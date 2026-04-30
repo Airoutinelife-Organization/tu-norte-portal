@@ -39,7 +39,17 @@ function HomePage() {
       {/* HERO — How can we help you today? */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 -z-10">
-          <img src={portalHero} alt="" className="h-full w-full object-cover" width={1920} height={1080} />
+          <video
+            src="/videos/hero-loop.mp4"
+            poster={portalHero}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            aria-hidden="true"
+            className="h-full w-full object-cover"
+          />
           <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/85 to-primary/40" />
           <div className="absolute inset-0 bg-gradient-to-t from-background/70 via-transparent to-transparent" />
         </div>
