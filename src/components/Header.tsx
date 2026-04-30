@@ -22,7 +22,7 @@ export function Header() {
     <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/80 backdrop-blur-xl">
       <div className="mx-auto flex h-24 max-w-7xl items-center justify-between gap-4 px-4 py-3 md:px-6">
         <Link to="/" className="flex items-center gap-2">
-          <img src={logo} alt="Tu Norte TV" className="h-22 w-22 object-contain" width={88} height={88} />
+          <img src={logo} alt="Tu Norte TV" className="h-20 w-20 object-contain" width={88} height={88} />
           <span className="hidden flex-col leading-none sm:flex">
             <span className="text-base font-bold tracking-tight text-primary">Tu Norte</span>
             <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-brand">Portal · Autogestión</span>
