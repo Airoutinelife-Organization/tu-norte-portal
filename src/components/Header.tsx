@@ -24,8 +24,7 @@ export function Header() {
         <Link to="/" className="flex items-center gap-2">
           <img src={logo} alt="Tu Norte TV" className="h-20 w-20 object-contain" width={88} height={88} />
           <span className="hidden flex-col leading-none sm:flex">
-            <span className="text-base font-bold tracking-tight text-primary">Tu Norte</span>
-            <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-brand">Portal · Autogestión</span>
+            <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-brand">Tu Portal · Autogestión</span>
           </span>
         </Link>
 
