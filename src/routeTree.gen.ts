@@ -9,8 +9,44 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TestVelocidadRouteImport } from './routes/test-velocidad'
+import { Route as SoporteRouteImport } from './routes/soporte'
+import { Route as PqrRouteImport } from './routes/pqr'
+import { Route as PlanesRouteImport } from './routes/planes'
+import { Route as EmpresaRouteImport } from './routes/empresa'
+import { Route as CoberturaRouteImport } from './routes/cobertura'
 import { Route as IndexRouteImport } from './routes/index'
 
+const TestVelocidadRoute = TestVelocidadRouteImport.update({
+  id: '/test-velocidad',
+  path: '/test-velocidad',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SoporteRoute = SoporteRouteImport.update({
+  id: '/soporte',
+  path: '/soporte',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PqrRoute = PqrRouteImport.update({
+  id: '/pqr',
+  path: '/pqr',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlanesRoute = PlanesRouteImport.update({
+  id: '/planes',
+  path: '/planes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmpresaRoute = EmpresaRouteImport.update({
+  id: '/empresa',
+  path: '/empresa',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CoberturaRoute = CoberturaRouteImport.update({
+  id: '/cobertura',
+  path: '/cobertura',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +55,116 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/cobertura': typeof CoberturaRoute
+  '/empresa': typeof EmpresaRoute
+  '/planes': typeof PlanesRoute
+  '/pqr': typeof PqrRoute
+  '/soporte': typeof SoporteRoute
+  '/test-velocidad': typeof TestVelocidadRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/cobertura': typeof CoberturaRoute
+  '/empresa': typeof EmpresaRoute
+  '/planes': typeof PlanesRoute
+  '/pqr': typeof PqrRoute
+  '/soporte': typeof SoporteRoute
+  '/test-velocidad': typeof TestVelocidadRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/cobertura': typeof CoberturaRoute
+  '/empresa': typeof EmpresaRoute
+  '/planes': typeof PlanesRoute
+  '/pqr': typeof PqrRoute
+  '/soporte': typeof SoporteRoute
+  '/test-velocidad': typeof TestVelocidadRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/cobertura'
+    | '/empresa'
+    | '/planes'
+    | '/pqr'
+    | '/soporte'
+    | '/test-velocidad'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/cobertura'
+    | '/empresa'
+    | '/planes'
+    | '/pqr'
+    | '/soporte'
+    | '/test-velocidad'
+  id:
+    | '__root__'
+    | '/'
+    | '/cobertura'
+    | '/empresa'
+    | '/planes'
+    | '/pqr'
+    | '/soporte'
+    | '/test-velocidad'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CoberturaRoute: typeof CoberturaRoute
+  EmpresaRoute: typeof EmpresaRoute
+  PlanesRoute: typeof PlanesRoute
+  PqrRoute: typeof PqrRoute
+  SoporteRoute: typeof SoporteRoute
+  TestVelocidadRoute: typeof TestVelocidadRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/test-velocidad': {
+      id: '/test-velocidad'
+      path: '/test-velocidad'
+      fullPath: '/test-velocidad'
+      preLoaderRoute: typeof TestVelocidadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/soporte': {
+      id: '/soporte'
+      path: '/soporte'
+      fullPath: '/soporte'
+      preLoaderRoute: typeof SoporteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pqr': {
+      id: '/pqr'
+      path: '/pqr'
+      fullPath: '/pqr'
+      preLoaderRoute: typeof PqrRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/planes': {
+      id: '/planes'
+      path: '/planes'
+      fullPath: '/planes'
+      preLoaderRoute: typeof PlanesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/empresa': {
+      id: '/empresa'
+      path: '/empresa'
+      fullPath: '/empresa'
+      preLoaderRoute: typeof EmpresaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cobertura': {
+      id: '/cobertura'
+      path: '/cobertura'
+      fullPath: '/cobertura'
+      preLoaderRoute: typeof CoberturaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,6 +177,12 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CoberturaRoute: CoberturaRoute,
+  EmpresaRoute: EmpresaRoute,
+  PlanesRoute: PlanesRoute,
+  PqrRoute: PqrRoute,
+  SoporteRoute: SoporteRoute,
+  TestVelocidadRoute: TestVelocidadRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
