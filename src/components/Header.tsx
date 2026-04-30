@@ -1,16 +1,16 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useState } from "react";
-import { Menu, X, UserCircle } from "lucide-react";
+import { Menu, X, UserCircle, LayoutDashboard } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const links = [
   { to: "/", label: "Inicio" },
-  { to: "/empresa", label: "Empresa" },
-  { to: "/planes", label: "Planes" },
   { to: "/cobertura", label: "Cobertura" },
-  { to: "/test-velocidad", label: "Test de Velocidad" },
+  { to: "/planes", label: "Planes" },
+  { to: "/diagnostico", label: "Diagnóstico" },
+  { to: "/mis-tickets", label: "Mis tickets" },
   { to: "/soporte", label: "Soporte" },
 ] as const;
 
@@ -25,7 +25,7 @@ export function Header() {
           <img src={logo} alt="Tu Norte TV" className="h-11 w-11 object-contain" width={44} height={44} />
           <span className="hidden flex-col leading-none sm:flex">
             <span className="text-base font-bold tracking-tight text-primary">Tu Norte</span>
-            <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-brand">TV · Internet</span>
+            <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-brand">Portal · Autogestión</span>
           </span>
         </Link>
 
@@ -37,15 +37,11 @@ export function Header() {
                 key={l.to}
                 to={l.to}
                 className={cn(
-                  "relative rounded-full px-4 py-2 text-sm font-medium transition-colors",
-                  active
-                    ? "text-primary"
-                    : "text-muted-foreground hover:text-foreground",
+                  "relative rounded-full px-3.5 py-2 text-sm font-medium transition-colors",
+                  active ? "text-primary" : "text-muted-foreground hover:text-foreground",
                 )}
               >
-                {active && (
-                  <span className="absolute inset-0 rounded-full bg-accent/60" aria-hidden />
-                )}
+                {active && <span className="absolute inset-0 rounded-full bg-accent/60" aria-hidden />}
                 <span className="relative">{l.label}</span>
               </Link>
             );
@@ -54,12 +50,14 @@ export function Header() {
 
         <div className="flex items-center gap-2">
           <Button asChild variant="ghost" size="sm" className="hidden md:inline-flex">
-            <Link to="/pqr">PQR</Link>
+            <Link to="/pagar">
+              <LayoutDashboard className="mr-1 h-4 w-4" /> Mi cuenta
+            </Link>
           </Button>
           <Button asChild size="sm" className="hidden bg-gradient-brand text-primary-foreground shadow-soft hover:opacity-90 md:inline-flex">
-            <a href="https://oficinavirtual.tunorte.co" target="_blank" rel="noreferrer">
-              <UserCircle className="mr-1 h-4 w-4" /> Clientes
-            </a>
+            <Link to="/agendar">
+              <UserCircle className="mr-1 h-4 w-4" /> Contratar
+            </Link>
           </Button>
           <button
             onClick={() => setOpen(!open)}
@@ -87,12 +85,12 @@ export function Header() {
                 {l.label}
               </Link>
             ))}
-            <Link to="/pqr" onClick={() => setOpen(false)} className="rounded-lg px-4 py-3 text-sm font-medium text-foreground hover:bg-muted">
-              PQR
+            <Link to="/pagar" onClick={() => setOpen(false)} className="rounded-lg px-4 py-3 text-sm font-medium text-foreground hover:bg-muted">
+              Mi factura
             </Link>
-            <a href="https://oficinavirtual.tunorte.co" target="_blank" rel="noreferrer" className="mt-2 rounded-lg bg-gradient-brand px-4 py-3 text-center text-sm font-semibold text-primary-foreground">
-              Portal Clientes
-            </a>
+            <Link to="/agendar" onClick={() => setOpen(false)} className="mt-2 rounded-lg bg-gradient-brand px-4 py-3 text-center text-sm font-semibold text-primary-foreground">
+              Contratar / Agendar
+            </Link>
           </nav>
         </div>
       )}
