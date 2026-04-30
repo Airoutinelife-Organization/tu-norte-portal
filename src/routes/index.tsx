@@ -91,7 +91,7 @@ function HomePage() {
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                navigate({ to: "/cobertura", search: { q: address } as never });
+                navigate({ to: "/cobertura" });
               }}
               className="mt-5 flex flex-col gap-3 sm:flex-row"
             >
