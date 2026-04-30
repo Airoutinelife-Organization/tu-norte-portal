@@ -11,10 +11,15 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TestVelocidadRouteImport } from './routes/test-velocidad'
 import { Route as SoporteRouteImport } from './routes/soporte'
+import { Route as RecomendadorRouteImport } from './routes/recomendador'
 import { Route as PqrRouteImport } from './routes/pqr'
 import { Route as PlanesRouteImport } from './routes/planes'
+import { Route as PagarRouteImport } from './routes/pagar'
+import { Route as MisTicketsRouteImport } from './routes/mis-tickets'
 import { Route as EmpresaRouteImport } from './routes/empresa'
+import { Route as DiagnosticoRouteImport } from './routes/diagnostico'
 import { Route as CoberturaRouteImport } from './routes/cobertura'
+import { Route as AgendarRouteImport } from './routes/agendar'
 import { Route as IndexRouteImport } from './routes/index'
 
 const TestVelocidadRoute = TestVelocidadRouteImport.update({
@@ -27,6 +32,11 @@ const SoporteRoute = SoporteRouteImport.update({
   path: '/soporte',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RecomendadorRoute = RecomendadorRouteImport.update({
+  id: '/recomendador',
+  path: '/recomendador',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PqrRoute = PqrRouteImport.update({
   id: '/pqr',
   path: '/pqr',
@@ -37,14 +47,34 @@ const PlanesRoute = PlanesRouteImport.update({
   path: '/planes',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PagarRoute = PagarRouteImport.update({
+  id: '/pagar',
+  path: '/pagar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MisTicketsRoute = MisTicketsRouteImport.update({
+  id: '/mis-tickets',
+  path: '/mis-tickets',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EmpresaRoute = EmpresaRouteImport.update({
   id: '/empresa',
   path: '/empresa',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DiagnosticoRoute = DiagnosticoRouteImport.update({
+  id: '/diagnostico',
+  path: '/diagnostico',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CoberturaRoute = CoberturaRouteImport.update({
   id: '/cobertura',
   path: '/cobertura',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgendarRoute = AgendarRouteImport.update({
+  id: '/agendar',
+  path: '/agendar',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -55,29 +85,44 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/agendar': typeof AgendarRoute
   '/cobertura': typeof CoberturaRoute
+  '/diagnostico': typeof DiagnosticoRoute
   '/empresa': typeof EmpresaRoute
+  '/mis-tickets': typeof MisTicketsRoute
+  '/pagar': typeof PagarRoute
   '/planes': typeof PlanesRoute
   '/pqr': typeof PqrRoute
+  '/recomendador': typeof RecomendadorRoute
   '/soporte': typeof SoporteRoute
   '/test-velocidad': typeof TestVelocidadRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/agendar': typeof AgendarRoute
   '/cobertura': typeof CoberturaRoute
+  '/diagnostico': typeof DiagnosticoRoute
   '/empresa': typeof EmpresaRoute
+  '/mis-tickets': typeof MisTicketsRoute
+  '/pagar': typeof PagarRoute
   '/planes': typeof PlanesRoute
   '/pqr': typeof PqrRoute
+  '/recomendador': typeof RecomendadorRoute
   '/soporte': typeof SoporteRoute
   '/test-velocidad': typeof TestVelocidadRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/agendar': typeof AgendarRoute
   '/cobertura': typeof CoberturaRoute
+  '/diagnostico': typeof DiagnosticoRoute
   '/empresa': typeof EmpresaRoute
+  '/mis-tickets': typeof MisTicketsRoute
+  '/pagar': typeof PagarRoute
   '/planes': typeof PlanesRoute
   '/pqr': typeof PqrRoute
+  '/recomendador': typeof RecomendadorRoute
   '/soporte': typeof SoporteRoute
   '/test-velocidad': typeof TestVelocidadRoute
 }
@@ -85,38 +130,58 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/agendar'
     | '/cobertura'
+    | '/diagnostico'
     | '/empresa'
+    | '/mis-tickets'
+    | '/pagar'
     | '/planes'
     | '/pqr'
+    | '/recomendador'
     | '/soporte'
     | '/test-velocidad'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/agendar'
     | '/cobertura'
+    | '/diagnostico'
     | '/empresa'
+    | '/mis-tickets'
+    | '/pagar'
     | '/planes'
     | '/pqr'
+    | '/recomendador'
     | '/soporte'
     | '/test-velocidad'
   id:
     | '__root__'
     | '/'
+    | '/agendar'
     | '/cobertura'
+    | '/diagnostico'
     | '/empresa'
+    | '/mis-tickets'
+    | '/pagar'
     | '/planes'
     | '/pqr'
+    | '/recomendador'
     | '/soporte'
     | '/test-velocidad'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AgendarRoute: typeof AgendarRoute
   CoberturaRoute: typeof CoberturaRoute
+  DiagnosticoRoute: typeof DiagnosticoRoute
   EmpresaRoute: typeof EmpresaRoute
+  MisTicketsRoute: typeof MisTicketsRoute
+  PagarRoute: typeof PagarRoute
   PlanesRoute: typeof PlanesRoute
   PqrRoute: typeof PqrRoute
+  RecomendadorRoute: typeof RecomendadorRoute
   SoporteRoute: typeof SoporteRoute
   TestVelocidadRoute: typeof TestVelocidadRoute
 }
@@ -137,6 +202,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SoporteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/recomendador': {
+      id: '/recomendador'
+      path: '/recomendador'
+      fullPath: '/recomendador'
+      preLoaderRoute: typeof RecomendadorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/pqr': {
       id: '/pqr'
       path: '/pqr'
@@ -151,6 +223,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlanesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/pagar': {
+      id: '/pagar'
+      path: '/pagar'
+      fullPath: '/pagar'
+      preLoaderRoute: typeof PagarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mis-tickets': {
+      id: '/mis-tickets'
+      path: '/mis-tickets'
+      fullPath: '/mis-tickets'
+      preLoaderRoute: typeof MisTicketsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/empresa': {
       id: '/empresa'
       path: '/empresa'
@@ -158,11 +244,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EmpresaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/diagnostico': {
+      id: '/diagnostico'
+      path: '/diagnostico'
+      fullPath: '/diagnostico'
+      preLoaderRoute: typeof DiagnosticoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/cobertura': {
       id: '/cobertura'
       path: '/cobertura'
       fullPath: '/cobertura'
       preLoaderRoute: typeof CoberturaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agendar': {
+      id: '/agendar'
+      path: '/agendar'
+      fullPath: '/agendar'
+      preLoaderRoute: typeof AgendarRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -177,10 +277,15 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AgendarRoute: AgendarRoute,
   CoberturaRoute: CoberturaRoute,
+  DiagnosticoRoute: DiagnosticoRoute,
   EmpresaRoute: EmpresaRoute,
+  MisTicketsRoute: MisTicketsRoute,
+  PagarRoute: PagarRoute,
   PlanesRoute: PlanesRoute,
   PqrRoute: PqrRoute,
+  RecomendadorRoute: RecomendadorRoute,
   SoporteRoute: SoporteRoute,
   TestVelocidadRoute: TestVelocidadRoute,
 }
