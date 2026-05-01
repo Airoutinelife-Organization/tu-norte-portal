@@ -31,6 +31,19 @@ const helpOptions = [
   { icon: Wifi, label: "Ver planes", to: "/planes", color: "from-blue-400 to-indigo-500" },
 ] as const;
 
+// Floating channel badges sprinkled over the hero video.
+// Generic monograms — no real broadcaster trademarks.
+const channelBadges = [
+  { label: "HD+", from: "#22d3ee", to: "#0ea5e9", top: "8%", left: "6%", size: 64, delay: "0s" },
+  { label: "4K", from: "#f97316", to: "#ef4444", top: "18%", left: "88%", size: 72, delay: "0.6s" },
+  { label: "TV", from: "#a855f7", to: "#6366f1", top: "62%", left: "4%", size: 60, delay: "1.2s" },
+  { label: "★", from: "#fbbf24", to: "#f59e0b", top: "70%", left: "92%", size: 56, delay: "0.3s" },
+  { label: "GO", from: "#10b981", to: "#06b6d4", top: "40%", left: "94%", size: 52, delay: "1.6s" },
+  { label: "FX", from: "#ec4899", to: "#a855f7", top: "82%", left: "22%", size: 56, delay: "0.9s" },
+  { label: "N+", from: "#3b82f6", to: "#1e3a8a", top: "12%", left: "70%", size: 50, delay: "1.4s" },
+  { label: "PLAY", from: "#06b6d4", to: "#3b82f6", top: "78%", left: "70%", size: 60, delay: "0.4s" },
+] as const;
+
 function HomePage() {
   const navigate = useNavigate();
   const [address, setAddress] = useState("");
