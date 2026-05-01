@@ -1,6 +1,17 @@
 import { Link } from "@tanstack/react-router";
-import { MapPin, Phone, Mail, Facebook, Instagram } from "lucide-react";
+import { MapPin, Phone, Mail, Facebook, Instagram, ShieldAlert } from "lucide-react";
 import logo from "@/assets/logo.png";
+import regIcbf from "@/assets/reg-icbf.png";
+import regCai from "@/assets/reg-cai.png";
+import regEntic from "@/assets/reg-entic.png";
+import regFiscalia from "@/assets/reg-fiscalia.png";
+
+const reportingChannels = [
+  { name: "Bienestar Familiar", img: regIcbf, url: "https://www.icbf.gov.co/" },
+  { name: "CAI Virtual — Policía Nacional", img: regCai, url: "https://caivirtual.policia.gov.co/" },
+  { name: "En TIC Confío", img: regEntic, url: "https://www.enticconfio.gov.co/" },
+  { name: "Fiscalía General de la Nación", img: regFiscalia, url: "https://www.fiscalia.gov.co/colombia/" },
+] as const;
 
 export function Footer() {
   return (
@@ -51,6 +62,42 @@ export function Footer() {
               <li className="flex gap-3"><Phone className="h-4 w-4 shrink-0 text-brand" /><span>(+57) 321 756 0178</span></li>
               <li className="flex gap-3"><Mail className="h-4 w-4 shrink-0 text-brand" /><span>contacto@tunorte.co</span></li>
             </ul>
+          </div>
+        </div>
+
+        {/* Canales de denuncia y entidades reguladoras */}
+        <div className="mt-14 border-t border-white/10 pt-10">
+          <div className="flex items-center gap-2">
+            <ShieldAlert className="h-5 w-5 text-brand" />
+            <h4 className="text-sm font-semibold uppercase tracking-wider text-brand">
+              Canales de denuncia
+            </h4>
+          </div>
+          <p className="mt-2 max-w-2xl text-sm text-white/70">
+            En caso de delitos informáticos, abuso a menores o fraude, denuncia directamente ante las autoridades competentes.
+          </p>
+          <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
+            {reportingChannels.map((c) => (
+              <a
+                key={c.name}
+                href={c.url}
+                target="_blank"
+                rel="noreferrer"
+                className="group flex flex-col items-center gap-3 rounded-2xl bg-white p-4 text-center transition hover:-translate-y-1 hover:shadow-glow"
+              >
+                <div className="grid h-20 w-full place-items-center">
+                  <img
+                    src={c.img}
+                    alt={c.name}
+                    className="max-h-16 w-auto object-contain"
+                    loading="lazy"
+                  />
+                </div>
+                <span className="inline-flex items-center justify-center rounded-full bg-brand px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-primary transition group-hover:brightness-110">
+                  Denuncie aquí
+                </span>
+              </a>
+            ))}
           </div>
         </div>
 
