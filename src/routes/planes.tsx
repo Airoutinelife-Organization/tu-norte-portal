@@ -36,6 +36,120 @@ const comboPlans = [
 
 type Channel = { name: string; category: string; hd?: boolean };
 
+// Map channel name -> official domain. Logos are fetched via Google's favicon service
+// (sz=128) which serves the brand's high-res favicon/logo.
+const channelDomains: Record<string, string> = {
+  // Nacionales
+  "Caracol": "caracoltv.com",
+  "RCN": "canalrcn.com",
+  "Canal 1": "canal1.com.co",
+  "Señal Colombia": "senalcolombia.tv",
+  "Canal Institucional": "canalinstitucional.tv",
+  "Canal Congreso": "canalcongreso.tv",
+  "CityTV": "citytv.com.co",
+  "Telecaribe": "telecaribe.co",
+  "TRO": "canaltro.com",
+  "Teleantioquia": "teleantioquia.co",
+  "Telepacífico": "telepacifico.com",
+  "Telecafé": "telecafe.gov.co",
+  "Canal Capital": "canalcapital.gov.co",
+  "Canal Trece": "canaltrece.com.co",
+  // Noticias
+  "CNN en Español": "cnnespanol.cnn.com",
+  "CNN Internacional": "cnn.com",
+  "NTN24": "ntn24.com",
+  "France 24": "france24.com",
+  "DW": "dw.com",
+  "TeleSUR": "telesurtv.net",
+  "Bloomberg": "bloomberg.com",
+  "Caracol Noticias": "noticiascaracol.com",
+  // Deportes
+  "ESPN": "espn.com",
+  "ESPN 2": "espn.com",
+  "ESPN 3": "espn.com",
+  "ESPN 4": "espn.com",
+  "Win Sports": "winsports.co",
+  "Win Sports +": "winsports.co",
+  "DirecTV Sports": "directvsports.com",
+  "Fox Sports": "foxsports.com",
+  "Golf Channel": "golfchannel.com",
+  // Películas y Series
+  "FX": "fxnetworks.com",
+  "FXM": "fxnetworks.com",
+  "Fox": "fox.com",
+  "Sony": "sonychannel.com",
+  "Universal": "universalchannel.com",
+  "Warner Channel": "warnerchannel.com",
+  "TNT": "tntla.com",
+  "TNT Series": "tntla.com",
+  "Space": "spacetv.com",
+  "Cinemax": "cinemax.com",
+  "AXN": "axn.com",
+  "AMC": "amc.com",
+  "Studio Universal": "studiouniversal.com",
+  "Cinecanal": "cinecanal.com",
+  "Multipremier": "multipremier.tv",
+  "Multicinema": "multicinema.tv",
+  "De Película": "depelicula.tv",
+  // Entretenimiento
+  "E! Entertainment": "eonline.com",
+  "ID — Investigation Discovery": "investigationdiscovery.com",
+  "TLC": "tlc.com",
+  "Lifetime": "mylifetime.com",
+  "Discovery Home & Health": "discoverymujer.com",
+  "Discovery Familia": "discoveryfamilia.com",
+  "Glitz*": "glitz.tv",
+  "truTV": "trutv.com",
+  "A&E": "aetv.com",
+  "Syfy": "syfy.com",
+  "Comedy Central": "comedycentral.com",
+  // Música
+  "MTV": "mtv.com",
+  "MTV Hits": "mtv.com",
+  "VH1": "vh1.com",
+  "HTV": "htv.tv",
+  "Ve Plus": "veplus.tv",
+  // Documentales
+  "Discovery Channel": "discovery.com",
+  "Discovery Turbo": "discovery.com",
+  "Discovery Science": "sciencechannel.com",
+  "Discovery Theater": "discovery.com",
+  "National Geographic": "nationalgeographic.com",
+  "Nat Geo Wild": "natgeotv.com",
+  "History Channel": "history.com",
+  "H2": "history.com",
+  "Animal Planet": "animalplanet.com",
+  "Film & Arts": "filmandarts.tv",
+  // Infantiles
+  "Disney Channel": "disney.com",
+  "Disney Junior": "disneyjunior.com",
+  "Disney XD": "disneyxd.disney.com",
+  "Cartoon Network": "cartoonnetwork.com",
+  "Boomerang": "boomerang.com",
+  "Tooncast": "tooncast.tv",
+  "Nick": "nick.com",
+  "Nick Jr.": "nickjr.com",
+  "Discovery Kids": "discoverykids.com",
+  "BabyTV": "babytv.com",
+  // Religiosos
+  "EWTN": "ewtn.com",
+  "Enlace": "enlace.org",
+  "Cristovisión": "cristovision.tv",
+  "TBN": "tbn.org",
+  // Internacionales
+  "TV5 Monde": "tv5monde.com",
+  "RAI Italia": "rai.it",
+  "TVE Internacional": "rtve.es",
+  "Antena 3 Internacional": "antena3.com",
+  "Canal de las Estrellas": "televisa.com",
+};
+
+function getChannelLogo(name: string): string | null {
+  const domain = channelDomains[name];
+  if (!domain) return null;
+  return `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+}
+
 const channels: Channel[] = [
   // Nacionales / Locales
   { name: "Caracol", category: "Nacionales", hd: true },
@@ -331,17 +445,42 @@ function ChannelLineup() {
             </p>
           ) : (
             <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-              {filtered.map((c) => (
-                <li
-                  key={c.name}
-                  className="flex items-center justify-between gap-2 rounded-lg border border-muted bg-background px-3 py-2.5 text-sm transition hover:border-brand/40 hover:bg-brand/5"
-                >
-                  <span className="truncate font-medium text-primary">{c.name}</span>
-                  {c.hd && (
-                    <span className="rounded bg-brand/15 px-1.5 py-0.5 text-[10px] font-bold text-brand">HD</span>
-                  )}
-                </li>
-              ))}
+              {filtered.map((c) => {
+                const logo = getChannelLogo(c.name);
+                return (
+                  <li
+                    key={c.name}
+                    className="flex items-center gap-2.5 rounded-lg border border-muted bg-background px-2.5 py-2 text-sm transition hover:border-brand/40 hover:bg-brand/5"
+                  >
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-md bg-muted/40 ring-1 ring-border">
+                      {logo ? (
+                        <img
+                          src={logo}
+                          alt={`${c.name} logo`}
+                          loading="lazy"
+                          className="h-7 w-7 object-contain"
+                          onError={(e) => {
+                            const el = e.currentTarget;
+                            el.style.display = "none";
+                            const fallback = el.nextElementSibling as HTMLElement | null;
+                            if (fallback) fallback.style.display = "flex";
+                          }}
+                        />
+                      ) : null}
+                      <span
+                        className="flex h-7 w-7 items-center justify-center rounded text-[11px] font-bold text-brand"
+                        style={{ display: logo ? "none" : "flex" }}
+                      >
+                        {c.name.slice(0, 2).toUpperCase()}
+                      </span>
+                    </div>
+                    <span className="flex-1 truncate font-medium text-primary">{c.name}</span>
+                    {c.hd && (
+                      <span className="rounded bg-brand/15 px-1.5 py-0.5 text-[10px] font-bold text-brand">HD</span>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           )}
         </div>
