@@ -65,6 +65,42 @@ export function Footer() {
           </div>
         </div>
 
+        {/* Canales de denuncia y entidades reguladoras */}
+        <div className="mt-14 border-t border-white/10 pt-10">
+          <div className="flex items-center gap-2">
+            <ShieldAlert className="h-5 w-5 text-brand" />
+            <h4 className="text-sm font-semibold uppercase tracking-wider text-brand">
+              Canales de denuncia
+            </h4>
+          </div>
+          <p className="mt-2 max-w-2xl text-sm text-white/70">
+            En caso de delitos informáticos, abuso a menores o fraude, denuncia directamente ante las autoridades competentes.
+          </p>
+          <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
+            {reportingChannels.map((c) => (
+              <a
+                key={c.name}
+                href={c.url}
+                target="_blank"
+                rel="noreferrer"
+                className="group flex flex-col items-center gap-3 rounded-2xl bg-white p-4 text-center transition hover:-translate-y-1 hover:shadow-glow"
+              >
+                <div className="grid h-20 w-full place-items-center">
+                  <img
+                    src={c.img}
+                    alt={c.name}
+                    className="max-h-16 w-auto object-contain"
+                    loading="lazy"
+                  />
+                </div>
+                <span className="inline-flex items-center justify-center rounded-full bg-brand px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-primary transition group-hover:brightness-110">
+                  Denuncie aquí
+                </span>
+              </a>
+            ))}
+          </div>
+        </div>
+
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-xs text-white/50 md:flex-row">
           <p>© {new Date().getFullYear()} Tu Norte TV. Todos los derechos reservados.</p>
           <div className="flex gap-6">
