@@ -11,6 +11,7 @@ import portalHero from "@/assets/portal-hero.jpg";
 import coverageCity from "@/assets/coverage-city.jpg";
 import heroLoop from "@/assets/hero-loop.mp4?url";
 import girlLaptop from "@/assets/girl-laptop.png";
+import girlLaptopVideo from "@/assets/girl-laptop.mp4.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -157,14 +158,17 @@ function HomePage() {
               </div>
             </div>
 
-            {/* Girl with laptop — sits in front, on the right, gazing left toward the orbit */}
-            <img
-              src={girlLaptop}
-              alt=""
-              width={1024}
-              height={1024}
-              className="animate-breathe absolute bottom-0 right-0 h-[640px] w-auto select-none drop-shadow-[0_30px_60px_rgba(0,0,0,0.45)]"
-              style={{ objectFit: "contain" }}
+            {/* Girl with laptop — looping video, gazing left toward the orbit */}
+            <video
+              src={girlLaptopVideo.url}
+              poster={girlLaptop}
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="auto"
+              aria-hidden="true"
+              className="absolute bottom-0 right-0 h-[640px] w-auto select-none object-contain drop-shadow-[0_30px_60px_rgba(0,0,0,0.45)]"
             />
           </div>
         </div>
