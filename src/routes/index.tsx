@@ -160,7 +160,7 @@ function HomePage() {
 
             {/* Girl with laptop — looping video, gazing left toward the orbit */}
             <video
-              src={girlLaptopVideo.url}
+              src={girlLaptopVideo}
               poster={girlLaptop}
               autoPlay
               loop
