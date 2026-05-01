@@ -11,6 +11,7 @@ import portalHero from "@/assets/portal-hero.jpg";
 import coverageCity from "@/assets/coverage-city.jpg";
 import heroLoop from "@/assets/hero-loop.mp4?url";
 import girlLaptop from "@/assets/girl-laptop.png";
+import girlLaptopVideo from "@/assets/girl-laptop.mp4.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
