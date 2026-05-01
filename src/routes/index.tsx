@@ -90,55 +90,82 @@ function HomePage() {
           <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/80 to-primary/30" />
           <div className="absolute inset-0 bg-gradient-to-t from-background/70 via-transparent to-transparent" />
 
-          {/* Channels orbiting the Earth — confined to the right side, away from the headline */}
+          {/* Right-side composition: girl with laptop "watching the world" while channels orbit */}
           <div
             className="pointer-events-none absolute right-0 top-1/2 hidden -translate-y-1/2 lg:block"
             aria-hidden="true"
-            style={{ width: "560px", height: "560px", marginRight: "-80px" }}
+            style={{ width: "720px", height: "640px", marginRight: "-40px" }}
           >
-            {/* Soft orbit guide */}
-            <div className="absolute inset-8 rounded-full border border-white/10" />
-            <div className="absolute inset-20 rounded-full border border-white/5" />
+            {/* Glow behind the orbit, focal point of her gaze */}
+            <div
+              className="absolute"
+              style={{
+                left: "30%",
+                top: "50%",
+                width: 380,
+                height: 380,
+                transform: "translate(-50%, -50%)",
+                background: "radial-gradient(circle, rgba(56,189,248,0.35) 0%, rgba(56,189,248,0) 65%)",
+                filter: "blur(8px)",
+              }}
+            />
 
-            {/* Rotating ring */}
-            <div className="animate-orbit absolute inset-0">
-              {channelChips.map((c, i) => {
-                const angle = (i / channelChips.length) * 2 * Math.PI;
-                const radius = 240; // px from center
-                const x = Math.cos(angle) * radius;
-                const y = Math.sin(angle) * radius;
-                return (
-                  <div
-                    key={c.label}
-                    className="absolute left-1/2 top-1/2"
-                    style={{ transform: `translate(-50%, -50%) translate(${x}px, ${y}px)` }}
-                  >
-                    {/* Counter-rotate so the chip stays upright */}
-                    <div className="animate-orbit-counter">
-                      <div
-                        className="grid place-items-center rounded-xl px-3 shadow-glow ring-1 ring-white/20"
-                        style={{
-                          height: 36,
-                          minWidth: 68,
-                          background: c.bg,
-                          color: c.fg,
-                          fontFamily: "'Plus Jakarta Sans', 'Inter', system-ui, sans-serif",
-                          fontWeight: c.weight ?? 800,
-                          fontStyle: c.italic ? "italic" : "normal",
-                          letterSpacing: c.letterSpacing ?? "-0.02em",
-                          fontSize: 16,
-                          lineHeight: 1,
-                          textTransform: c.label.length <= 4 ? "uppercase" : "none",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        {c.label}
+            {/* Orbit container, centered on the area she's looking at */}
+            <div
+              className="absolute"
+              style={{ left: "30%", top: "50%", width: 480, height: 480, transform: "translate(-50%, -50%)" }}
+            >
+              <div className="absolute inset-6 rounded-full border border-white/10" />
+              <div className="absolute inset-20 rounded-full border border-white/5" />
+
+              <div className="animate-orbit absolute inset-0">
+                {channelChips.map((c, i) => {
+                  const angle = (i / channelChips.length) * 2 * Math.PI;
+                  const radius = 220;
+                  const x = Math.cos(angle) * radius;
+                  const y = Math.sin(angle) * radius;
+                  return (
+                    <div
+                      key={c.label}
+                      className="absolute left-1/2 top-1/2"
+                      style={{ transform: `translate(-50%, -50%) translate(${x}px, ${y}px)` }}
+                    >
+                      <div className="animate-orbit-counter">
+                        <div
+                          className="grid place-items-center rounded-xl px-3 shadow-glow ring-1 ring-white/20"
+                          style={{
+                            height: 34,
+                            minWidth: 64,
+                            background: c.bg,
+                            color: c.fg,
+                            fontFamily: "'Plus Jakarta Sans', 'Inter', system-ui, sans-serif",
+                            fontWeight: c.weight ?? 800,
+                            fontStyle: c.italic ? "italic" : "normal",
+                            letterSpacing: c.letterSpacing ?? "-0.02em",
+                            fontSize: 15,
+                            lineHeight: 1,
+                            textTransform: c.label.length <= 4 ? "uppercase" : "none",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          {c.label}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
+
+            {/* Girl with laptop — sits in front, on the right, gazing left toward the orbit */}
+            <img
+              src={girlLaptop}
+              alt=""
+              width={1024}
+              height={1024}
+              className="absolute bottom-0 right-0 h-[640px] w-auto select-none drop-shadow-[0_30px_60px_rgba(0,0,0,0.45)]"
+              style={{ objectFit: "contain" }}
+            />
           </div>
         </div>
 
