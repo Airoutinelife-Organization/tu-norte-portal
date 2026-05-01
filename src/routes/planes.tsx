@@ -445,17 +445,42 @@ function ChannelLineup() {
             </p>
           ) : (
             <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-              {filtered.map((c) => (
-                <li
-                  key={c.name}
-                  className="flex items-center justify-between gap-2 rounded-lg border border-muted bg-background px-3 py-2.5 text-sm transition hover:border-brand/40 hover:bg-brand/5"
-                >
-                  <span className="truncate font-medium text-primary">{c.name}</span>
-                  {c.hd && (
-                    <span className="rounded bg-brand/15 px-1.5 py-0.5 text-[10px] font-bold text-brand">HD</span>
-                  )}
-                </li>
-              ))}
+              {filtered.map((c) => {
+                const logo = getChannelLogo(c.name);
+                return (
+                  <li
+                    key={c.name}
+                    className="flex items-center gap-2.5 rounded-lg border border-muted bg-background px-2.5 py-2 text-sm transition hover:border-brand/40 hover:bg-brand/5"
+                  >
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-md bg-muted/40 ring-1 ring-border">
+                      {logo ? (
+                        <img
+                          src={logo}
+                          alt={`${c.name} logo`}
+                          loading="lazy"
+                          className="h-7 w-7 object-contain"
+                          onError={(e) => {
+                            const el = e.currentTarget;
+                            el.style.display = "none";
+                            const fallback = el.nextElementSibling as HTMLElement | null;
+                            if (fallback) fallback.style.display = "flex";
+                          }}
+                        />
+                      ) : null}
+                      <span
+                        className="flex h-7 w-7 items-center justify-center rounded text-[11px] font-bold text-brand"
+                        style={{ display: logo ? "none" : "flex" }}
+                      >
+                        {c.name.slice(0, 2).toUpperCase()}
+                      </span>
+                    </div>
+                    <span className="flex-1 truncate font-medium text-primary">{c.name}</span>
+                    {c.hd && (
+                      <span className="rounded bg-brand/15 px-1.5 py-0.5 text-[10px] font-bold text-brand">HD</span>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           )}
         </div>
