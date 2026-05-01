@@ -31,6 +31,19 @@ const helpOptions = [
   { icon: Wifi, label: "Ver planes", to: "/planes", color: "from-blue-400 to-indigo-500" },
 ] as const;
 
+// Floating channel badges sprinkled over the hero video.
+// Generic monograms — no real broadcaster trademarks.
+const channelBadges = [
+  { label: "HD+", from: "#22d3ee", to: "#0ea5e9", top: "8%", left: "6%", size: 64, delay: "0s" },
+  { label: "4K", from: "#f97316", to: "#ef4444", top: "18%", left: "88%", size: 72, delay: "0.6s" },
+  { label: "TV", from: "#a855f7", to: "#6366f1", top: "62%", left: "4%", size: 60, delay: "1.2s" },
+  { label: "★", from: "#fbbf24", to: "#f59e0b", top: "70%", left: "92%", size: 56, delay: "0.3s" },
+  { label: "GO", from: "#10b981", to: "#06b6d4", top: "40%", left: "94%", size: 52, delay: "1.6s" },
+  { label: "FX", from: "#ec4899", to: "#a855f7", top: "82%", left: "22%", size: 56, delay: "0.9s" },
+  { label: "N+", from: "#3b82f6", to: "#1e3a8a", top: "12%", left: "70%", size: 50, delay: "1.4s" },
+  { label: "PLAY", from: "#06b6d4", to: "#3b82f6", top: "78%", left: "70%", size: 60, delay: "0.4s" },
+] as const;
+
 function HomePage() {
   const navigate = useNavigate();
   const [address, setAddress] = useState("");
@@ -63,8 +76,31 @@ function HomePage() {
             aria-hidden="true"
             className="h-full w-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/85 to-primary/40" />
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/80 to-primary/30" />
           <div className="absolute inset-0 bg-gradient-to-t from-background/70 via-transparent to-transparent" />
+
+          {/* Floating channel badges */}
+          <div className="pointer-events-none absolute inset-0 hidden md:block" aria-hidden="true">
+            {channelBadges.map((b) => (
+              <div
+                key={b.label}
+                className="animate-float absolute grid place-items-center rounded-full bg-white/95 font-display font-extrabold text-primary shadow-glow ring-2 ring-white/40 backdrop-blur"
+                style={{
+                  top: b.top,
+                  left: b.left,
+                  width: b.size,
+                  height: b.size,
+                  fontSize: Math.round(b.size * 0.32),
+                  animationDelay: b.delay,
+                  background: `linear-gradient(135deg, ${b.from}, ${b.to})`,
+                  color: "white",
+                  textShadow: "0 1px 2px rgba(0,0,0,0.25)",
+                }}
+              >
+                {b.label}
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="relative mx-auto max-w-7xl px-4 pt-16 pb-32 md:px-6 md:pt-24 md:pb-40">
@@ -74,10 +110,10 @@ function HomePage() {
               Portal de autogestión 24/7
             </span>
             <h1 className="mt-5 font-display text-4xl font-bold leading-[1.05] tracking-tight text-white md:text-6xl">
-              ¿Cómo podemos <span className="text-brand">ayudarte</span> hoy?
+              Accede al mundo con la <span className="text-brand">mejor TV</span> y el <span className="text-brand">internet más rápido</span>
             </h1>
             <p className="mt-4 max-w-xl text-base text-white/80 md:text-lg">
-              Resuelve lo que necesitas en segundos. Sin llamadas, sin filas, sin esperas.
+              Cientos de canales en HD, fibra óptica de alta velocidad y un portal donde tú mandas. Sin llamadas, sin esperas.
             </p>
 
             {/* Help options pills */}
