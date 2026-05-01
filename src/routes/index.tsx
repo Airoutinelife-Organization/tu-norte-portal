@@ -33,29 +33,6 @@ const helpOptions = [
   { icon: Wifi, label: "Ver planes", to: "/planes", color: "from-blue-400 to-indigo-500" },
 ] as const;
 
-// Channel chips that orbit the rotating Earth on the right side of the hero.
-type ChannelChip = {
-  label: string;
-  bg: string;
-  fg: string;
-  italic?: boolean;
-  weight?: number;
-  letterSpacing?: string;
-};
-
-const channelChips: ChannelChip[] = [
-  { label: "CNN",       bg: "#cc0000", fg: "#ffffff", weight: 900, letterSpacing: "-0.04em" },
-  { label: "FOX",       bg: "#003478", fg: "#ffffff", weight: 900, letterSpacing: "-0.04em" },
-  { label: "ESPN",      bg: "#d50000", fg: "#ffffff", italic: true, weight: 900, letterSpacing: "-0.05em" },
-  { label: "HBO",       bg: "#000000", fg: "#ffffff", weight: 900, letterSpacing: "-0.04em" },
-  { label: "Discovery", bg: "#004b87", fg: "#ffffff", weight: 700, letterSpacing: "-0.02em" },
-  { label: "FX",        bg: "#000000", fg: "#ffffff", weight: 900, letterSpacing: "-0.05em" },
-  { label: "MTV",       bg: "#ffd200", fg: "#000000", weight: 900, italic: true, letterSpacing: "-0.04em" },
-  { label: "TNT",       bg: "#e30613", fg: "#ffffff", weight: 900, letterSpacing: "-0.05em" },
-  { label: "Nat Geo",   bg: "#ffcc00", fg: "#000000", weight: 800, letterSpacing: "-0.02em" },
-  { label: "AXN",       bg: "#000000", fg: "#ffffff", weight: 900, letterSpacing: "-0.04em" },
-];
-
 function HomePage() {
   const navigate = useNavigate();
   const [address, setAddress] = useState("");
@@ -111,54 +88,7 @@ function HomePage() {
               }}
             />
 
-            {/* Orbit container, centered on the area she's looking at */}
-            <div
-              className="absolute"
-              style={{ left: "30%", top: "50%", width: 480, height: 480, transform: "translate(-50%, -50%)" }}
-            >
-              <div className="absolute inset-6 rounded-full border border-white/10" />
-              <div className="absolute inset-20 rounded-full border border-white/5" />
-
-              <div className="animate-orbit absolute inset-0">
-                {channelChips.map((c, i) => {
-                  const angle = (i / channelChips.length) * 2 * Math.PI;
-                  const radius = 220;
-                  const x = Math.cos(angle) * radius;
-                  const y = Math.sin(angle) * radius;
-                  return (
-                    <div
-                      key={c.label}
-                      className="absolute left-1/2 top-1/2"
-                      style={{ transform: `translate(-50%, -50%) translate(${x}px, ${y}px)` }}
-                    >
-                      <div className="animate-orbit-counter">
-                        <div
-                          className="grid place-items-center rounded-xl px-3 shadow-glow ring-1 ring-white/20"
-                          style={{
-                            height: 34,
-                            minWidth: 64,
-                            background: c.bg,
-                            color: c.fg,
-                            fontFamily: "'Plus Jakarta Sans', 'Inter', system-ui, sans-serif",
-                            fontWeight: c.weight ?? 800,
-                            fontStyle: c.italic ? "italic" : "normal",
-                            letterSpacing: c.letterSpacing ?? "-0.02em",
-                            fontSize: 15,
-                            lineHeight: 1,
-                            textTransform: c.label.length <= 4 ? "uppercase" : "none",
-                            whiteSpace: "nowrap",
-                          }}
-                        >
-                          {c.label}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Girl with laptop — looping video, gazing left toward the orbit */}
+            {/* Girl with laptop — looping video, gazing left toward the rotating Earth */}
             <video
               src={girlLaptopVideo}
               poster={girlLaptop}
