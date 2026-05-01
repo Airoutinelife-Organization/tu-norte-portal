@@ -59,7 +59,7 @@ export function Footer() {
             <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-brand">Contacto</h4>
             <ul className="space-y-3 text-sm text-white/75">
               <li className="flex gap-3"><MapPin className="h-4 w-4 shrink-0 text-brand" /><span>Av 1 # 4-50, Barrio Motilones, Cúcuta, N. de Santander</span></li>
-              <li className="flex gap-3"><Phone className="h-4 w-4 shrink-0 text-brand" /><span>(+57) 321 756 0178</span></li>
+              <li className="flex gap-3"><Phone className="h-4 w-4 shrink-0 text-brand" /><a href="tel:+16075759847" className="hover:text-brand">(607) 575-9847</a></li>
               <li className="flex gap-3"><Mail className="h-4 w-4 shrink-0 text-brand" /><span>contacto@tunorte.co</span></li>
             </ul>
           </div>
