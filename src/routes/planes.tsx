@@ -17,16 +17,19 @@ export const Route = createFileRoute("/planes")({
 });
 
 const internetPlans = [
-  { name: "Esencial", speed: 50, price: "45.900", perks: ["50 Mbps simétricos", "Router WiFi incluido", "Soporte 24/7"] },
-  { name: "Hogar", speed: 100, price: "59.900", perks: ["100 Mbps simétricos", "WiFi 6 incluido", "Soporte 24/7", "Instalación gratis"] },
-  { name: "Familiar", speed: 300, price: "79.900", popular: true, perks: ["300 Mbps simétricos", "WiFi 6 mesh", "Soporte prioritario", "Instalación gratis"] },
-  { name: "Premium", speed: 600, price: "109.900", perks: ["600 Mbps simétricos", "WiFi 6 mesh + extensor", "Soporte VIP", "IP fija opcional"] },
+  { name: "Inicio", speed: 10, price: "35.000", perks: ["10 Mbps por fibra óptica", "Plan simétrico", "Router WiFi incluido", "Soporte 24/7"] },
+  { name: "Básico", speed: 20, price: "40.000", perks: ["20 Mbps por fibra óptica", "Plan simétrico", "Router WiFi incluido", "Soporte 24/7"] },
+  { name: "Hogar", speed: 50, price: "65.000", popular: true, perks: ["50 Mbps por fibra óptica", "Plan simétrico", "WiFi de alto rendimiento", "Instalación incluida", "Soporte 24/7"] },
+  { name: "Familiar", speed: 100, price: "95.000", perks: ["100 Mbps por fibra óptica", "Plan simétrico", "WiFi de alto rendimiento", "Instalación incluida", "Soporte prioritario"] },
+  { name: "Premium", speed: 200, price: "145.000", perks: ["200 Mbps por fibra óptica", "Plan simétrico", "WiFi mesh recomendado", "Instalación incluida", "Soporte VIP"] },
 ];
 
 const comboPlans = [
-  { name: "Combo Hogar", speed: 100, channels: 90, price: "89.900", perks: ["100 Mbps simétricos", "+90 canales HD", "1 decodificador", "Instalación gratis"] },
-  { name: "Combo Familiar", speed: 300, channels: 120, price: "119.900", popular: true, perks: ["300 Mbps simétricos", "+120 canales HD", "2 decodificadores", "Canales premium", "Instalación gratis"] },
-  { name: "Combo Premium", speed: 600, channels: 150, price: "159.900", perks: ["600 Mbps simétricos", "+150 canales HD/4K", "3 decodificadores 4K", "Todos los premium", "IP fija incluida"] },
+  { name: "Combo 10", speed: 10, channels: 180, price: "45.000", perks: ["10 Mbps + TV Digital FTTH", "+180 canales (Full HD y Análogo)", "1 decodificador", "Soporte 24/7"] },
+  { name: "Combo 20", speed: 20, channels: 180, price: "50.000", perks: ["20 Mbps + TV Digital FTTH", "+180 canales (Full HD y Análogo)", "1 decodificador", "Soporte 24/7"] },
+  { name: "Combo 50", speed: 50, channels: 180, price: "85.000", popular: true, perks: ["50 Mbps + TV Digital FTTH", "+180 canales (Full HD y Análogo)", "1 decodificador", "Instalación incluida", "Soporte 24/7"] },
+  { name: "Combo 100", speed: 100, channels: 180, price: "105.000", perks: ["100 Mbps + TV Digital FTTH", "+180 canales (Full HD y Análogo)", "2 decodificadores", "Instalación incluida", "Soporte prioritario"] },
+  { name: "Combo 200", speed: 200, channels: 180, price: "155.000", perks: ["200 Mbps + TV Digital FTTH", "+180 canales (Full HD y Análogo)", "2 decodificadores", "Instalación incluida", "Soporte VIP"] },
 ];
 
 function PlanCard({ p, type }: { p: any; type: "internet" | "combo" }) {
@@ -82,14 +85,16 @@ function PlanesPage() {
           </TabsList>
 
           <TabsContent value="combo">
-            <div className="grid gap-6 md:grid-cols-3">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
               {comboPlans.map((p) => <PlanCard key={p.name} p={p} type="combo" />)}
             </div>
+            <p className="mt-6 text-center text-xs text-muted-foreground">Combos TVN Norte — Televisión Digital FTTH con más de 180 canales en Full HD y Análogo. Precios mensuales.</p>
           </TabsContent>
           <TabsContent value="internet">
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
               {internetPlans.map((p) => <PlanCard key={p.name} p={p} type="internet" />)}
             </div>
+            <p className="mt-6 text-center text-xs text-muted-foreground">Planes simétricos por fibra óptica. Mayor calidad, mayor servicio, mayor velocidad al precio justo.</p>
           </TabsContent>
         </Tabs>
       </section>
