@@ -89,33 +89,55 @@ function HomePage() {
           <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/80 to-primary/30" />
           <div className="absolute inset-0 bg-gradient-to-t from-background/70 via-transparent to-transparent" />
 
-          {/* Floating channel chips — like portals to the world's content */}
-          <div className="pointer-events-none absolute inset-0 hidden md:block" aria-hidden="true">
-            {channelChips.map((c) => (
-              <div
-                key={c.label}
-                className="animate-float absolute grid place-items-center rounded-xl px-3 shadow-glow ring-1 ring-white/20"
-                style={{
-                  top: c.top,
-                  left: c.left,
-                  height: c.size * 0.55,
-                  minWidth: c.size,
-                  background: c.bg,
-                  color: c.fg,
-                  fontFamily: c.font ?? "'Plus Jakarta Sans', 'Inter', system-ui, sans-serif",
-                  fontWeight: c.weight ?? 800,
-                  fontStyle: c.italic ? "italic" : "normal",
-                  letterSpacing: c.letterSpacing ?? "-0.02em",
-                  fontSize: Math.round(c.size * 0.42),
-                  animationDelay: c.delay,
-                  lineHeight: 1,
-                  textTransform: c.label.length <= 4 ? "uppercase" : "none",
-                  transform: "translateZ(0)",
-                }}
-              >
-                {c.label}
-              </div>
-            ))}
+          {/* Channels orbiting the Earth — confined to the right side, away from the headline */}
+          <div
+            className="pointer-events-none absolute right-0 top-1/2 hidden -translate-y-1/2 lg:block"
+            aria-hidden="true"
+            style={{ width: "560px", height: "560px", marginRight: "-80px" }}
+          >
+            {/* Soft orbit guide */}
+            <div className="absolute inset-8 rounded-full border border-white/10" />
+            <div className="absolute inset-20 rounded-full border border-white/5" />
+
+            {/* Rotating ring */}
+            <div className="animate-orbit absolute inset-0">
+              {channelChips.map((c, i) => {
+                const angle = (i / channelChips.length) * 2 * Math.PI;
+                const radius = 240; // px from center
+                const x = Math.cos(angle) * radius;
+                const y = Math.sin(angle) * radius;
+                return (
+                  <div
+                    key={c.label}
+                    className="absolute left-1/2 top-1/2"
+                    style={{ transform: `translate(-50%, -50%) translate(${x}px, ${y}px)` }}
+                  >
+                    {/* Counter-rotate so the chip stays upright */}
+                    <div className="animate-orbit-counter">
+                      <div
+                        className="grid place-items-center rounded-xl px-3 shadow-glow ring-1 ring-white/20"
+                        style={{
+                          height: 36,
+                          minWidth: 68,
+                          background: c.bg,
+                          color: c.fg,
+                          fontFamily: "'Plus Jakarta Sans', 'Inter', system-ui, sans-serif",
+                          fontWeight: c.weight ?? 800,
+                          fontStyle: c.italic ? "italic" : "normal",
+                          letterSpacing: c.letterSpacing ?? "-0.02em",
+                          fontSize: 16,
+                          lineHeight: 1,
+                          textTransform: c.label.length <= 4 ? "uppercase" : "none",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {c.label}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
 
