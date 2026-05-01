@@ -1,28 +1,40 @@
 import { useState, useRef, useEffect } from "react";
-import { Send, X, Sparkles, MessageCircle } from "lucide-react";
+import { Send, X, Sparkles } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import noriAvatar from "@/assets/nori-avatar.png";
 
 type Msg = {
   role: "bot" | "user";
   text: string;
-  actions?: { label: string; to?: string; href?: string; reply?: string }[];
+  actions?: { label: string; to?: string; href?: string; reply?: string; intent?: string }[];
 };
+
+type LeadStep = "idle" | "name" | "phone" | "address" | "plan" | "done";
+type Lead = { name?: string; phone?: string; address?: string; plan?: string };
 
 const initialMsg: Msg = {
   role: "bot",
   text: "¡Hola! Soy Nori 👋 Tu asistente virtual de Tu Norte TV. ¿Cómo puedo ayudarte hoy?",
   actions: [
+    { label: "🛒 Quiero contratar", reply: "Quiero contratar un plan", intent: "buy" },
     { label: "Mi internet no funciona", reply: "Mi internet no funciona" },
     { label: "Pagar mi factura", reply: "Quiero pagar mi factura" },
     { label: "Verificar cobertura", reply: "Quiero verificar cobertura" },
-    { label: "Estado de mi PQR", reply: "Estado de mi PQR" },
   ],
 };
 
+const PLAN_OPTIONS = [
+  "Internet 100 Mbps",
+  "Internet 300 Mbps",
+  "Internet 600 Mbps",
+  "Combo Internet + TV",
+  "Solo TV",
+  "Aún no estoy seguro",
+];
+
 function botReply(text: string): Msg {
   const t = text.toLowerCase();
-  if (t.includes("internet") || t.includes("falla") || t.includes("no funciona") || t.includes("lento")) {
+  if (t.includes("internet") && (t.includes("no funciona") || t.includes("falla") || t.includes("lento"))) {
     return {
       role: "bot",
       text: "Lamento la molestia 😔. Vamos a solucionarlo. Inicia el diagnóstico guiado y revisamos tu conexión paso a paso.",
@@ -63,20 +75,11 @@ function botReply(text: string): Msg {
       ],
     };
   }
-  if (t.includes("plan") || t.includes("contratar") || t.includes("velocidad") || t.includes("megas")) {
-    return {
-      role: "bot",
-      text: "Te ayudo a encontrar el plan ideal con 3 preguntas rápidas. ¿Vamos?",
-      actions: [
-        { label: "Encontrar mi plan", to: "/recomendador" },
-        { label: "Ver todos los planes", to: "/planes" },
-      ],
-    };
-  }
   return {
     role: "bot",
     text: "Te puedo ayudar con cobertura, fallas, facturas, planes o tickets. ¿Qué necesitas?",
     actions: [
+      { label: "🛒 Quiero contratar", reply: "Quiero contratar un plan", intent: "buy" },
       { label: "Reportar falla", to: "/diagnostico" },
       { label: "Pagar factura", to: "/pagar" },
       { label: "Hablar con asesor", href: "https://wa.me/573217560178" },
@@ -84,28 +87,171 @@ function botReply(text: string): Msg {
   };
 }
 
+function isBuyIntent(t: string) {
+  const s = t.toLowerCase();
+  return (
+    s.includes("contratar") ||
+    s.includes("comprar") ||
+    s.includes("adquirir") ||
+    s.includes("quiero un plan") ||
+    s.includes("quiero el plan") ||
+    s.includes("hire") ||
+    s.includes("contratación") ||
+    (s.includes("plan") && (s.includes("quiero") || s.includes("nuevo")))
+  );
+}
+
 export function Chatbot() {
   const [open, setOpen] = useState(false);
   const [msgs, setMsgs] = useState<Msg[]>([initialMsg]);
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
+  const [leadStep, setLeadStep] = useState<LeadStep>("idle");
+  const [lead, setLead] = useState<Lead>({});
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [msgs, typing]);
 
-  const send = (text: string) => {
+  const pushBot = (msg: Msg, delay = 600) => {
+    setTyping(true);
+    setTimeout(() => {
+      setTyping(false);
+      setMsgs((m) => [...m, msg]);
+    }, delay);
+  };
+
+  const startBuyFlow = () => {
+    setLead({});
+    setLeadStep("name");
+    pushBot({
+      role: "bot",
+      text: "¡Excelente decisión! 🎉 Te ayudo a contratar en menos de 1 minuto. Para personalizar tu oferta, necesito unos datos.\n\n👤 ¿Cuál es tu nombre completo?",
+    });
+  };
+
+  const handleLeadInput = (value: string) => {
+    const v = value.trim();
+    if (!v) return;
+
+    if (leadStep === "name") {
+      if (v.length < 2) {
+        pushBot({ role: "bot", text: "Por favor ingresa un nombre válido 🙂" });
+        return;
+      }
+      setLead((l) => ({ ...l, name: v }));
+      setLeadStep("phone");
+      pushBot({
+        role: "bot",
+        text: `Mucho gusto, ${v.split(" ")[0]} ✨\n\n📱 ¿A qué número de celular podemos contactarte?`,
+      });
+      return;
+    }
+
+    if (leadStep === "phone") {
+      const digits = v.replace(/\D/g, "");
+      if (digits.length < 7 || digits.length > 15) {
+        pushBot({ role: "bot", text: "Ese número no parece válido. ¿Puedes verificarlo? (ej: 3217560178)" });
+        return;
+      }
+      setLead((l) => ({ ...l, phone: digits }));
+      setLeadStep("address");
+      pushBot({
+        role: "bot",
+        text: "📍 Perfecto. ¿En qué dirección y barrio te gustaría instalar el servicio?",
+      });
+      return;
+    }
+
+    if (leadStep === "address") {
+      if (v.length < 5) {
+        pushBot({ role: "bot", text: "Necesito una dirección un poco más completa para verificar cobertura 🗺️" });
+        return;
+      }
+      setLead((l) => ({ ...l, address: v }));
+      setLeadStep("plan");
+      pushBot({
+        role: "bot",
+        text: "🎯 Último paso: ¿qué servicio te interesa?",
+        actions: PLAN_OPTIONS.map((p) => ({ label: p, reply: p })),
+      });
+      return;
+    }
+
+    if (leadStep === "plan") {
+      const finalLead: Lead = { ...lead, plan: v };
+      setLead(finalLead);
+      setLeadStep("done");
+
+      const summary =
+        `*Nueva solicitud de contratación — Tu Norte TV*\n\n` +
+        `👤 Nombre: ${finalLead.name}\n` +
+        `📱 Teléfono: ${finalLead.phone}\n` +
+        `📍 Dirección: ${finalLead.address}\n` +
+        `🎯 Servicio: ${finalLead.plan}\n\n` +
+        `¡Hola! Quiero contratar este plan, ¿me ayudan a continuar?`;
+
+      const waUrl = `https://wa.me/573217560178?text=${encodeURIComponent(summary)}`;
+
+      pushBot(
+        {
+          role: "bot",
+          text:
+            `¡Listo, ${(finalLead.name || "").split(" ")[0]}! ✅\n\n` +
+            `Resumen de tu solicitud:\n` +
+            `• Plan: ${finalLead.plan}\n` +
+            `• Dirección: ${finalLead.address}\n` +
+            `• Contacto: ${finalLead.phone}\n\n` +
+            `Un asesor te contactará en minutos. Mientras tanto, puedes confirmar por WhatsApp o agendar tu instalación 👇`,
+          actions: [
+            { label: "💬 Continuar por WhatsApp", href: waUrl },
+            { label: "📅 Agendar instalación", to: "/agendar" },
+            { label: "Ver todos los planes", to: "/planes" },
+          ],
+        },
+        700,
+      );
+      return;
+    }
+  };
+
+  const send = (text: string, intent?: string) => {
     const v = text.trim();
     if (!v) return;
     setMsgs((m) => [...m, { role: "user", text: v }]);
     setInput("");
+
+    // Buy intent triggers guided flow
+    if (intent === "buy" || (leadStep === "idle" && isBuyIntent(v))) {
+      startBuyFlow();
+      return;
+    }
+
+    // Active lead capture flow
+    if (leadStep !== "idle" && leadStep !== "done") {
+      handleLeadInput(v);
+      return;
+    }
+
+    // Default Q&A
     setTyping(true);
     setTimeout(() => {
       setTyping(false);
       setMsgs((m) => [...m, botReply(v)]);
     }, 700);
   };
+
+  const placeholder =
+    leadStep === "name"
+      ? "Escribe tu nombre completo..."
+      : leadStep === "phone"
+      ? "Tu número de celular..."
+      : leadStep === "address"
+      ? "Dirección y barrio..."
+      : leadStep === "plan"
+      ? "Escribe o elige un plan..."
+      : "Escribe tu mensaje...";
 
   return (
     <>
@@ -145,11 +291,30 @@ export function Chatbot() {
             </button>
           </div>
 
+          {leadStep !== "idle" && leadStep !== "done" && (
+            <div className="px-4 py-2 bg-brand/5 border-b border-border flex items-center gap-2 text-[11px] font-medium text-primary">
+              <span>Contratación</span>
+              <div className="flex-1 flex gap-1">
+                {(["name", "phone", "address", "plan"] as LeadStep[]).map((s, i) => {
+                  const order = ["name", "phone", "address", "plan"];
+                  const active = order.indexOf(leadStep) >= i;
+                  return (
+                    <span
+                      key={s}
+                      className={`h-1.5 flex-1 rounded-full transition ${active ? "bg-gradient-brand" : "bg-muted"}`}
+                    />
+                  );
+                })}
+              </div>
+              <span>{["name", "phone", "address", "plan"].indexOf(leadStep) + 1}/4</span>
+            </div>
+          )}
+
           <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3 bg-muted/30">
             {msgs.map((m, i) => (
               <div key={i} className={`flex flex-col ${m.role === "user" ? "items-end" : "items-start"}`}>
                 <div
-                  className={`max-w-[85%] px-4 py-2.5 rounded-2xl text-sm shadow-soft ${
+                  className={`max-w-[85%] px-4 py-2.5 rounded-2xl text-sm shadow-soft whitespace-pre-line ${
                     m.role === "user"
                       ? "bg-gradient-brand text-primary-foreground rounded-br-sm"
                       : "bg-white text-foreground border border-border rounded-bl-sm"
@@ -182,7 +347,7 @@ export function Chatbot() {
                       ) : (
                         <button
                           key={j}
-                          onClick={() => send(a.reply || a.label)}
+                          onClick={() => send(a.reply || a.label, a.intent)}
                           className="text-xs px-3 py-1.5 rounded-full bg-white border border-brand/40 text-primary font-medium hover:bg-brand hover:text-primary-foreground transition shadow-soft"
                         >
                           {a.label}
@@ -214,7 +379,8 @@ export function Chatbot() {
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Escribe tu mensaje..."
+              placeholder={placeholder}
+              type={leadStep === "phone" ? "tel" : "text"}
               className="flex-1 bg-muted rounded-full px-4 py-2.5 text-sm outline-none focus:ring-2 ring-brand"
               maxLength={500}
             />
