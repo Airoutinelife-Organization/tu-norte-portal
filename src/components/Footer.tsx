@@ -1,6 +1,17 @@
 import { Link } from "@tanstack/react-router";
-import { MapPin, Phone, Mail, Facebook, Instagram } from "lucide-react";
+import { MapPin, Phone, Mail, Facebook, Instagram, ShieldAlert } from "lucide-react";
 import logo from "@/assets/logo.png";
+import regIcbf from "@/assets/reg-icbf.png";
+import regCai from "@/assets/reg-cai.png";
+import regEntic from "@/assets/reg-entic.png";
+import regFiscalia from "@/assets/reg-fiscalia.png";
+
+const reportingChannels = [
+  { name: "Bienestar Familiar", img: regIcbf, url: "https://www.icbf.gov.co/" },
+  { name: "CAI Virtual — Policía Nacional", img: regCai, url: "https://caivirtual.policia.gov.co/" },
+  { name: "En TIC Confío", img: regEntic, url: "https://www.enticconfio.gov.co/" },
+  { name: "Fiscalía General de la Nación", img: regFiscalia, url: "https://www.fiscalia.gov.co/colombia/" },
+] as const;
 
 export function Footer() {
   return (
