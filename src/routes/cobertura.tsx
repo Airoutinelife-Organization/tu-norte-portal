@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MapPin, CheckCircle2, XCircle, Loader2, Phone } from "lucide-react";
+import { CucutaFiberMap } from "@/components/CucutaFiberMap";
 
 export const Route = createFileRoute("/cobertura")({
   head: () => ({
@@ -56,8 +57,28 @@ function CoberturaPage() {
         </div>
       </section>
 
-      <section className="mx-auto -mt-10 max-w-3xl px-4 pb-20 md:px-6">
-        <Card className="border-0 p-7 shadow-card md:p-10">
+      <section className="relative pb-20">
+        {/* Live fiber map background */}
+        <div className="absolute inset-0 -top-10 overflow-hidden">
+          <CucutaFiberMap className="h-full w-full" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-background/60 to-background" />
+        </div>
+
+        {/* Legend */}
+        <div className="relative mx-auto mb-6 flex max-w-3xl flex-wrap items-center justify-center gap-3 px-4 pt-4 md:px-6">
+          <span className="inline-flex items-center gap-2 rounded-full bg-background/80 px-3 py-1.5 text-xs font-semibold text-foreground shadow-soft backdrop-blur ring-1 ring-border">
+            <span className="h-2.5 w-2.5 rounded-full bg-success animate-pulse" /> Fibra activa
+          </span>
+          <span className="inline-flex items-center gap-2 rounded-full bg-background/80 px-3 py-1.5 text-xs font-semibold text-foreground shadow-soft backdrop-blur ring-1 ring-border">
+            <span className="h-2.5 w-2.5 rounded-full bg-warning animate-pulse" /> En construcción
+          </span>
+          <span className="inline-flex items-center gap-2 rounded-full bg-background/80 px-3 py-1.5 text-xs font-semibold text-foreground shadow-soft backdrop-blur ring-1 ring-border">
+            <MapPin className="h-3.5 w-3.5 text-brand" /> Cúcuta · Norte de Santander
+          </span>
+        </div>
+
+        <div className="relative mx-auto max-w-3xl px-4 md:px-6">
+        <Card className="border-0 bg-card/95 p-7 shadow-card backdrop-blur md:p-10">
           {status === "idle" || status === "checking" ? (
             <form onSubmit={onCheck} className="space-y-5">
               <div className="grid gap-2">
@@ -120,6 +141,7 @@ function CoberturaPage() {
             </div>
           )}
         </Card>
+        </div>
       </section>
     </>
   );
