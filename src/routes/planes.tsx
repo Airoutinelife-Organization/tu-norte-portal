@@ -232,6 +232,8 @@ function PlanesPage() {
         </Tabs>
       </section>
 
+      <ChannelLineup />
+
       <section className="mx-auto max-w-5xl px-4 py-12 md:px-6">
         <Card className="overflow-hidden border-0 bg-gradient-dark p-8 text-primary-foreground shadow-glow md:p-12">
           <div className="grid items-center gap-6 md:grid-cols-[1fr_auto]">
