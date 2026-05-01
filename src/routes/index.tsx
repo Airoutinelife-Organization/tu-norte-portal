@@ -201,42 +201,6 @@ function HomePage() {
           </div>
         </div>
 
-        {/* Floating coverage search card */}
-        <div className="relative mx-auto -mt-20 max-w-5xl px-4 md:px-6">
-          <Card className="overflow-hidden border-0 bg-white p-6 shadow-glow md:p-8">
-            <div className="flex items-center gap-3">
-              <span className="grid h-10 w-10 place-items-center rounded-xl bg-brand/15 text-primary">
-                <MapPin className="h-5 w-5" />
-              </span>
-              <div>
-                <h2 className="font-display text-lg font-bold md:text-xl">Verifica cobertura al instante</h2>
-                <p className="text-xs text-muted-foreground md:text-sm">Escribe tu dirección o barrio y ve los planes disponibles.</p>
-              </div>
-            </div>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                navigate({ to: "/cobertura" });
-              }}
-              className="mt-5 flex flex-col gap-3 sm:flex-row"
-            >
-              <div className="relative flex-1">
-                <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <input
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  placeholder="Ej: Av. 5 # 12-34, Barrio La Libertad, Cúcuta"
-                  className="h-12 w-full rounded-xl border border-input bg-muted/40 pl-11 pr-4 text-sm outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
-                  maxLength={120}
-                />
-              </div>
-              <Button type="submit" size="lg" className="h-12 bg-gradient-brand text-primary-foreground shadow-soft hover:opacity-90">
-                Verificar
-                <ArrowRight className="ml-1 h-4 w-4" />
-              </Button>
-            </form>
-          </Card>
-        </div>
       </section>
 
       {/* QUICK ACTIONS PANEL */}
@@ -267,6 +231,43 @@ function HomePage() {
             </Link>
           ))}
         </div>
+      </section>
+
+      {/* COVERAGE SEARCH */}
+      <section className="mx-auto max-w-5xl px-4 pb-20 md:px-6">
+        <Card className="overflow-hidden border-0 bg-white p-6 shadow-glow md:p-8">
+          <div className="flex items-center gap-3">
+            <span className="grid h-10 w-10 place-items-center rounded-xl bg-brand/15 text-primary">
+              <MapPin className="h-5 w-5" />
+            </span>
+            <div>
+              <h2 className="font-display text-lg font-bold md:text-xl">Verifica cobertura al instante</h2>
+              <p className="text-xs text-muted-foreground md:text-sm">Escribe tu dirección o barrio y ve los planes disponibles.</p>
+            </div>
+          </div>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              navigate({ to: "/cobertura" });
+            }}
+            className="mt-5 flex flex-col gap-3 sm:flex-row"
+          >
+            <div className="relative flex-1">
+              <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <input
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder="Ej: Av. 5 # 12-34, Barrio La Libertad, Cúcuta"
+                className="h-12 w-full rounded-xl border border-input bg-muted/40 pl-11 pr-4 text-sm outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+                maxLength={120}
+              />
+            </div>
+            <Button type="submit" size="lg" className="h-12 bg-gradient-brand text-primary-foreground shadow-soft hover:opacity-90">
+              Verificar
+              <ArrowRight className="ml-1 h-4 w-4" />
+            </Button>
+          </form>
+        </Card>
       </section>
 
       {/* SMART PLAN SELECTOR teaser */}
