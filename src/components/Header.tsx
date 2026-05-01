@@ -1,6 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useState } from "react";
-import { Menu, X, UserCircle, LayoutDashboard } from "lucide-react";
+import { Menu, X, UserCircle, LayoutDashboard, Phone } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -20,6 +20,15 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/80 backdrop-blur-xl">
+      <div className="w-full bg-gradient-brand text-primary-foreground">
+        <div className="mx-auto flex max-w-7xl items-center justify-center gap-2 px-4 py-1.5 text-[12px] font-semibold md:justify-end md:gap-3 md:text-xs">
+          <span className="hidden sm:inline opacity-90">Tu Asistente 24 horas, 7 días disponible</span>
+          <a href="tel:+16075759847" className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 ring-1 ring-white/25 transition hover:bg-white/25">
+            <Phone className="h-3.5 w-3.5" />
+            (607) 575-9847
+          </a>
+        </div>
+      </div>
       <div className="mx-auto flex h-24 max-w-7xl items-center justify-between gap-4 px-4 py-3 md:px-6">
         <Link to="/" className="flex items-center gap-2">
           <img src={logo} alt="Tu Norte TV" className="h-20 w-20 object-contain" width={88} height={88} />
