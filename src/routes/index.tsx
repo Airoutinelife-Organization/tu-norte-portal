@@ -95,25 +95,31 @@ function HomePage() {
           <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/80 to-primary/30" />
           <div className="absolute inset-0 bg-gradient-to-t from-background/70 via-transparent to-transparent" />
 
-          {/* Floating channel badges */}
+          {/* Floating channel chips — like portals to the world's content */}
           <div className="pointer-events-none absolute inset-0 hidden md:block" aria-hidden="true">
-            {channelBadges.map((b) => (
+            {channelChips.map((c) => (
               <div
-                key={b.label}
-                className="animate-float absolute grid place-items-center rounded-full bg-white/95 font-display font-extrabold text-primary shadow-glow ring-2 ring-white/40 backdrop-blur"
+                key={c.label}
+                className="animate-float absolute grid place-items-center rounded-xl px-3 shadow-glow ring-1 ring-white/20"
                 style={{
-                  top: b.top,
-                  left: b.left,
-                  width: b.size,
-                  height: b.size,
-                  fontSize: Math.round(b.size * 0.32),
-                  animationDelay: b.delay,
-                  background: `linear-gradient(135deg, ${b.from}, ${b.to})`,
-                  color: "white",
-                  textShadow: "0 1px 2px rgba(0,0,0,0.25)",
+                  top: c.top,
+                  left: c.left,
+                  height: c.size * 0.55,
+                  minWidth: c.size,
+                  background: c.bg,
+                  color: c.fg,
+                  fontFamily: c.font ?? "'Plus Jakarta Sans', 'Inter', system-ui, sans-serif",
+                  fontWeight: c.weight ?? 800,
+                  fontStyle: c.italic ? "italic" : "normal",
+                  letterSpacing: c.letterSpacing ?? "-0.02em",
+                  fontSize: Math.round(c.size * 0.42),
+                  animationDelay: c.delay,
+                  lineHeight: 1,
+                  textTransform: c.label.length <= 4 ? "uppercase" : "none",
+                  transform: "translateZ(0)",
                 }}
               >
-                {b.label}
+                {c.label}
               </div>
             ))}
           </div>
