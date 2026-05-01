@@ -110,7 +110,7 @@ function HomePage() {
               Portal de autogestión 24/7
             </span>
             <h1 className="mt-5 font-display text-4xl font-bold leading-[1.05] tracking-tight text-white md:text-6xl">
-              Accede al mundo con la <span className="text-brand">mejor TV</span> y el <span className="text-brand">internet más rápido</span>
+              Accede al mundo usando la <span className="text-brand">mejor TV</span> y el <span className="text-brand">internet más rápido</span>
             </h1>
             <p className="mt-4 max-w-xl text-base text-white/80 md:text-lg">
               Cientos de canales en HD, fibra óptica de alta velocidad y un portal donde tú mandas. Sin llamadas, sin esperas.
