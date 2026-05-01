@@ -11,7 +11,7 @@ import portalHero from "@/assets/portal-hero.jpg";
 import coverageCity from "@/assets/coverage-city.jpg";
 import heroLoop from "@/assets/hero-loop.mp4?url";
 import girlLaptop from "@/assets/girl-laptop.png";
-import girlLaptopVideo from "@/assets/girl-laptop.mp4.asset.json";
+import girlLaptopVideo from "@/assets/girl-laptop.webm?url";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -160,7 +160,7 @@ function HomePage() {
 
             {/* Girl with laptop — looping video, gazing left toward the orbit */}
             <video
-              src={girlLaptopVideo.url}
+              src={girlLaptopVideo}
               poster={girlLaptop}
               autoPlay
               loop
