@@ -2,7 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Check, Wifi, Tv, Sparkles } from "lucide-react";
+import { Check, Wifi, Tv, Sparkles, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { useMemo, useState } from "react";
 
 export const Route = createFileRoute("/planes")({
   head: () => ({
