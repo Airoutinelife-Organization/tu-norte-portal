@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Phone, Mail, MapPin, MessageCircle, Clock, Headphones } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import nocSupportVideo from "@/assets/noc-support.mp4.asset.json";
 
 export const Route = createFileRoute("/soporte")({
   head: () => ({
@@ -35,13 +36,35 @@ const faqs = [
 function SoportePage() {
   return (
     <>
-      <section className="bg-gradient-hero">
-        <div className="mx-auto max-w-7xl px-4 py-12 text-center md:px-6 md:py-16">
-          <span className="inline-flex items-center gap-2 rounded-full border border-brand/30 bg-white/60 px-4 py-1.5 text-xs font-semibold text-primary backdrop-blur">
-            <Headphones className="h-3.5 w-3.5 text-brand" /> Soporte 24/7
+      <section className="relative overflow-hidden">
+        {/* Live NOC support team background video */}
+        <video
+          src={nocSupportVideo.url}
+          autoPlay
+          loop
+          muted
+          playsInline
+          aria-hidden="true"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        {/* Readability overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/55 to-background/85" />
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-brand/20 mix-blend-overlay" />
+
+        <div className="relative mx-auto max-w-7xl px-4 py-20 text-center md:px-6 md:py-28">
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/15 px-4 py-1.5 text-xs font-semibold text-white shadow-soft backdrop-blur">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-success" />
+            </span>
+            <Headphones className="h-3.5 w-3.5" /> NOC en vivo · Soporte 24/7
           </span>
-          <h1 className="mt-5 font-display text-4xl font-bold md:text-5xl">Estamos aquí para <span className="text-gradient-brand">ayudarte</span></h1>
-          <p className="mx-auto mt-3 max-w-xl text-muted-foreground">Elige el canal que prefieras o consulta nuestras preguntas frecuentes.</p>
+          <h1 className="mt-5 font-display text-4xl font-bold text-white drop-shadow-[0_2px_20px_rgba(0,0,0,0.5)] md:text-6xl">
+            Estamos aquí para <span className="text-gradient-brand">ayudarte</span>
+          </h1>
+          <p className="mx-auto mt-4 max-w-xl text-white/90 drop-shadow-md md:text-lg">
+            Nuestro equipo en el Centro de Operaciones de Red está conectado las 24 horas. Elige el canal que prefieras.
+          </p>
         </div>
       </section>
 
