@@ -52,7 +52,8 @@ function HomePage() {
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 -z-10">
           <video
-            src="/videos/hero-loop.mp4"
+            ref={videoRef}
+            src={heroLoop}
             poster={portalHero}
             autoPlay
             loop
