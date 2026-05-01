@@ -47,6 +47,7 @@ function SoportePage() {
           aria-hidden="true"
           className="absolute inset-0 h-full w-full object-cover"
         />
+
         {/* Readability overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/55 to-background/85" />
         <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-brand/20 mix-blend-overlay" />
