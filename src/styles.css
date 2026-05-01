@@ -166,6 +166,14 @@
   }
   .animate-float { animation: float 4s ease-in-out infinite; }
 
+  @keyframes breathe {
+    0%, 100% { transform: translateY(0) scale(1) rotate(0deg); }
+    25%      { transform: translateY(-6px) scale(1.005) rotate(-0.4deg); }
+    50%      { transform: translateY(-10px) scale(1.01) rotate(0deg); }
+    75%      { transform: translateY(-6px) scale(1.005) rotate(0.4deg); }
+  }
+  .animate-breathe { animation: breathe 6s ease-in-out infinite; transform-origin: center bottom; will-change: transform; }
+
   @keyframes orbit-spin {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
