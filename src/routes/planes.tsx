@@ -34,6 +34,137 @@ const comboPlans = [
   { name: "Combo 200", speed: 200, channels: 180, price: "155.000", perks: ["200 Mbps + TV Digital FTTH", "+180 canales (Full HD y Análogo)", "2 decodificadores", "Instalación incluida", "Soporte VIP"] },
 ];
 
+type Channel = { name: string; category: string; hd?: boolean };
+
+const channels: Channel[] = [
+  // Nacionales / Locales
+  { name: "Caracol", category: "Nacionales", hd: true },
+  { name: "RCN", category: "Nacionales", hd: true },
+  { name: "Canal 1", category: "Nacionales", hd: true },
+  { name: "Señal Colombia", category: "Nacionales", hd: true },
+  { name: "Canal Institucional", category: "Nacionales" },
+  { name: "Canal Congreso", category: "Nacionales" },
+  { name: "CityTV", category: "Nacionales", hd: true },
+  { name: "Telecaribe", category: "Nacionales", hd: true },
+  { name: "TRO", category: "Nacionales", hd: true },
+  { name: "Teleantioquia", category: "Nacionales" },
+  { name: "Telepacífico", category: "Nacionales" },
+  { name: "Telecafé", category: "Nacionales" },
+  { name: "Canal Capital", category: "Nacionales" },
+  { name: "Canal Trece", category: "Nacionales" },
+
+  // Noticias
+  { name: "CNN en Español", category: "Noticias", hd: true },
+  { name: "CNN Internacional", category: "Noticias", hd: true },
+  { name: "NTN24", category: "Noticias", hd: true },
+  { name: "France 24", category: "Noticias" },
+  { name: "DW", category: "Noticias" },
+  { name: "TeleSUR", category: "Noticias" },
+  { name: "Bloomberg", category: "Noticias" },
+  { name: "Caracol Noticias", category: "Noticias", hd: true },
+
+  // Deportes
+  { name: "ESPN", category: "Deportes", hd: true },
+  { name: "ESPN 2", category: "Deportes", hd: true },
+  { name: "ESPN 3", category: "Deportes", hd: true },
+  { name: "ESPN 4", category: "Deportes", hd: true },
+  { name: "Win Sports", category: "Deportes", hd: true },
+  { name: "Win Sports +", category: "Deportes", hd: true },
+  { name: "DirecTV Sports", category: "Deportes", hd: true },
+  { name: "Fox Sports", category: "Deportes", hd: true },
+  { name: "Golf Channel", category: "Deportes" },
+
+  // Películas y Series
+  { name: "FX", category: "Películas y Series", hd: true },
+  { name: "FXM", category: "Películas y Series", hd: true },
+  { name: "Fox", category: "Películas y Series", hd: true },
+  { name: "Sony", category: "Películas y Series", hd: true },
+  { name: "Universal", category: "Películas y Series", hd: true },
+  { name: "Warner Channel", category: "Películas y Series", hd: true },
+  { name: "TNT", category: "Películas y Series", hd: true },
+  { name: "TNT Series", category: "Películas y Series", hd: true },
+  { name: "Space", category: "Películas y Series", hd: true },
+  { name: "Cinemax", category: "Películas y Series", hd: true },
+  { name: "AXN", category: "Películas y Series", hd: true },
+  { name: "AMC", category: "Películas y Series", hd: true },
+  { name: "Studio Universal", category: "Películas y Series", hd: true },
+  { name: "Cinecanal", category: "Películas y Series", hd: true },
+  { name: "Multipremier", category: "Películas y Series" },
+  { name: "Multicinema", category: "Películas y Series" },
+  { name: "De Película", category: "Películas y Series" },
+
+  // Entretenimiento / Lifestyle
+  { name: "E! Entertainment", category: "Entretenimiento", hd: true },
+  { name: "ID — Investigation Discovery", category: "Entretenimiento", hd: true },
+  { name: "TLC", category: "Entretenimiento", hd: true },
+  { name: "Lifetime", category: "Entretenimiento", hd: true },
+  { name: "Discovery Home & Health", category: "Entretenimiento", hd: true },
+  { name: "Discovery Familia", category: "Entretenimiento" },
+  { name: "Glitz*", category: "Entretenimiento" },
+  { name: "truTV", category: "Entretenimiento" },
+  { name: "A&E", category: "Entretenimiento", hd: true },
+  { name: "Syfy", category: "Entretenimiento", hd: true },
+  { name: "Comedy Central", category: "Entretenimiento", hd: true },
+
+  // Música
+  { name: "MTV", category: "Música", hd: true },
+  { name: "MTV Hits", category: "Música" },
+  { name: "VH1", category: "Música" },
+  { name: "HTV", category: "Música" },
+  { name: "Ve Plus", category: "Música" },
+
+  // Documentales / Cultura
+  { name: "Discovery Channel", category: "Documentales", hd: true },
+  { name: "Discovery Turbo", category: "Documentales", hd: true },
+  { name: "Discovery Science", category: "Documentales" },
+  { name: "Discovery Theater", category: "Documentales" },
+  { name: "National Geographic", category: "Documentales", hd: true },
+  { name: "Nat Geo Wild", category: "Documentales", hd: true },
+  { name: "History Channel", category: "Documentales", hd: true },
+  { name: "H2", category: "Documentales" },
+  { name: "Animal Planet", category: "Documentales", hd: true },
+  { name: "Film & Arts", category: "Documentales" },
+
+  // Infantiles
+  { name: "Disney Channel", category: "Infantiles", hd: true },
+  { name: "Disney Junior", category: "Infantiles", hd: true },
+  { name: "Disney XD", category: "Infantiles" },
+  { name: "Cartoon Network", category: "Infantiles", hd: true },
+  { name: "Boomerang", category: "Infantiles" },
+  { name: "Tooncast", category: "Infantiles" },
+  { name: "Nick", category: "Infantiles", hd: true },
+  { name: "Nick Jr.", category: "Infantiles" },
+  { name: "Discovery Kids", category: "Infantiles", hd: true },
+  { name: "BabyTV", category: "Infantiles" },
+
+  // Religiosos / Comunidad
+  { name: "EWTN", category: "Religiosos" },
+  { name: "Enlace", category: "Religiosos" },
+  { name: "Cristovisión", category: "Religiosos" },
+  { name: "TBN", category: "Religiosos" },
+
+  // Internacionales
+  { name: "TV5 Monde", category: "Internacionales" },
+  { name: "RAI Italia", category: "Internacionales" },
+  { name: "TVE Internacional", category: "Internacionales" },
+  { name: "Antena 3 Internacional", category: "Internacionales" },
+  { name: "Canal de las Estrellas", category: "Internacionales" },
+];
+
+const channelCategories = [
+  "Todos",
+  "Nacionales",
+  "Noticias",
+  "Deportes",
+  "Películas y Series",
+  "Entretenimiento",
+  "Música",
+  "Documentales",
+  "Infantiles",
+  "Religiosos",
+  "Internacionales",
+];
+
 function PlanCard({ p, type }: { p: any; type: "internet" | "combo" }) {
   return (
     <Card className={`relative overflow-hidden border-0 p-7 shadow-card transition hover:-translate-y-1 ${p.popular ? "bg-gradient-dark text-primary-foreground shadow-glow" : "bg-white"}`}>
