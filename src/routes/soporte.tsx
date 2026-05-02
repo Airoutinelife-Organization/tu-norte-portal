@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Phone, Mail, MapPin, MessageCircle, Clock, Headphones } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import nocSupportVideo from "@/assets/noc-support.mp4";
+import nocSupportVideo from "@/assets/noc-support.mp4.asset.json";
 
 export const Route = createFileRoute("/soporte")({
   head: () => ({
