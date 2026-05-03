@@ -4,7 +4,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Phone, Mail, MapPin, MessageCircle, Clock, Headphones } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import nocSupportVideo from "@/assets/noc-support.mp4.asset.json";
-// sync: github trigger
+// sync: github trigger (noc video refresh)
 
 export const Route = createFileRoute("/soporte")({
   head: () => ({
