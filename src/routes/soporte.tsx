@@ -3,8 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Phone, Mail, MapPin, MessageCircle, Clock, Headphones } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import nocSupportVideo from "@/assets/noc-support.mp4.asset.json";
-// sync: github trigger (noc video refresh)
+const nocSupportVideoUrl = "/videos/noc-support.mp4";
 
 export const Route = createFileRoute("/soporte")({
   head: () => ({
@@ -40,7 +39,7 @@ function SoportePage() {
       <section className="relative overflow-hidden">
         {/* Live NOC support team background video */}
         <video
-          src={nocSupportVideo.url}
+          src={nocSupportVideoUrl}
           autoPlay
           loop
           muted
