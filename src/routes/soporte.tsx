@@ -37,7 +37,7 @@ function SoportePage() {
   return (
     <>
       <section className="relative overflow-hidden">
-        {/* Live NOC support team background video (autoplay, looped) */}
+        {/* Live NOC support team background video */}
         <video
           src={nocSupportVideo.url}
           autoPlay
