@@ -26,9 +26,10 @@ const offices = [
 ];
 
 export function PaymentMethodsSection({ eyebrow = "Medios de pago", title = "Paga como más te convenga", intro }: { eyebrow?: string; title?: string; intro?: string }) {
-  const [active, setActive] = useState<MethodKey>("pse");
+  const [active, setActive] = useState<MethodKey>("sae");
   const [copied, setCopied] = useState<string | null>(null);
   const pseUrl = "https://saeplus.com/r_VRD*y2";
+  const saeUrl = "https://saeplus.com/r_VRD*y2";
 
   const copy = async (text: string, key: string) => {
     try {
@@ -46,6 +47,7 @@ export function PaymentMethodsSection({ eyebrow = "Medios de pago", title = "Pag
   };
 
   const tabs: { key: MethodKey; label: string; icon: typeof Globe; badge?: string }[] = [
+    { key: "sae", label: "SAE PAY", icon: CreditCard, badge: "Destacado" },
     { key: "pse", label: "PSE en línea", icon: Globe, badge: "Rápido" },
     { key: "supergiros", label: "SuperGiros", icon: Store },
     { key: "oficinas", label: "Oficinas", icon: Building2 },
