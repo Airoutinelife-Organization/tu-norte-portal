@@ -11,10 +11,10 @@ import { FileText, CheckCircle2, AlertCircle } from "lucide-react";
 export const Route = createFileRoute("/pqr")({
   head: () => ({
     meta: [
-      { title: "Radicar PQR — Tu Norte TV" },
+      { title: "Radicar PQR — Tu Norte Portal" },
       { name: "description", content: "Radica peticiones, quejas, reclamos y recursos. Tu Norte TV atiende todas las solicitudes en los plazos legales." },
-      { property: "og:title", content: "Radicar PQR — Tu Norte TV" },
-      { property: "og:description", content: "Formulario oficial de PQR de Tu Norte TV." },
+      { property: "og:title", content: "Radicar PQR — Tu Norte Portal" },
+      { property: "og:description", content: "Formulario oficial de PQR de Tu Norte Portal." },
     ],
   }),
   component: PQRPage,

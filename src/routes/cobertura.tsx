@@ -11,9 +11,9 @@ import { CucutaFiberMap } from "@/components/CucutaFiberMap";
 export const Route = createFileRoute("/cobertura")({
   head: () => ({
     meta: [
-      { title: "Verificar cobertura — Tu Norte TV" },
+      { title: "Verificar cobertura — Tu Norte Portal" },
       { name: "description", content: "Verifica si tenemos cobertura de internet de fibra óptica en tu zona de Norte de Santander." },
-      { property: "og:title", content: "Verificar cobertura — Tu Norte TV" },
+      { property: "og:title", content: "Verificar cobertura — Tu Norte Portal" },
       { property: "og:description", content: "Consulta cobertura de fibra óptica en tu dirección en segundos." },
     ],
   }),

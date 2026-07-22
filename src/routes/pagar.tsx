@@ -9,7 +9,7 @@ import {
 export const Route = createFileRoute("/pagar")({
   head: () => ({
     meta: [
-      { title: "Pagar factura — Tu Norte TV" },
+      { title: "Pagar factura — Tu Norte Portal" },
       { name: "description", content: "Consulta y paga tu factura mensual de forma segura, 100% en línea." },
     ],
   }),
