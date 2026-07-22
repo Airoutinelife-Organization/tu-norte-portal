@@ -68,39 +68,6 @@ function HomePage() {
           <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/80 to-primary/30" />
           <div className="absolute inset-0 bg-gradient-to-t from-background/70 via-transparent to-transparent" />
 
-          {/* Right-side composition: girl with laptop "watching the world" while channels orbit */}
-          <div
-            className="pointer-events-none absolute right-0 top-1/2 hidden -translate-y-1/2 lg:block"
-            aria-hidden="true"
-            style={{ width: "720px", height: "640px", marginRight: "-40px" }}
-          >
-            {/* Glow behind the orbit, focal point of her gaze */}
-            <div
-              className="absolute"
-              style={{
-                left: "30%",
-                top: "50%",
-                width: 380,
-                height: 380,
-                transform: "translate(-50%, -50%)",
-                background: "radial-gradient(circle, rgba(56,189,248,0.35) 0%, rgba(56,189,248,0) 65%)",
-                filter: "blur(8px)",
-              }}
-            />
-
-            {/* Girl with laptop — looping video, gazing left toward the rotating Earth */}
-            <video
-              src={girlLaptopVideo}
-              poster={girlLaptop}
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="auto"
-              aria-hidden="true"
-              className="absolute bottom-0 right-0 h-[640px] w-auto select-none object-contain drop-shadow-[0_30px_60px_rgba(0,0,0,0.45)]"
-            />
-          </div>
         </div>
 
         <div className="relative mx-auto max-w-7xl px-4 pt-16 pb-32 md:px-6 md:pt-24 md:pb-40">
