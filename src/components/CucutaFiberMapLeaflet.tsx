@@ -83,9 +83,11 @@ const BUILDING_ROUTES: [number, number][][] = [
 export default function CucutaFiberMapLeaflet({
   className = "",
   highlight,
+  address,
 }: {
   className?: string;
   highlight?: string | null;
+  address?: string | null;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
