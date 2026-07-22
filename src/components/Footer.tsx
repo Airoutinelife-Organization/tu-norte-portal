@@ -1,10 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { MapPin, Phone, Mail, Facebook, Instagram, ShieldAlert } from "lucide-react";
-import logo from "@/assets/logo.png";
-import regIcbf from "@/assets/reg-icbf.png";
-import regCai from "@/assets/reg-cai.png";
-import regEntic from "@/assets/reg-entic.png";
-import regFiscalia from "@/assets/reg-fiscalia.png";
+const logo = "/images/logo.png";
+const regIcbf = "/images/reg-icbf.png";
+const regCai = "/images/reg-cai.png";
+const regEntic = "/images/reg-entic.png";
+const regFiscalia = "/images/reg-fiscalia.png";
 
 const reportingChannels = [
   { name: "Bienestar Familiar", img: regIcbf, url: "https://www.icbf.gov.co/" },
