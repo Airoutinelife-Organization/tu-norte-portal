@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AgendarRouteImport } from './routes/agendar'
-import { Route as AutoSoporteRouteImport } from './routes/auto-soporte'
 import { Route as CoberturaRouteImport } from './routes/cobertura'
 import { Route as DiagnosticoRouteImport } from './routes/diagnostico'
 import { Route as EmpresaRouteImport } from './routes/empresa'
@@ -22,6 +21,7 @@ import { Route as PqrRouteImport } from './routes/pqr'
 import { Route as RecomendadorRouteImport } from './routes/recomendador'
 import { Route as SoporteRouteImport } from './routes/soporte'
 import { Route as TestVelocidadRouteImport } from './routes/test-velocidad'
+import { Route as VideoSoporteRouteImport } from './routes/video-soporte'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -31,11 +31,6 @@ const IndexRoute = IndexRouteImport.update({
 const AgendarRoute = AgendarRouteImport.update({
   id: '/agendar',
   path: '/agendar',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AutoSoporteRoute = AutoSoporteRouteImport.update({
-  id: '/auto-soporte',
-  path: '/auto-soporte',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CoberturaRoute = CoberturaRouteImport.update({
@@ -88,11 +83,15 @@ const TestVelocidadRoute = TestVelocidadRouteImport.update({
   path: '/test-velocidad',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VideoSoporteRoute = VideoSoporteRouteImport.update({
+  id: '/video-soporte',
+  path: '/video-soporte',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/agendar': typeof AgendarRoute
-  '/auto-soporte': typeof AutoSoporteRoute
   '/cobertura': typeof CoberturaRoute
   '/diagnostico': typeof DiagnosticoRoute
   '/empresa': typeof EmpresaRoute
@@ -103,11 +102,11 @@ export interface FileRoutesByFullPath {
   '/recomendador': typeof RecomendadorRoute
   '/soporte': typeof SoporteRoute
   '/test-velocidad': typeof TestVelocidadRoute
+  '/video-soporte': typeof VideoSoporteRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/agendar': typeof AgendarRoute
-  '/auto-soporte': typeof AutoSoporteRoute
   '/cobertura': typeof CoberturaRoute
   '/diagnostico': typeof DiagnosticoRoute
   '/empresa': typeof EmpresaRoute
@@ -118,12 +117,12 @@ export interface FileRoutesByTo {
   '/recomendador': typeof RecomendadorRoute
   '/soporte': typeof SoporteRoute
   '/test-velocidad': typeof TestVelocidadRoute
+  '/video-soporte': typeof VideoSoporteRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/agendar': typeof AgendarRoute
-  '/auto-soporte': typeof AutoSoporteRoute
   '/cobertura': typeof CoberturaRoute
   '/diagnostico': typeof DiagnosticoRoute
   '/empresa': typeof EmpresaRoute
@@ -134,13 +133,13 @@ export interface FileRoutesById {
   '/recomendador': typeof RecomendadorRoute
   '/soporte': typeof SoporteRoute
   '/test-velocidad': typeof TestVelocidadRoute
+  '/video-soporte': typeof VideoSoporteRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/agendar'
-    | '/auto-soporte'
     | '/cobertura'
     | '/diagnostico'
     | '/empresa'
@@ -151,11 +150,11 @@ export interface FileRouteTypes {
     | '/recomendador'
     | '/soporte'
     | '/test-velocidad'
+    | '/video-soporte'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/agendar'
-    | '/auto-soporte'
     | '/cobertura'
     | '/diagnostico'
     | '/empresa'
@@ -166,11 +165,11 @@ export interface FileRouteTypes {
     | '/recomendador'
     | '/soporte'
     | '/test-velocidad'
+    | '/video-soporte'
   id:
     | '__root__'
     | '/'
     | '/agendar'
-    | '/auto-soporte'
     | '/cobertura'
     | '/diagnostico'
     | '/empresa'
@@ -181,12 +180,12 @@ export interface FileRouteTypes {
     | '/recomendador'
     | '/soporte'
     | '/test-velocidad'
+    | '/video-soporte'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AgendarRoute: typeof AgendarRoute
-  AutoSoporteRoute: typeof AutoSoporteRoute
   CoberturaRoute: typeof CoberturaRoute
   DiagnosticoRoute: typeof DiagnosticoRoute
   EmpresaRoute: typeof EmpresaRoute
@@ -197,6 +196,7 @@ export interface RootRouteChildren {
   RecomendadorRoute: typeof RecomendadorRoute
   SoporteRoute: typeof SoporteRoute
   TestVelocidadRoute: typeof TestVelocidadRoute
+  VideoSoporteRoute: typeof VideoSoporteRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -213,13 +213,6 @@ declare module '@tanstack/react-router' {
       path: '/agendar'
       fullPath: '/agendar'
       preLoaderRoute: typeof AgendarRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auto-soporte': {
-      id: '/auto-soporte'
-      path: '/auto-soporte'
-      fullPath: '/auto-soporte'
-      preLoaderRoute: typeof AutoSoporteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cobertura': {
@@ -292,13 +285,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TestVelocidadRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/video-soporte': {
+      id: '/video-soporte'
+      path: '/video-soporte'
+      fullPath: '/video-soporte'
+      preLoaderRoute: typeof VideoSoporteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AgendarRoute: AgendarRoute,
-  AutoSoporteRoute: AutoSoporteRoute,
   CoberturaRoute: CoberturaRoute,
   DiagnosticoRoute: DiagnosticoRoute,
   EmpresaRoute: EmpresaRoute,
@@ -309,6 +308,7 @@ const rootRouteChildren: RootRouteChildren = {
   RecomendadorRoute: RecomendadorRoute,
   SoporteRoute: SoporteRoute,
   TestVelocidadRoute: TestVelocidadRoute,
+  VideoSoporteRoute: VideoSoporteRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
