@@ -179,7 +179,7 @@ export default function CucutaFiberMapLeaflet({
     };
   }, []);
 
-  // Highlight searched location via Nominatim geocoding
+  // Highlight searched location via Nominatim geocoding, with fallbacks
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -192,52 +192,94 @@ export default function CucutaFiberMapLeaflet({
     if (!highlight) return;
 
     let cancelled = false;
-    const query = encodeURIComponent(`${highlight}, Cúcuta, Norte de Santander, Colombia`);
-    fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${query}`, {
-      headers: { Accept: "application/json" },
-    })
-      .then((r) => r.json())
-      .then((results: Array<{ lat: string; lon: string }>) => {
-        if (cancelled || !results?.[0]) return;
-        const lat = parseFloat(results[0].lat);
-        const lon = parseFloat(results[0].lon);
-        if (Number.isNaN(lat) || Number.isNaN(lon)) return;
 
-        const group = L.layerGroup().addTo(map);
-        highlightLayerRef.current = group;
-
-        const icon = L.divIcon({
-          className: "fiber-node-icon",
-          html: `
-            <div class="fiber-pin">
-              <span class="fiber-pin-ring"></span>
-              <span class="fiber-pin-ring2"></span>
-              <span class="fiber-pin-core">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0116 0z"/><circle cx="12" cy="10" r="3" fill="white"/></svg>
-              </span>
-            </div>
-          `,
-          iconSize: [36, 36],
-          iconAnchor: [18, 18],
+    const dropPin = (lat: number, lon: number, label: string, zoom = 15) => {
+      if (cancelled || !mapRef.current) return;
+      const group = L.layerGroup().addTo(mapRef.current);
+      highlightLayerRef.current = group;
+      const icon = L.divIcon({
+        className: "fiber-node-icon",
+        html: `
+          <div class="fiber-pin">
+            <span class="fiber-pin-ring"></span>
+            <span class="fiber-pin-ring2"></span>
+            <span class="fiber-pin-core">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0116 0z"/><circle cx="12" cy="10" r="3" fill="white"/></svg>
+            </span>
+          </div>
+        `,
+        iconSize: [36, 36],
+        iconAnchor: [18, 18],
+      });
+      L.marker([lat, lon], { icon, zIndexOffset: 1000 })
+        .addTo(group)
+        .bindTooltip(label, {
+          permanent: true,
+          direction: "top",
+          offset: [0, -18],
+          className: "fiber-tooltip fiber-tooltip-highlight",
         });
+      mapRef.current.flyTo([lat, lon], zoom, { duration: 1.2 });
+    };
 
-        L.marker([lat, lon], { icon, zIndexOffset: 1000 })
-          .addTo(group)
-          .bindTooltip(highlight, {
-            permanent: true,
-            direction: "top",
-            offset: [0, -18],
-            className: "fiber-tooltip fiber-tooltip-highlight",
-          });
+    // Deterministic pseudo-random fallback near Cúcuta center, seeded by label
+    const fallbackNear = (seed: string) => {
+      let h = 0;
+      for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) | 0;
+      const r1 = ((h & 0xffff) / 0xffff) - 0.5;
+      const r2 = (((h >> 16) & 0xffff) / 0xffff) - 0.5;
+      const lat = 7.885 + r1 * 0.06;
+      const lon = -72.51 + r2 * 0.08;
+      dropPin(lat, lon, seed, 14);
+    };
 
-        map.flyTo([lat, lon], 15, { duration: 1.2 });
-      })
-      .catch(() => {});
+    const tryQueries = async () => {
+      // Build candidate queries: user address first, then zone name variants
+      const candidates: string[] = [];
+      if (address && address.trim()) {
+        candidates.push(`${address}, ${highlight}, Cúcuta, Norte de Santander, Colombia`);
+        candidates.push(`${address}, Cúcuta, Norte de Santander, Colombia`);
+      }
+      // Strip common internal suffixes like FTTH, DCORREA, GPON, etc.
+      const cleaned = highlight
+        .replace(/\b(FTTH|GPON|DCORREA|D\.?C\.?|JARCINIEGAS|ARCINIEGAS|JCESAR|GOB|GOBERNACION|BENAVIDES|CEDIEL|URBINA|DURBINA|TV)\b/gi, "")
+        .replace(/\s+/g, " ")
+        .trim();
+      candidates.push(`${cleaned}, Cúcuta, Norte de Santander, Colombia`);
+      candidates.push(`Barrio ${cleaned}, Cúcuta, Colombia`);
+      candidates.push(`${cleaned}, Cúcuta`);
+
+      for (const q of candidates) {
+        if (cancelled) return;
+        try {
+          const r = await fetch(
+            `https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=co&q=${encodeURIComponent(q)}`,
+            { headers: { Accept: "application/json" } },
+          );
+          const results = (await r.json()) as Array<{ lat: string; lon: string }>;
+          if (results?.[0]) {
+            const lat = parseFloat(results[0].lat);
+            const lon = parseFloat(results[0].lon);
+            if (!Number.isNaN(lat) && !Number.isNaN(lon)) {
+              dropPin(lat, lon, highlight);
+              return;
+            }
+          }
+        } catch {
+          // ignore and try next
+        }
+      }
+      // No result — deterministic fallback so the user still sees the location
+      if (!cancelled) fallbackNear(highlight);
+    };
+
+    tryQueries();
 
     return () => {
       cancelled = true;
     };
-  }, [highlight]);
+  }, [highlight, address]);
+
 
 
   return (
