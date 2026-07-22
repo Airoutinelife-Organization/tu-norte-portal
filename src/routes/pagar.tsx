@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
   CreditCard, Download, Check, Calendar, Wifi, Tv, FileText, ArrowRight, AlertCircle,
-  Globe, Store, MapPin, Copy, ExternalLink, Info, Building2, Clock, ShieldCheck,
+  Globe, Store, ExternalLink, Building2, ShieldCheck,
 } from "lucide-react";
+import { PaymentMethodsSection } from "@/components/PaymentMethodsSection";
 
 export const Route = createFileRoute("/pagar")({
   head: () => ({
