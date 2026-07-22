@@ -91,20 +91,39 @@ function PagarPage() {
                 <p className="text-sm text-muted-foreground">Recibirás el comprobante por correo.</p>
               </div>
             ) : (
-              <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-                <Button onClick={handlePay} disabled={paying} size="lg" className="flex-1 bg-gradient-brand text-primary-foreground shadow-glow hover:opacity-90">
-                  {paying ? (
-                    <span className="flex items-center gap-2">
-                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                      Procesando…
+              <div className="mt-4 flex flex-col gap-3">
+                <a
+                  href="https://saeplus.com/r_VRD*y2"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="group flex items-center justify-between rounded-xl bg-gradient-brand px-5 py-4 text-primary-foreground shadow-glow transition hover:opacity-95"
+                >
+                  <span className="flex items-center gap-3">
+                    <span className="grid h-10 w-10 place-items-center rounded-xl bg-white/15">
+                      <CreditCard className="h-5 w-5" />
                     </span>
-                  ) : (
-                    <><CreditCard className="mr-1 h-4 w-4" /> Pagar ahora</>
-                  )}
-                </Button>
-                <Button variant="outline" size="lg" className="border-2">
-                  <Download className="mr-1 h-4 w-4" /> Descargar PDF
-                </Button>
+                    <span className="flex flex-col text-left">
+                      <span className="font-display text-base font-bold">Pagar con SAE PAY</span>
+                      <span className="text-[11px] opacity-90">PSE en línea · Costo adicional $1.190</span>
+                    </span>
+                  </span>
+                  <ExternalLink className="h-4 w-4 transition group-hover:translate-x-0.5" />
+                </a>
+                <div className="flex flex-col gap-3 sm:flex-row">
+                  <Button onClick={handlePay} disabled={paying} size="lg" variant="outline" className="flex-1 border-2">
+                    {paying ? (
+                      <span className="flex items-center gap-2">
+                        <span className="h-4 w-4 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
+                        Procesando…
+                      </span>
+                    ) : (
+                      <><CreditCard className="mr-1 h-4 w-4" /> Marcar como pagada</>
+                    )}
+                  </Button>
+                  <Button variant="outline" size="lg" className="border-2">
+                    <Download className="mr-1 h-4 w-4" /> Descargar PDF
+                  </Button>
+                </div>
               </div>
             )}
           </div>
