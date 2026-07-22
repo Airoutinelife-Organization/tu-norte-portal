@@ -12,7 +12,7 @@ const links = [
   { to: "/diagnostico", label: "Diagnóstico" },
   { to: "/mis-tickets", label: "Mis tickets" },
   { to: "/video-soporte", label: "Video soporte" },
-  { to: "/soporte", label: "Soporte" },
+  { to: "/soporte", label: "Soporte en tiempo real" },
 ] as const;
 
 export function Header() {
