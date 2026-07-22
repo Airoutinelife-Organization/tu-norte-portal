@@ -110,17 +110,27 @@ function PagarPage() {
           </div>
         </Card>
 
-        {/* Payment methods */}
+        {/* Payment methods quick view */}
         <div className="space-y-6">
           <Card className="border-border/60 bg-white p-6 shadow-soft">
-            <h3 className="font-display font-bold">Métodos de pago</h3>
-            <p className="mt-1 text-sm text-muted-foreground">100% seguro y encriptado.</p>
-            <div className="mt-4 grid grid-cols-3 gap-3">
-              {["PSE", "Tarjeta", "Nequi", "Daviplata", "Bancolombia", "Efecty"].map((m) => (
-                <div key={m} className="rounded-xl border border-border bg-muted/30 px-3 py-3 text-center text-xs font-semibold">
-                  {m}
-                </div>
-              ))}
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="h-5 w-5 text-primary" />
+              <h3 className="font-display font-bold">Medios de pago</h3>
+            </div>
+            <p className="mt-1 text-sm text-muted-foreground">Elige el que te resulte más cómodo y seguro.</p>
+            <div className="mt-4 space-y-2">
+              <a href="#pse" className="flex items-center justify-between rounded-xl border border-border bg-muted/30 px-4 py-3 transition hover:border-primary hover:bg-primary/5">
+                <span className="flex items-center gap-3 text-sm font-semibold"><Globe className="h-4 w-4 text-primary" /> PSE en línea</span>
+                <span className="rounded-full bg-success/15 px-2 py-0.5 text-[10px] font-bold uppercase text-success">Recomendado</span>
+              </a>
+              <a href="#supergiros" className="flex items-center justify-between rounded-xl border border-border bg-muted/30 px-4 py-3 transition hover:border-primary hover:bg-primary/5">
+                <span className="flex items-center gap-3 text-sm font-semibold"><Store className="h-4 w-4 text-primary" /> SuperGiros</span>
+                <ArrowRight className="h-4 w-4 text-muted-foreground" />
+              </a>
+              <a href="#oficinas" className="flex items-center justify-between rounded-xl border border-border bg-muted/30 px-4 py-3 transition hover:border-primary hover:bg-primary/5">
+                <span className="flex items-center gap-3 text-sm font-semibold"><Building2 className="h-4 w-4 text-primary" /> Nuestras oficinas</span>
+                <ArrowRight className="h-4 w-4 text-muted-foreground" />
+              </a>
             </div>
           </Card>
 
@@ -128,16 +138,19 @@ function PagarPage() {
             <div className="flex gap-3">
               <AlertCircle className="h-5 w-5 shrink-0 text-amber-600" />
               <div>
-                <p className="font-display text-sm font-bold text-amber-900">Programa pago automático</p>
-                <p className="mt-1 text-xs text-amber-800">Olvídate de las fechas. Cargamos tu factura el día que prefieras.</p>
-                <Link to="/pagar" className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-amber-900 hover:underline">
-                  Activar <ArrowRight className="h-3 w-3" />
-                </Link>
+                <p className="font-display text-sm font-bold text-amber-900">Aviso importante</p>
+                <p className="mt-1 text-xs text-amber-800">
+                  Los pagos realizados a través de <strong>SAE PAY</strong> tienen un costo adicional de <strong>$1.190</strong>.
+                </p>
               </div>
             </div>
           </Card>
         </div>
       </div>
+
+      {/* ============= Interactive payment methods section ============= */}
+      <PaymentMethodsSection />
+
 
       {/* History */}
       <div className="mt-10">
