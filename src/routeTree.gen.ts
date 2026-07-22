@@ -21,7 +21,6 @@ import { Route as PqrRouteImport } from './routes/pqr'
 import { Route as RecomendadorRouteImport } from './routes/recomendador'
 import { Route as SoporteRouteImport } from './routes/soporte'
 import { Route as TestVelocidadRouteImport } from './routes/test-velocidad'
-import { Route as VideoSoporteRouteImport } from './routes/video-soporte'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -83,11 +82,6 @@ const TestVelocidadRoute = TestVelocidadRouteImport.update({
   path: '/test-velocidad',
   getParentRoute: () => rootRouteImport,
 } as any)
-const VideoSoporteRoute = VideoSoporteRouteImport.update({
-  id: '/video-soporte',
-  path: '/video-soporte',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -102,7 +96,6 @@ export interface FileRoutesByFullPath {
   '/recomendador': typeof RecomendadorRoute
   '/soporte': typeof SoporteRoute
   '/test-velocidad': typeof TestVelocidadRoute
-  '/video-soporte': typeof VideoSoporteRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -117,7 +110,6 @@ export interface FileRoutesByTo {
   '/recomendador': typeof RecomendadorRoute
   '/soporte': typeof SoporteRoute
   '/test-velocidad': typeof TestVelocidadRoute
-  '/video-soporte': typeof VideoSoporteRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -133,7 +125,6 @@ export interface FileRoutesById {
   '/recomendador': typeof RecomendadorRoute
   '/soporte': typeof SoporteRoute
   '/test-velocidad': typeof TestVelocidadRoute
-  '/video-soporte': typeof VideoSoporteRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -150,7 +141,6 @@ export interface FileRouteTypes {
     | '/recomendador'
     | '/soporte'
     | '/test-velocidad'
-    | '/video-soporte'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -165,7 +155,6 @@ export interface FileRouteTypes {
     | '/recomendador'
     | '/soporte'
     | '/test-velocidad'
-    | '/video-soporte'
   id:
     | '__root__'
     | '/'
@@ -180,7 +169,6 @@ export interface FileRouteTypes {
     | '/recomendador'
     | '/soporte'
     | '/test-velocidad'
-    | '/video-soporte'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -196,7 +184,6 @@ export interface RootRouteChildren {
   RecomendadorRoute: typeof RecomendadorRoute
   SoporteRoute: typeof SoporteRoute
   TestVelocidadRoute: typeof TestVelocidadRoute
-  VideoSoporteRoute: typeof VideoSoporteRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -285,13 +272,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TestVelocidadRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/video-soporte': {
-      id: '/video-soporte'
-      path: '/video-soporte'
-      fullPath: '/video-soporte'
-      preLoaderRoute: typeof VideoSoporteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -308,7 +288,6 @@ const rootRouteChildren: RootRouteChildren = {
   RecomendadorRoute: RecomendadorRoute,
   SoporteRoute: SoporteRoute,
   TestVelocidadRoute: TestVelocidadRoute,
-  VideoSoporteRoute: VideoSoporteRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
