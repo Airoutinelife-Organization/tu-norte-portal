@@ -1,7 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useState } from "react";
 import { Menu, X, UserCircle, LayoutDashboard, Phone } from "lucide-react";
-import logo from "@/assets/logo.png";
+const logo = "/images/logo.png";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
