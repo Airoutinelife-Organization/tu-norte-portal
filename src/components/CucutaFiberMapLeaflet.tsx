@@ -276,6 +276,25 @@ export default function CucutaFiberMapLeaflet({
           box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important;
         }
         .fiber-tooltip::before { display: none !important; }
+        .fiber-tooltip-highlight {
+          background: #059669 !important;
+          color: white !important;
+          border-color: white !important;
+          font-size: 12px !important;
+        }
+        .fiber-pin { position: relative; width: 36px; height: 36px; display: grid; place-items: center; }
+        .fiber-pin-ring, .fiber-pin-ring2 {
+          position: absolute; inset: 0; border-radius: 999px; background: #10b981; opacity: 0.5;
+          animation: fiber-pulse 1.8s ease-out infinite;
+        }
+        .fiber-pin-ring2 { animation-delay: 0.6s; }
+        .fiber-pin-core {
+          position: relative; width: 28px; height: 28px; border-radius: 999px;
+          background: linear-gradient(135deg, #059669, #10b981);
+          display: grid; place-items: center;
+          box-shadow: 0 0 0 3px white, 0 6px 18px rgba(5,150,105,0.6);
+        }
+
         .leaflet-control-attribution {
           background: rgba(2,6,23,0.7) !important;
           color: #94a3b8 !important;
