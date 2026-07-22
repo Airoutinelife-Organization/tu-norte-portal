@@ -10,9 +10,11 @@ const RealMap = lazy(() => import("./CucutaFiberMapLeaflet"));
 export function CucutaFiberMap({
   className = "",
   highlight,
+  address,
 }: {
   className?: string;
   highlight?: string | null;
+  address?: string | null;
 }) {
   return (
     <ClientOnly
@@ -25,7 +27,7 @@ export function CucutaFiberMap({
           <div className={className} style={{ background: "oklch(0.18 0.05 250)" }} />
         }
       >
-        <RealMap className={className} highlight={highlight} />
+        <RealMap className={className} highlight={highlight} address={address} />
       </Suspense>
     </ClientOnly>
   );
