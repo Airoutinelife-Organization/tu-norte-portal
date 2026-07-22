@@ -7,11 +7,11 @@ import {
   ArrowRight, Search, Zap, MessageSquare, Sparkles, Activity, ShieldCheck, Check,
   Clock, TrendingUp,
 } from "lucide-react";
-import portalHero from "@/assets/portal-hero.jpg";
-import coverageCity from "@/assets/coverage-city.jpg";
-import heroLoop from "@/assets/hero-loop.mp4?url";
-import girlLaptop from "@/assets/girl-laptop.png";
-import girlLaptopVideo from "@/assets/girl-laptop.webm?url";
+const portalHero = "/images/portal-hero.jpg";
+const coverageCity = "/images/coverage-city.jpg";
+const heroLoop = "/videos/hero-loop.mp4";
+const girlLaptop = "/images/girl-laptop.png";
+const girlLaptopVideo = "/videos/girl-laptop.webm";
 
 export const Route = createFileRoute("/")({
   head: () => ({
