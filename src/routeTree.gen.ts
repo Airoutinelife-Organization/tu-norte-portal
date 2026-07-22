@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AgendarRouteImport } from './routes/agendar'
+import { Route as AutoSoporteRouteImport } from './routes/auto-soporte'
 import { Route as CoberturaRouteImport } from './routes/cobertura'
 import { Route as DiagnosticoRouteImport } from './routes/diagnostico'
 import { Route as EmpresaRouteImport } from './routes/empresa'
@@ -30,6 +31,11 @@ const IndexRoute = IndexRouteImport.update({
 const AgendarRoute = AgendarRouteImport.update({
   id: '/agendar',
   path: '/agendar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AutoSoporteRoute = AutoSoporteRouteImport.update({
+  id: '/auto-soporte',
+  path: '/auto-soporte',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CoberturaRoute = CoberturaRouteImport.update({
@@ -86,6 +92,7 @@ const TestVelocidadRoute = TestVelocidadRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/agendar': typeof AgendarRoute
+  '/auto-soporte': typeof AutoSoporteRoute
   '/cobertura': typeof CoberturaRoute
   '/diagnostico': typeof DiagnosticoRoute
   '/empresa': typeof EmpresaRoute
@@ -100,6 +107,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/agendar': typeof AgendarRoute
+  '/auto-soporte': typeof AutoSoporteRoute
   '/cobertura': typeof CoberturaRoute
   '/diagnostico': typeof DiagnosticoRoute
   '/empresa': typeof EmpresaRoute
@@ -115,6 +123,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/agendar': typeof AgendarRoute
+  '/auto-soporte': typeof AutoSoporteRoute
   '/cobertura': typeof CoberturaRoute
   '/diagnostico': typeof DiagnosticoRoute
   '/empresa': typeof EmpresaRoute
@@ -131,6 +140,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/agendar'
+    | '/auto-soporte'
     | '/cobertura'
     | '/diagnostico'
     | '/empresa'
@@ -145,6 +155,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/agendar'
+    | '/auto-soporte'
     | '/cobertura'
     | '/diagnostico'
     | '/empresa'
@@ -159,6 +170,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/agendar'
+    | '/auto-soporte'
     | '/cobertura'
     | '/diagnostico'
     | '/empresa'
@@ -174,6 +186,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AgendarRoute: typeof AgendarRoute
+  AutoSoporteRoute: typeof AutoSoporteRoute
   CoberturaRoute: typeof CoberturaRoute
   DiagnosticoRoute: typeof DiagnosticoRoute
   EmpresaRoute: typeof EmpresaRoute
@@ -200,6 +213,13 @@ declare module '@tanstack/react-router' {
       path: '/agendar'
       fullPath: '/agendar'
       preLoaderRoute: typeof AgendarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auto-soporte': {
+      id: '/auto-soporte'
+      path: '/auto-soporte'
+      fullPath: '/auto-soporte'
+      preLoaderRoute: typeof AutoSoporteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cobertura': {
@@ -278,6 +298,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AgendarRoute: AgendarRoute,
+  AutoSoporteRoute: AutoSoporteRoute,
   CoberturaRoute: CoberturaRoute,
   DiagnosticoRoute: DiagnosticoRoute,
   EmpresaRoute: EmpresaRoute,
@@ -292,12 +313,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
