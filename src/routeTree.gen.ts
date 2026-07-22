@@ -9,67 +9,23 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TestVelocidadRouteImport } from './routes/test-velocidad'
-import { Route as SoporteRouteImport } from './routes/soporte'
-import { Route as RecomendadorRouteImport } from './routes/recomendador'
-import { Route as PqrRouteImport } from './routes/pqr'
-import { Route as PlanesRouteImport } from './routes/planes'
-import { Route as PagarRouteImport } from './routes/pagar'
-import { Route as MisTicketsRouteImport } from './routes/mis-tickets'
-import { Route as EmpresaRouteImport } from './routes/empresa'
-import { Route as DiagnosticoRouteImport } from './routes/diagnostico'
-import { Route as CoberturaRouteImport } from './routes/cobertura'
-import { Route as AgendarRouteImport } from './routes/agendar'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AgendarRouteImport } from './routes/agendar'
+import { Route as AutoSoporteRouteImport } from './routes/auto-soporte'
+import { Route as CoberturaRouteImport } from './routes/cobertura'
+import { Route as DiagnosticoRouteImport } from './routes/diagnostico'
+import { Route as EmpresaRouteImport } from './routes/empresa'
+import { Route as MisTicketsRouteImport } from './routes/mis-tickets'
+import { Route as PagarRouteImport } from './routes/pagar'
+import { Route as PlanesRouteImport } from './routes/planes'
+import { Route as PqrRouteImport } from './routes/pqr'
+import { Route as RecomendadorRouteImport } from './routes/recomendador'
+import { Route as SoporteRouteImport } from './routes/soporte'
+import { Route as TestVelocidadRouteImport } from './routes/test-velocidad'
 
-const TestVelocidadRoute = TestVelocidadRouteImport.update({
-  id: '/test-velocidad',
-  path: '/test-velocidad',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SoporteRoute = SoporteRouteImport.update({
-  id: '/soporte',
-  path: '/soporte',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RecomendadorRoute = RecomendadorRouteImport.update({
-  id: '/recomendador',
-  path: '/recomendador',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PqrRoute = PqrRouteImport.update({
-  id: '/pqr',
-  path: '/pqr',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PlanesRoute = PlanesRouteImport.update({
-  id: '/planes',
-  path: '/planes',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PagarRoute = PagarRouteImport.update({
-  id: '/pagar',
-  path: '/pagar',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MisTicketsRoute = MisTicketsRouteImport.update({
-  id: '/mis-tickets',
-  path: '/mis-tickets',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EmpresaRoute = EmpresaRouteImport.update({
-  id: '/empresa',
-  path: '/empresa',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DiagnosticoRoute = DiagnosticoRouteImport.update({
-  id: '/diagnostico',
-  path: '/diagnostico',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CoberturaRoute = CoberturaRouteImport.update({
-  id: '/cobertura',
-  path: '/cobertura',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AgendarRoute = AgendarRouteImport.update({
@@ -77,15 +33,66 @@ const AgendarRoute = AgendarRouteImport.update({
   path: '/agendar',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AutoSoporteRoute = AutoSoporteRouteImport.update({
+  id: '/auto-soporte',
+  path: '/auto-soporte',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CoberturaRoute = CoberturaRouteImport.update({
+  id: '/cobertura',
+  path: '/cobertura',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DiagnosticoRoute = DiagnosticoRouteImport.update({
+  id: '/diagnostico',
+  path: '/diagnostico',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmpresaRoute = EmpresaRouteImport.update({
+  id: '/empresa',
+  path: '/empresa',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MisTicketsRoute = MisTicketsRouteImport.update({
+  id: '/mis-tickets',
+  path: '/mis-tickets',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PagarRoute = PagarRouteImport.update({
+  id: '/pagar',
+  path: '/pagar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlanesRoute = PlanesRouteImport.update({
+  id: '/planes',
+  path: '/planes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PqrRoute = PqrRouteImport.update({
+  id: '/pqr',
+  path: '/pqr',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecomendadorRoute = RecomendadorRouteImport.update({
+  id: '/recomendador',
+  path: '/recomendador',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SoporteRoute = SoporteRouteImport.update({
+  id: '/soporte',
+  path: '/soporte',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TestVelocidadRoute = TestVelocidadRouteImport.update({
+  id: '/test-velocidad',
+  path: '/test-velocidad',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/agendar': typeof AgendarRoute
+  '/auto-soporte': typeof AutoSoporteRoute
   '/cobertura': typeof CoberturaRoute
   '/diagnostico': typeof DiagnosticoRoute
   '/empresa': typeof EmpresaRoute
@@ -100,6 +107,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/agendar': typeof AgendarRoute
+  '/auto-soporte': typeof AutoSoporteRoute
   '/cobertura': typeof CoberturaRoute
   '/diagnostico': typeof DiagnosticoRoute
   '/empresa': typeof EmpresaRoute
@@ -115,6 +123,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/agendar': typeof AgendarRoute
+  '/auto-soporte': typeof AutoSoporteRoute
   '/cobertura': typeof CoberturaRoute
   '/diagnostico': typeof DiagnosticoRoute
   '/empresa': typeof EmpresaRoute
@@ -131,6 +140,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/agendar'
+    | '/auto-soporte'
     | '/cobertura'
     | '/diagnostico'
     | '/empresa'
@@ -145,6 +155,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/agendar'
+    | '/auto-soporte'
     | '/cobertura'
     | '/diagnostico'
     | '/empresa'
@@ -159,6 +170,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/agendar'
+    | '/auto-soporte'
     | '/cobertura'
     | '/diagnostico'
     | '/empresa'
@@ -174,6 +186,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AgendarRoute: typeof AgendarRoute
+  AutoSoporteRoute: typeof AutoSoporteRoute
   CoberturaRoute: typeof CoberturaRoute
   DiagnosticoRoute: typeof DiagnosticoRoute
   EmpresaRoute: typeof EmpresaRoute
@@ -188,74 +201,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/test-velocidad': {
-      id: '/test-velocidad'
-      path: '/test-velocidad'
-      fullPath: '/test-velocidad'
-      preLoaderRoute: typeof TestVelocidadRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/soporte': {
-      id: '/soporte'
-      path: '/soporte'
-      fullPath: '/soporte'
-      preLoaderRoute: typeof SoporteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/recomendador': {
-      id: '/recomendador'
-      path: '/recomendador'
-      fullPath: '/recomendador'
-      preLoaderRoute: typeof RecomendadorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/pqr': {
-      id: '/pqr'
-      path: '/pqr'
-      fullPath: '/pqr'
-      preLoaderRoute: typeof PqrRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/planes': {
-      id: '/planes'
-      path: '/planes'
-      fullPath: '/planes'
-      preLoaderRoute: typeof PlanesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/pagar': {
-      id: '/pagar'
-      path: '/pagar'
-      fullPath: '/pagar'
-      preLoaderRoute: typeof PagarRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/mis-tickets': {
-      id: '/mis-tickets'
-      path: '/mis-tickets'
-      fullPath: '/mis-tickets'
-      preLoaderRoute: typeof MisTicketsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/empresa': {
-      id: '/empresa'
-      path: '/empresa'
-      fullPath: '/empresa'
-      preLoaderRoute: typeof EmpresaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/diagnostico': {
-      id: '/diagnostico'
-      path: '/diagnostico'
-      fullPath: '/diagnostico'
-      preLoaderRoute: typeof DiagnosticoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cobertura': {
-      id: '/cobertura'
-      path: '/cobertura'
-      fullPath: '/cobertura'
-      preLoaderRoute: typeof CoberturaRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/agendar': {
@@ -265,11 +215,81 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgendarRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/auto-soporte': {
+      id: '/auto-soporte'
+      path: '/auto-soporte'
+      fullPath: '/auto-soporte'
+      preLoaderRoute: typeof AutoSoporteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cobertura': {
+      id: '/cobertura'
+      path: '/cobertura'
+      fullPath: '/cobertura'
+      preLoaderRoute: typeof CoberturaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/diagnostico': {
+      id: '/diagnostico'
+      path: '/diagnostico'
+      fullPath: '/diagnostico'
+      preLoaderRoute: typeof DiagnosticoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/empresa': {
+      id: '/empresa'
+      path: '/empresa'
+      fullPath: '/empresa'
+      preLoaderRoute: typeof EmpresaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mis-tickets': {
+      id: '/mis-tickets'
+      path: '/mis-tickets'
+      fullPath: '/mis-tickets'
+      preLoaderRoute: typeof MisTicketsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pagar': {
+      id: '/pagar'
+      path: '/pagar'
+      fullPath: '/pagar'
+      preLoaderRoute: typeof PagarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/planes': {
+      id: '/planes'
+      path: '/planes'
+      fullPath: '/planes'
+      preLoaderRoute: typeof PlanesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pqr': {
+      id: '/pqr'
+      path: '/pqr'
+      fullPath: '/pqr'
+      preLoaderRoute: typeof PqrRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recomendador': {
+      id: '/recomendador'
+      path: '/recomendador'
+      fullPath: '/recomendador'
+      preLoaderRoute: typeof RecomendadorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/soporte': {
+      id: '/soporte'
+      path: '/soporte'
+      fullPath: '/soporte'
+      preLoaderRoute: typeof SoporteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/test-velocidad': {
+      id: '/test-velocidad'
+      path: '/test-velocidad'
+      fullPath: '/test-velocidad'
+      preLoaderRoute: typeof TestVelocidadRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -278,6 +298,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AgendarRoute: AgendarRoute,
+  AutoSoporteRoute: AutoSoporteRoute,
   CoberturaRoute: CoberturaRoute,
   DiagnosticoRoute: DiagnosticoRoute,
   EmpresaRoute: EmpresaRoute,
@@ -292,12 +313,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
