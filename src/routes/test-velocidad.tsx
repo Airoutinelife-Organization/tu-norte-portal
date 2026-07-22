@@ -7,9 +7,9 @@ import { Gauge, Download, Upload, Activity, Play, RotateCcw } from "lucide-react
 export const Route = createFileRoute("/test-velocidad")({
   head: () => ({
     meta: [
-      { title: "Test de Velocidad — Tu Norte TV" },
+      { title: "Test de Velocidad — Tu Norte Portal" },
       { name: "description", content: "Mide la velocidad real de tu conexión a internet de Tu Norte TV: descarga, carga y latencia." },
-      { property: "og:title", content: "Test de Velocidad — Tu Norte TV" },
+      { property: "og:title", content: "Test de Velocidad — Tu Norte Portal" },
       { property: "og:description", content: "Comprueba en segundos la velocidad de tu internet." },
     ],
   }),

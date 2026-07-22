@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/mis-tickets")({
   head: () => ({
     meta: [
-      { title: "Mis tickets — Seguimiento PQR | Tu Norte TV" },
+      { title: "Mis tickets — Seguimiento PQR | Tu Norte Portal" },
       { name: "description", content: "Sigue en tiempo real el estado de tus solicitudes, PQR y tickets técnicos." },
     ],
   }),

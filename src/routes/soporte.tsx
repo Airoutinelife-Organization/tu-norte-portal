@@ -8,9 +8,9 @@ const nocSupportVideoUrl = "/videos/noc-support.mp4";
 export const Route = createFileRoute("/soporte")({
   head: () => ({
     meta: [
-      { title: "Soporte en tiempo real — Tu Norte TV" },
+      { title: "Soporte en tiempo real — Tu Norte Portal" },
       { name: "description", content: "Canales de atención, soporte técnico y preguntas frecuentes de Tu Norte TV." },
-      { property: "og:title", content: "Soporte en tiempo real — Tu Norte TV" },
+      { property: "og:title", content: "Soporte en tiempo real — Tu Norte Portal" },
       { property: "og:description", content: "Atención telefónica, WhatsApp, oficina y FAQ." },
     ],
   }),
