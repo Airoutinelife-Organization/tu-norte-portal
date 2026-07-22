@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Send, X, Sparkles } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-import noriAvatar from "@/assets/nori-avatar.png";
+const noriAvatar = "/images/nori-avatar.png";
 
 type Msg = {
   role: "bot" | "user";
