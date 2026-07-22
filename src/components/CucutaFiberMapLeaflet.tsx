@@ -172,7 +172,7 @@ export default function CucutaFiberMapLeaflet({ className = "" }: { className?: 
   return (
     <>
       <style>{`
-        .leaflet-container { background: #0b1220; font-family: ui-sans-serif, system-ui; }
+        .leaflet-container { background: #eef3f7; font-family: ui-sans-serif, system-ui; }
         .fiber-node-icon { background: transparent; border: 0; }
         .fiber-node {
           position: relative; width: var(--s); height: var(--s);
