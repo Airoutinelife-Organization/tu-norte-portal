@@ -29,10 +29,10 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Tu Norte TV — Internet y Televisión en Norte de Santander" },
+      { title: "Tu Norte Portal — Internet y Televisión en Norte de Santander" },
       { name: "description", content: "Internet de fibra óptica y televisión por suscripción en Cúcuta y Norte de Santander. Planes desde $45.000. Soporte 24/7." },
-      { name: "author", content: "Tu Norte TV" },
-      { property: "og:title", content: "Tu Norte TV — Internet y Televisión" },
+      { name: "author", content: "Tu Norte Portal" },
+      { property: "og:title", content: "Tu Norte Portal — Internet y Televisión" },
       { property: "og:description", content: "Conectamos a Norte de Santander con internet de fibra óptica y TV de calidad." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

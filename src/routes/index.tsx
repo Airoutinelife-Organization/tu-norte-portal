@@ -16,9 +16,9 @@ const girlLaptopVideo = "/videos/girl-laptop.webm";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Tu Norte TV — Portal de autogestión, soporte e instalación" },
+      { title: "Tu Norte Portal — Autogestión, soporte e instalación" },
       { name: "description", content: "Verifica cobertura, paga tu factura, reporta fallas y agenda instalación. El portal interactivo de Tu Norte TV en Norte de Santander." },
-      { property: "og:title", content: "Tu Norte TV — Portal interactivo" },
+      { property: "og:title", content: "Tu Norte Portal — Portal interactivo" },
       { property: "og:description", content: "Autogestión, soporte e instalación en un solo lugar." },
     ],
   }),

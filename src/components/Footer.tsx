@@ -20,9 +20,9 @@ export function Footer() {
         <div className="grid gap-10 md:grid-cols-4">
           <div>
             <div className="flex items-center gap-3">
-              <img src={logo} alt="Tu Norte TV" className="h-12 w-12 rounded-xl bg-white/10 p-1" width={48} height={48} loading="lazy" />
+              <img src={logo} alt="Tu Norte Portal" className="h-12 w-12 rounded-xl bg-white/10 p-1" width={48} height={48} loading="lazy" />
               <div>
-                <p className="text-lg font-bold">Tu Norte TV</p>
+                <p className="text-lg font-bold">Tu Norte Portal</p>
                 <p className="text-xs uppercase tracking-widest text-white/60">Telecomunicaciones</p>
               </div>
             </div>
