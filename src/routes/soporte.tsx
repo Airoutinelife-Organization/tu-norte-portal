@@ -58,7 +58,7 @@ function SoportePage() {
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-success" />
             </span>
-            <Headphones className="h-3.5 w-3.5" /> NOC en vivo · Soporte 24/7
+            <Headphones className="h-3.5 w-3.5" /> NOC en vivo · Soporte en tiempo real 24/7
           </span>
           <h1 className="mt-5 font-display text-4xl font-bold text-white drop-shadow-[0_2px_20px_rgba(0,0,0,0.5)] md:text-6xl">
             Estamos aquí para <span className="text-gradient-brand">ayudarte</span>
