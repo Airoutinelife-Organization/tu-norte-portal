@@ -11,8 +11,7 @@ const links = [
   { to: "/planes", label: "Planes" },
   { to: "/diagnostico", label: "Diagnóstico" },
   { to: "/mis-tickets", label: "Mis tickets" },
-  { to: "/video-soporte", label: "Video soporte" },
-  { to: "/soporte", label: "Soporte en tiempo real" },
+  { to: "/soporte", label: "Soporte" },
 ] as const;
 
 export function Header() {
