@@ -3,10 +3,10 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
   Globe, Store, Building2, MapPin, Copy, Check, ExternalLink, Info,
-  Clock, ShieldCheck, ArrowRight,
+  Clock, ShieldCheck, ArrowRight, CreditCard,
 } from "lucide-react";
 
-type MethodKey = "pse" | "supergiros" | "oficinas";
+type MethodKey = "sae" | "pse" | "supergiros" | "oficinas";
 
 const offices = [
   {
