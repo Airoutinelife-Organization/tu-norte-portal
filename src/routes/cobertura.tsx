@@ -117,7 +117,7 @@ function CoberturaPage() {
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr] lg:items-stretch">
             {/* LIVE MAP PANEL */}
-            <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-[oklch(0.18_0.06_250)] shadow-card ring-1 ring-black/10">
+            <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white shadow-card ring-1 ring-black/10">
               <CucutaFiberMap className="h-[420px] w-full md:h-[560px] lg:h-full" />
 
               <div className="pointer-events-none absolute inset-x-0 top-0 flex flex-wrap items-center justify-between gap-2 p-4">
@@ -143,7 +143,7 @@ function CoberturaPage() {
                 </div>
               )}
 
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-wrap items-end justify-between gap-3 bg-gradient-to-t from-black/70 via-black/30 to-transparent p-4">
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-wrap items-end justify-between gap-3 bg-gradient-to-t from-black/40 via-black/10 to-transparent p-4">
                 <div className="flex flex-wrap gap-2">
                   <span className="inline-flex items-center gap-2 rounded-full bg-black/55 px-3 py-1.5 text-xs font-semibold text-white ring-1 ring-white/15 backdrop-blur">
                     <span className="h-2.5 w-2.5 rounded-full bg-success animate-pulse" /> Fibra activa

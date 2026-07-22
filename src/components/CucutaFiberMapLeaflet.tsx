@@ -97,7 +97,7 @@ export default function CucutaFiberMapLeaflet({ className = "" }: { className?: 
     mapRef.current = map;
 
     L.tileLayer(
-      "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+      "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
       {
         attribution: "© OpenStreetMap © CARTO",
         subdomains: "abcd",
@@ -105,18 +105,18 @@ export default function CucutaFiberMapLeaflet({ className = "" }: { className?: 
       }
     ).addTo(map);
 
-    // Active fiber lines — glow + core
+    // Active fiber lines — glow + core (thicker for readability)
     for (const path of ACTIVE_ROUTES) {
       L.polyline(path, {
-        color: "#10b981",
-        weight: 10,
-        opacity: 0.18,
+        color: "#059669",
+        weight: 12,
+        opacity: 0.25,
         lineCap: "round",
       }).addTo(map);
       L.polyline(path, {
-        color: "#34d399",
-        weight: 3,
-        opacity: 0.95,
+        color: "#10b981",
+        weight: 5,
+        opacity: 1,
         lineCap: "round",
       }).addTo(map);
     }
@@ -124,9 +124,9 @@ export default function CucutaFiberMapLeaflet({ className = "" }: { className?: 
     // Under-construction — dashed orange
     for (const path of BUILDING_ROUTES) {
       L.polyline(path, {
-        color: "#fb923c",
-        weight: 8,
-        opacity: 0.2,
+        color: "#ea580c",
+        weight: 10,
+        opacity: 0.22,
         lineCap: "round",
       }).addTo(map);
       L.polyline(path, {
@@ -172,7 +172,7 @@ export default function CucutaFiberMapLeaflet({ className = "" }: { className?: 
   return (
     <>
       <style>{`
-        .leaflet-container { background: #0b1220; font-family: ui-sans-serif, system-ui; }
+        .leaflet-container { background: #eef3f7; font-family: ui-sans-serif, system-ui; }
         .fiber-node-icon { background: transparent; border: 0; }
         .fiber-node {
           position: relative; width: var(--s); height: var(--s);
