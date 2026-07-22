@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Target, Eye, Heart, Award, Users, Network } from "lucide-react";
-import network from "@/assets/network.jpg";
+const network = "/images/network.jpg";
 
 export const Route = createFileRoute("/empresa")({
   head: () => ({
