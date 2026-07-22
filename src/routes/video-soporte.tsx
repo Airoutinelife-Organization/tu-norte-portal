@@ -30,11 +30,32 @@ type Video = {
 // Add your videos here. `url` can be a YouTube link, Shorts link, or direct .mp4/.webm URL.
 const VIDEOS: Video[] = [
   {
-    id: "mascota-soporte",
-    title: "Nuestra mascota de soporte",
-    description: "Conoce al amigo de Tu Norte TV que te acompaña en tu experiencia de servicio.",
+    id: "tv-soporte",
+    title: "Soporte en TV",
+    description: "Aprende a resolver los problemas más comunes con tu servicio de televisión.",
+    url: "/videos/tv-soporte.mp4",
+    category: "TV",
+  },
+  {
+    id: "internet-soporte",
+    title: "Soporte en Internet",
+    description: "Guía rápida para optimizar tu conexión a internet de Tu Norte TV.",
     url: "/videos/mascota-soporte.mp4",
-    category: "Soporte",
+    category: "Internet",
+  },
+  {
+    id: "facturacion-soporte",
+    title: "Soporte en Facturación",
+    description: "Conoce cómo consultar y pagar tu factura de forma fácil y segura.",
+    url: "/videos/mascota-soporte.mp4",
+    category: "Facturacion",
+  },
+  {
+    id: "tips-soporte",
+    title: "Tips de autogestión",
+    description: "Consejos prácticos para sacar el máximo provecho a tu servicio.",
+    url: "/videos/mascota-soporte.mp4",
+    category: "tips",
   },
 ];
 
