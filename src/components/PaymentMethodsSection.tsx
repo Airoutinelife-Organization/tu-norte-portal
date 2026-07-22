@@ -3,10 +3,10 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
   Globe, Store, Building2, MapPin, Copy, Check, ExternalLink, Info,
-  Clock, ShieldCheck, ArrowRight,
+  Clock, ShieldCheck, ArrowRight, CreditCard,
 } from "lucide-react";
 
-type MethodKey = "pse" | "supergiros" | "oficinas";
+type MethodKey = "sae" | "pse" | "supergiros" | "oficinas";
 
 const offices = [
   {
@@ -26,9 +26,10 @@ const offices = [
 ];
 
 export function PaymentMethodsSection({ eyebrow = "Medios de pago", title = "Paga como más te convenga", intro }: { eyebrow?: string; title?: string; intro?: string }) {
-  const [active, setActive] = useState<MethodKey>("pse");
+  const [active, setActive] = useState<MethodKey>("sae");
   const [copied, setCopied] = useState<string | null>(null);
   const pseUrl = "https://saeplus.com/r_VRD*y2";
+  const saeUrl = "https://saeplus.com/r_VRD*y2";
 
   const copy = async (text: string, key: string) => {
     try {
@@ -46,6 +47,7 @@ export function PaymentMethodsSection({ eyebrow = "Medios de pago", title = "Pag
   };
 
   const tabs: { key: MethodKey; label: string; icon: typeof Globe; badge?: string }[] = [
+    { key: "sae", label: "SAE PAY", icon: CreditCard, badge: "Destacado" },
     { key: "pse", label: "PSE en línea", icon: Globe, badge: "Rápido" },
     { key: "supergiros", label: "SuperGiros", icon: Store },
     { key: "oficinas", label: "Oficinas", icon: Building2 },
@@ -89,6 +91,66 @@ export function PaymentMethodsSection({ eyebrow = "Medios de pago", title = "Pag
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[1.4fr_1fr]">
         <Card id={active} className="scroll-mt-24 overflow-hidden border-border/60 bg-white shadow-soft">
+          {active === "sae" && (
+            <div className="p-6 md:p-8">
+              <div className="flex items-center gap-3">
+                <div className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-brand text-primary-foreground shadow-glow">
+                  <CreditCard className="h-6 w-6" />
+                </div>
+                <div>
+                  <h3 className="font-display text-lg font-bold">SAE PAY — Pago en línea</h3>
+                  <p className="text-xs text-muted-foreground">Portal seguro para pagar con tarjeta débito o crédito.</p>
+                </div>
+              </div>
+
+              <ol className="mt-6 space-y-3">
+                {[
+                  "Ten a la mano el número de cédula del titular del servicio.",
+                  "Haz clic en 'Pagar con SAE PAY' para abrir el portal de pagos.",
+                  "Ingresa el valor a pagar y completa los datos de tu tarjeta.",
+                  "Descarga o guarda el comprobante que recibirás al finalizar.",
+                ].map((step, i) => (
+                  <li key={i} className="flex gap-3">
+                    <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-primary/10 text-xs font-bold text-primary">{i + 1}</span>
+                    <span className="text-sm text-muted-foreground">{step}</span>
+                  </li>
+                ))}
+              </ol>
+
+              <div className="mt-6 rounded-2xl border border-dashed border-amber-300 bg-amber-50 p-4">
+                <div className="flex items-start gap-3">
+                  <Info className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
+                  <div>
+                    <p className="font-display text-sm font-bold text-amber-900">Costo adicional de $1.190</p>
+                    <p className="mt-1 text-xs text-amber-800">
+                      Todos los pagos realizados a través de <strong>SAE PAY</strong> incluyen un costo adicional de <strong>$1.190</strong> por transacción.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 rounded-2xl border border-dashed border-primary/30 bg-primary/5 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wider text-primary">Enlace directo</p>
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  <code className="flex-1 truncate rounded-lg bg-white px-3 py-2 font-mono text-xs">{saeUrl}</code>
+                  <Button size="sm" variant="outline" onClick={() => copy(saeUrl, "sae")} className="border-2">
+                    {copied === "sae" ? <><Check className="mr-1 h-3 w-3" /> Copiado</> : <><Copy className="mr-1 h-3 w-3" /> Copiar</>}
+                  </Button>
+                </div>
+              </div>
+
+              <a
+                href={saeUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-brand px-6 py-3 font-display font-bold text-primary-foreground shadow-glow transition hover:opacity-90 sm:w-auto"
+              >
+                <CreditCard className="h-4 w-4" /> Pagar con SAE PAY
+                <ExternalLink className="h-4 w-4" />
+              </a>
+            </div>
+          )}
+
           {active === "pse" && (
             <div className="p-6 md:p-8">
               <div className="flex items-center gap-3">
