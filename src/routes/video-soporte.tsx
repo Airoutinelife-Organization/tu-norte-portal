@@ -30,32 +30,11 @@ type Video = {
 // Add your videos here. `url` can be a YouTube link, Shorts link, or direct .mp4/.webm URL.
 const VIDEOS: Video[] = [
   {
-    id: "reiniciar-router",
-    title: "Cómo reiniciar tu router",
-    description: "El truco que resuelve el 80% de los problemas de internet en 30 segundos.",
-    url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-    category: "Internet",
-  },
-  {
-    id: "test-velocidad",
-    title: "Cómo hacer un test de velocidad",
-    description: "Mide correctamente tu velocidad real y aprende a interpretar los resultados.",
-    url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-    category: "Internet",
-  },
-  {
-    id: "decodificador",
-    title: "Sintonizar tu decodificador",
-    description: "Paso a paso para volver a sintonizar los canales de tu TV.",
-    url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-    category: "TV",
-  },
-  {
-    id: "wifi-señal",
-    title: "Mejorar la señal WiFi en casa",
-    description: "Ubicación del router, canales y consejos para maximizar cobertura.",
-    url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-    category: "WiFi",
+    id: "mascota-soporte",
+    title: "Nuestra mascota de soporte",
+    description: "Conoce al amigo de Tu Norte TV que te acompaña en tu experiencia de servicio.",
+    url: "/videos/mascota-soporte.mp4",
+    category: "Soporte",
   },
 ];
 
