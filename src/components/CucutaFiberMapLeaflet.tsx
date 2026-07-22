@@ -80,9 +80,17 @@ const BUILDING_ROUTES: [number, number][][] = [
   ],
 ];
 
-export default function CucutaFiberMapLeaflet({ className = "" }: { className?: string }) {
+export default function CucutaFiberMapLeaflet({
+  className = "",
+  highlight,
+}: {
+  className?: string;
+  highlight?: string | null;
+}) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
+  const highlightLayerRef = useRef<L.LayerGroup | null>(null);
+
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
