@@ -73,6 +73,7 @@ function RootComponent() {
       </main>
       <Footer />
       <Chatbot />
+      <Toaster />
     </div>
   );
 }
