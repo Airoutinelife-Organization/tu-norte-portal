@@ -7,7 +7,7 @@ import { Sparkles, ArrowRight, ArrowLeft, Check, Wifi, RefreshCw } from "lucide-
 export const Route = createFileRoute("/recomendador")({
   head: () => ({
     meta: [
-      { title: "Recomendador inteligente — Tu Norte TV" },
+      { title: "Recomendador inteligente — Tu Norte Portal" },
       { name: "description", content: "Encuentra el plan ideal para tu hogar en 3 preguntas." },
     ],
   }),

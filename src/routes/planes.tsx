@@ -9,9 +9,9 @@ import { useMemo, useState } from "react";
 export const Route = createFileRoute("/planes")({
   head: () => ({
     meta: [
-      { title: "Planes de Internet y TV — Tu Norte TV" },
+      { title: "Planes de Internet y TV — Tu Norte Portal" },
       { name: "description", content: "Compara nuestros planes de internet de fibra óptica y televisión. Desde 100 hasta 600 Mbps con canales HD." },
-      { property: "og:title", content: "Planes de Internet y TV — Tu Norte TV" },
+      { property: "og:title", content: "Planes de Internet y TV — Tu Norte Portal" },
       { property: "og:description", content: "Planes desde $59.900/mes con fibra óptica simétrica y televisión HD." },
     ],
   }),

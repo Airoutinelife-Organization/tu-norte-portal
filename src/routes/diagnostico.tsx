@@ -10,7 +10,7 @@ import {
 export const Route = createFileRoute("/diagnostico")({
   head: () => ({
     meta: [
-      { title: "Diagnóstico — Solucionar problemas de internet | Tu Norte TV" },
+      { title: "Diagnóstico — Solucionar problemas de internet | Tu Norte Portal" },
       { name: "description", content: "Resuelve fallas de internet con nuestro asistente de diagnóstico paso a paso." },
     ],
   }),

@@ -12,7 +12,7 @@ import {
 export const Route = createFileRoute("/agendar")({
   head: () => ({
     meta: [
-      { title: "Agendar instalación — Tu Norte TV" },
+      { title: "Agendar instalación — Tu Norte Portal" },
       { name: "description", content: "Agenda la instalación de tu servicio en menos de 2 minutos. Elige día y franja horaria." },
     ],
   }),

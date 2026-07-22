@@ -10,9 +10,9 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/video-soporte")({
   head: () => ({
     meta: [
-      { title: "Video Soporte — Tu Norte TV" },
+      { title: "Video Soporte — Tu Norte Portal" },
       { name: "description", content: "Galería de videos de soporte para resolver los problemas más comunes de tu servicio." },
-      { property: "og:title", content: "Video Soporte — Tu Norte TV" },
+      { property: "og:title", content: "Video Soporte — Tu Norte Portal" },
       { property: "og:description", content: "Mira, aprende y resuelve. Videos cortos de auto ayuda." },
     ],
   }),
