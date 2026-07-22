@@ -7,9 +7,9 @@ const network = "/images/network.jpg";
 export const Route = createFileRoute("/empresa")({
   head: () => ({
     meta: [
-      { title: "Nuestra empresa — Tu Norte TV" },
+      { title: "Nuestra empresa — Tu Norte Portal" },
       { name: "description", content: "Conoce a Tu Norte TV: misión, visión y valores. Operador de telecomunicaciones autorizado en Norte de Santander." },
-      { property: "og:title", content: "Nuestra empresa — Tu Norte TV" },
+      { property: "og:title", content: "Nuestra empresa — Tu Norte Portal" },
       { property: "og:description", content: "+15 años conectando a Norte de Santander con internet y televisión." },
       { property: "og:image", content: "/network.jpg" },
     ],
