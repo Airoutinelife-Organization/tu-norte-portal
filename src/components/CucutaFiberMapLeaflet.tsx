@@ -80,9 +80,17 @@ const BUILDING_ROUTES: [number, number][][] = [
   ],
 ];
 
-export default function CucutaFiberMapLeaflet({ className = "" }: { className?: string }) {
+export default function CucutaFiberMapLeaflet({
+  className = "",
+  highlight,
+}: {
+  className?: string;
+  highlight?: string | null;
+}) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
+  const highlightLayerRef = useRef<L.LayerGroup | null>(null);
+
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
@@ -169,6 +177,67 @@ export default function CucutaFiberMapLeaflet({ className = "" }: { className?: 
     };
   }, []);
 
+  // Highlight searched location via Nominatim geocoding
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    // clear previous highlight
+    if (highlightLayerRef.current) {
+      highlightLayerRef.current.remove();
+      highlightLayerRef.current = null;
+    }
+    if (!highlight) return;
+
+    let cancelled = false;
+    const query = encodeURIComponent(`${highlight}, Cúcuta, Norte de Santander, Colombia`);
+    fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${query}`, {
+      headers: { Accept: "application/json" },
+    })
+      .then((r) => r.json())
+      .then((results: Array<{ lat: string; lon: string }>) => {
+        if (cancelled || !results?.[0]) return;
+        const lat = parseFloat(results[0].lat);
+        const lon = parseFloat(results[0].lon);
+        if (Number.isNaN(lat) || Number.isNaN(lon)) return;
+
+        const group = L.layerGroup().addTo(map);
+        highlightLayerRef.current = group;
+
+        const icon = L.divIcon({
+          className: "fiber-node-icon",
+          html: `
+            <div class="fiber-pin">
+              <span class="fiber-pin-ring"></span>
+              <span class="fiber-pin-ring2"></span>
+              <span class="fiber-pin-core">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0116 0z"/><circle cx="12" cy="10" r="3" fill="white"/></svg>
+              </span>
+            </div>
+          `,
+          iconSize: [36, 36],
+          iconAnchor: [18, 18],
+        });
+
+        L.marker([lat, lon], { icon, zIndexOffset: 1000 })
+          .addTo(group)
+          .bindTooltip(highlight, {
+            permanent: true,
+            direction: "top",
+            offset: [0, -18],
+            className: "fiber-tooltip fiber-tooltip-highlight",
+          });
+
+        map.flyTo([lat, lon], 15, { duration: 1.2 });
+      })
+      .catch(() => {});
+
+    return () => {
+      cancelled = true;
+    };
+  }, [highlight]);
+
+
   return (
     <>
       <style>{`
@@ -207,6 +276,25 @@ export default function CucutaFiberMapLeaflet({ className = "" }: { className?: 
           box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important;
         }
         .fiber-tooltip::before { display: none !important; }
+        .fiber-tooltip-highlight {
+          background: #059669 !important;
+          color: white !important;
+          border-color: white !important;
+          font-size: 12px !important;
+        }
+        .fiber-pin { position: relative; width: 36px; height: 36px; display: grid; place-items: center; }
+        .fiber-pin-ring, .fiber-pin-ring2 {
+          position: absolute; inset: 0; border-radius: 999px; background: #10b981; opacity: 0.5;
+          animation: fiber-pulse 1.8s ease-out infinite;
+        }
+        .fiber-pin-ring2 { animation-delay: 0.6s; }
+        .fiber-pin-core {
+          position: relative; width: 28px; height: 28px; border-radius: 999px;
+          background: linear-gradient(135deg, #059669, #10b981);
+          display: grid; place-items: center;
+          box-shadow: 0 0 0 3px white, 0 6px 18px rgba(5,150,105,0.6);
+        }
+
         .leaflet-control-attribution {
           background: rgba(2,6,23,0.7) !important;
           color: #94a3b8 !important;

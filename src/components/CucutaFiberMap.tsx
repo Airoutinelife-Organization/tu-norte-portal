@@ -7,7 +7,13 @@ const RealMap = lazy(() => import("./CucutaFiberMapLeaflet"));
  * Public wrapper — renders the real Leaflet map only on the client.
  * Leaflet touches window/document on import, so it must be gated.
  */
-export function CucutaFiberMap({ className = "" }: { className?: string }) {
+export function CucutaFiberMap({
+  className = "",
+  highlight,
+}: {
+  className?: string;
+  highlight?: string | null;
+}) {
   return (
     <ClientOnly
       fallback={
@@ -19,7 +25,7 @@ export function CucutaFiberMap({ className = "" }: { className?: string }) {
           <div className={className} style={{ background: "oklch(0.18 0.05 250)" }} />
         }
       >
-        <RealMap className={className} />
+        <RealMap className={className} highlight={highlight} />
       </Suspense>
     </ClientOnly>
   );
