@@ -27,7 +27,7 @@ export const Route = createFileRoute("/")({
 
 const helpOptions = [
   { icon: MapPin, label: "Verificar cobertura", to: "/cobertura", color: "from-cyan-400 to-blue-500" },
-  { icon: CreditCard, label: "Pagar factura", to: "/pagar", color: "from-emerald-400 to-cyan-500" },
+  { icon: CreditCard, label: "Pagar factura", to: "/medios-de-pago", color: "from-emerald-400 to-cyan-500" },
   { icon: AlertCircle, label: "Reportar problema", to: "/diagnostico", color: "from-orange-400 to-red-500" },
   { icon: CalendarPlus, label: "Agendar instalación", to: "/agendar", color: "from-violet-400 to-blue-500" },
   { icon: Wifi, label: "Ver planes", to: "/planes", color: "from-blue-400 to-indigo-500" },

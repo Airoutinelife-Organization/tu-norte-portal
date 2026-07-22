@@ -14,6 +14,7 @@ import { Route as AgendarRouteImport } from './routes/agendar'
 import { Route as CoberturaRouteImport } from './routes/cobertura'
 import { Route as DiagnosticoRouteImport } from './routes/diagnostico'
 import { Route as EmpresaRouteImport } from './routes/empresa'
+import { Route as MediosDePagoRouteImport } from './routes/medios-de-pago'
 import { Route as MisTicketsRouteImport } from './routes/mis-tickets'
 import { Route as PagarRouteImport } from './routes/pagar'
 import { Route as PlanesRouteImport } from './routes/planes'
@@ -45,6 +46,11 @@ const DiagnosticoRoute = DiagnosticoRouteImport.update({
 const EmpresaRoute = EmpresaRouteImport.update({
   id: '/empresa',
   path: '/empresa',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MediosDePagoRoute = MediosDePagoRouteImport.update({
+  id: '/medios-de-pago',
+  path: '/medios-de-pago',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MisTicketsRoute = MisTicketsRouteImport.update({
@@ -89,6 +95,7 @@ export interface FileRoutesByFullPath {
   '/cobertura': typeof CoberturaRoute
   '/diagnostico': typeof DiagnosticoRoute
   '/empresa': typeof EmpresaRoute
+  '/medios-de-pago': typeof MediosDePagoRoute
   '/mis-tickets': typeof MisTicketsRoute
   '/pagar': typeof PagarRoute
   '/planes': typeof PlanesRoute
@@ -103,6 +110,7 @@ export interface FileRoutesByTo {
   '/cobertura': typeof CoberturaRoute
   '/diagnostico': typeof DiagnosticoRoute
   '/empresa': typeof EmpresaRoute
+  '/medios-de-pago': typeof MediosDePagoRoute
   '/mis-tickets': typeof MisTicketsRoute
   '/pagar': typeof PagarRoute
   '/planes': typeof PlanesRoute
@@ -118,6 +126,7 @@ export interface FileRoutesById {
   '/cobertura': typeof CoberturaRoute
   '/diagnostico': typeof DiagnosticoRoute
   '/empresa': typeof EmpresaRoute
+  '/medios-de-pago': typeof MediosDePagoRoute
   '/mis-tickets': typeof MisTicketsRoute
   '/pagar': typeof PagarRoute
   '/planes': typeof PlanesRoute
@@ -134,6 +143,7 @@ export interface FileRouteTypes {
     | '/cobertura'
     | '/diagnostico'
     | '/empresa'
+    | '/medios-de-pago'
     | '/mis-tickets'
     | '/pagar'
     | '/planes'
@@ -148,6 +158,7 @@ export interface FileRouteTypes {
     | '/cobertura'
     | '/diagnostico'
     | '/empresa'
+    | '/medios-de-pago'
     | '/mis-tickets'
     | '/pagar'
     | '/planes'
@@ -162,6 +173,7 @@ export interface FileRouteTypes {
     | '/cobertura'
     | '/diagnostico'
     | '/empresa'
+    | '/medios-de-pago'
     | '/mis-tickets'
     | '/pagar'
     | '/planes'
@@ -177,6 +189,7 @@ export interface RootRouteChildren {
   CoberturaRoute: typeof CoberturaRoute
   DiagnosticoRoute: typeof DiagnosticoRoute
   EmpresaRoute: typeof EmpresaRoute
+  MediosDePagoRoute: typeof MediosDePagoRoute
   MisTicketsRoute: typeof MisTicketsRoute
   PagarRoute: typeof PagarRoute
   PlanesRoute: typeof PlanesRoute
@@ -221,6 +234,13 @@ declare module '@tanstack/react-router' {
       path: '/empresa'
       fullPath: '/empresa'
       preLoaderRoute: typeof EmpresaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/medios-de-pago': {
+      id: '/medios-de-pago'
+      path: '/medios-de-pago'
+      fullPath: '/medios-de-pago'
+      preLoaderRoute: typeof MediosDePagoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mis-tickets': {
@@ -281,6 +301,7 @@ const rootRouteChildren: RootRouteChildren = {
   CoberturaRoute: CoberturaRoute,
   DiagnosticoRoute: DiagnosticoRoute,
   EmpresaRoute: EmpresaRoute,
+  MediosDePagoRoute: MediosDePagoRoute,
   MisTicketsRoute: MisTicketsRoute,
   PagarRoute: PagarRoute,
   PlanesRoute: PlanesRoute,
