@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { CreditCard, ShieldCheck, ArrowRight } from "lucide-react";
+import { CreditCard, ShieldCheck, ArrowRight, ExternalLink, Info } from "lucide-react";
 import { PaymentMethodsSection } from "@/components/PaymentMethodsSection";
 
 export const Route = createFileRoute("/medios-de-pago")({
