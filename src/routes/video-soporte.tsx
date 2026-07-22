@@ -99,18 +99,42 @@ function VideoSoportePage() {
     }
   }, []);
 
+  const copyToClipboard = async (text: string) => {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+    } catch { /* fallback below */ }
+    try {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      const ok = document.execCommand("copy");
+      document.body.removeChild(ta);
+      return ok;
+    } catch { return false; }
+  };
+
   const handleShare = async (video: Video) => {
     const url = `${window.location.origin}/video-soporte?v=${video.id}`;
     try {
-      if (navigator.share) await navigator.share({ title: video.title, text: video.description, url });
-      else {
-        await navigator.clipboard.writeText(url);
-        setCopiedId(video.id);
-        toast.success("Link copiado al portapapeles");
-        setTimeout(() => setCopiedId(null), 1500);
+      if (navigator.share) {
+        await navigator.share({ title: video.title, text: video.description, url });
+        return;
       }
-    } catch {
-      /* cancelled */
+    } catch { /* user cancelled or blocked, fall through to copy */ }
+    const ok = await copyToClipboard(url);
+    if (ok) {
+      setCopiedId(video.id);
+      toast.success("Link copiado", { description: url });
+      setTimeout(() => setCopiedId(null), 1500);
+    } else {
+      window.prompt("Copia el link para compartir:", url);
     }
   };
 
