@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
   CreditCard, Download, Check, Calendar, Wifi, Tv, FileText, ArrowRight, AlertCircle,
+  Globe, Store, MapPin, Copy, ExternalLink, Info, Building2, Clock, ShieldCheck,
 } from "lucide-react";
 
 export const Route = createFileRoute("/pagar")({
