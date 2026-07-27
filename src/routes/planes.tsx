@@ -289,9 +289,14 @@ function PlanCard({ p, type }: { p: any; type: "internet" | "combo" }) {
       <h3 className="mt-4 font-display text-2xl font-bold">{p.name}</h3>
       <div className="mt-4 flex items-baseline gap-1">
         <span className={`font-display text-5xl font-bold ${p.popular ? "" : "text-primary"}`}>{p.speed}</span>
-        <span className="text-sm font-semibold opacity-80">Mbps</span>
+        <span className="text-sm font-semibold opacity-80">Mb</span>
       </div>
-      {type === "combo" && <p className={`mt-1 text-sm font-semibold ${p.popular ? "text-brand" : "text-brand"}`}>+{p.channels} canales HD</p>}
+      {type === "combo" && <p className="mt-1 text-sm font-semibold text-brand">{p.channels} canales Full HD</p>}
+      {p.streaming && (
+        <span className="mt-3 inline-flex items-center gap-1 rounded-full bg-brand/15 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-brand">
+          <Sparkles className="h-3 w-3" /> Incluye Win+ ó Disney+
+        </span>
+      )}
       <p className={`mt-4 text-xs uppercase tracking-wider ${p.popular ? "text-white/60" : "text-muted-foreground"}`}>Desde</p>
       <p className="font-display text-3xl font-bold">${p.price}<span className="text-sm font-normal opacity-70">/mes</span></p>
       <ul className="mt-5 space-y-2.5 text-sm">
@@ -306,40 +311,94 @@ function PlanCard({ p, type }: { p: any; type: "internet" | "combo" }) {
   );
 }
 
+function SubsidyPromo() {
+  return (
+    <Card className="overflow-hidden border-0 bg-gradient-dark p-8 text-primary-foreground shadow-glow md:p-10">
+      <div className="grid items-center gap-8 md:grid-cols-[1.1fr_1fr]">
+        <div>
+          <span className="inline-flex items-center gap-2 rounded-full bg-brand px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-wider text-primary">
+            <Zap className="h-3.5 w-3.5" /> Promoción vigente
+          </span>
+          <h2 className="mt-4 font-display text-3xl font-bold leading-tight md:text-4xl">
+            Tu Norte te <span className="text-brand">subsidia siempre</span>
+          </h2>
+          <p className="mt-3 text-white/75">
+            Si ya tienes internet con fibra óptica, todo va más rápido. Aplica términos y condiciones.
+          </p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <a href="https://wa.me/573330333696" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-primary transition hover:bg-brand/90">
+              <MessageCircle className="h-4 w-4" /> WhatsApp 333 0333696
+            </a>
+            <a href="tel:+573217560178" className="inline-flex items-center gap-2 rounded-full border border-white/25 px-5 py-2.5 text-sm font-semibold transition hover:bg-white/10">
+              <Phone className="h-4 w-4" /> 321 7560178
+            </a>
+          </div>
+        </div>
+        <div className="rounded-2xl border border-white/15 bg-white/5 p-7 text-center backdrop-blur">
+          <p className="font-display text-6xl font-bold leading-none text-brand">200<span className="ml-1 text-2xl">Mbps</span></p>
+          <p className="mt-4 font-display text-4xl font-bold">$15.000</p>
+          <p className="text-xs uppercase tracking-wider text-white/60">Mensuales</p>
+          <p className="mt-4 text-xs text-white/70">Sin cláusula de permanencia</p>
+        </div>
+      </div>
+    </Card>
+  );
+}
+
+function TvOnlyCard() {
+  return (
+    <Card className="mx-auto max-w-2xl overflow-hidden border-0 bg-white p-8 text-center shadow-card md:p-10">
+      <Tv className="mx-auto h-10 w-10 text-primary" />
+      <h3 className="mt-4 font-display text-2xl font-bold">Televisión Digital FTTH</h3>
+      <p className="mt-2 text-muted-foreground">100 canales Full HD para toda la familia.</p>
+      <p className="mt-6 font-display text-5xl font-bold text-primary">$35.000<span className="text-base font-normal text-muted-foreground">/mes</span></p>
+      <ul className="mx-auto mt-6 grid max-w-md gap-2.5 text-left text-sm sm:grid-cols-2">
+        {["100 canales Full HD", "Señal digital por fibra", "Guía de programación", "Sin cláusula de permanencia"].map((x) => (
+          <li key={x} className="flex items-center gap-2"><Check className="h-4 w-4 shrink-0 text-success" /> {x}</li>
+        ))}
+      </ul>
+      <Button asChild className="mt-7 bg-gradient-brand text-primary-foreground"><Link to="/cobertura">Contratar TV</Link></Button>
+    </Card>
+  );
+}
+
 function PlanesPage() {
   return (
     <>
       <section className="bg-gradient-hero">
         <div className="mx-auto max-w-7xl px-4 py-16 text-center md:px-6 md:py-20">
           <span className="inline-flex items-center gap-2 rounded-full border border-brand/30 bg-white/60 px-4 py-1.5 text-xs font-semibold text-primary backdrop-blur">
-            <Sparkles className="h-3.5 w-3.5 text-brand" /> Sin permanencias forzadas
+            <Sparkles className="h-3.5 w-3.5 text-brand" /> Sin cláusula de permanencia
           </span>
-          <h1 className="mt-5 font-display text-4xl font-bold tracking-tight md:text-5xl">Planes a tu <span className="text-gradient-brand">medida</span></h1>
-          <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">Internet de fibra óptica simétrica y televisión HD. Elige solo internet o nuestros combos con TV.</p>
+          <h1 className="mt-5 font-display text-4xl font-bold tracking-tight md:text-5xl">Planes de internet <span className="text-gradient-brand">más televisión</span></h1>
+          <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">Fibra óptica desde 200 Mb y 100 canales Full HD. Los planes de 700 y 900 Mb incluyen Win+ o Disney+.</p>
         </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 pt-12 md:px-6">
+        <SubsidyPromo />
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-12 md:px-6">
         <Tabs defaultValue="combo" className="w-full">
           <TabsList className="mx-auto mb-10 grid h-12 w-full max-w-md grid-cols-2 rounded-full bg-muted p-1">
             <TabsTrigger value="combo" className="rounded-full data-[state=active]:bg-gradient-brand data-[state=active]:text-primary-foreground data-[state=active]:shadow-soft">Internet + TV</TabsTrigger>
-            <TabsTrigger value="internet" className="rounded-full data-[state=active]:bg-gradient-brand data-[state=active]:text-primary-foreground data-[state=active]:shadow-soft">Solo Internet</TabsTrigger>
+            <TabsTrigger value="tv" className="rounded-full data-[state=active]:bg-gradient-brand data-[state=active]:text-primary-foreground data-[state=active]:shadow-soft">Solo TV</TabsTrigger>
           </TabsList>
 
           <TabsContent value="combo">
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
               {comboPlans.map((p) => <PlanCard key={p.name} p={p} type="combo" />)}
             </div>
-            <p className="mt-6 text-center text-xs text-muted-foreground">Combos TVN Norte — Televisión Digital FTTH con más de 180 canales en Full HD y Análogo. Precios mensuales.</p>
+            <p className="mt-6 text-center text-xs text-muted-foreground">Televisión Digital FTTH con 100 canales Full HD. Precios mensuales, aplican términos y condiciones.</p>
           </TabsContent>
-          <TabsContent value="internet">
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-              {internetPlans.map((p) => <PlanCard key={p.name} p={p} type="internet" />)}
-            </div>
-            <p className="mt-6 text-center text-xs text-muted-foreground">Planes simétricos por fibra óptica. Mayor calidad, mayor servicio, mayor velocidad al precio justo.</p>
+          <TabsContent value="tv">
+            <TvOnlyCard />
+            <p className="mt-6 text-center text-xs text-muted-foreground">Televisión por solo $35.000 con 100 canales Full HD.</p>
           </TabsContent>
         </Tabs>
       </section>
+
 
       <ChannelLineup />
 
