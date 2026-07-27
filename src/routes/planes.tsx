@@ -2,37 +2,32 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Check, Wifi, Tv, Sparkles, Search } from "lucide-react";
+import { Check, Wifi, Tv, Sparkles, Search, Phone, MessageCircle, Zap } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useMemo, useState } from "react";
 
 export const Route = createFileRoute("/planes")({
   head: () => ({
     meta: [
-      { title: "Planes de Internet y TV — Tu Norte Portal" },
-      { name: "description", content: "Compara nuestros planes de internet de fibra óptica y televisión. Desde 100 hasta 600 Mbps con canales HD." },
-      { property: "og:title", content: "Planes de Internet y TV — Tu Norte Portal" },
-      { property: "og:description", content: "Planes desde $59.900/mes con fibra óptica simétrica y televisión HD." },
+      { title: "Planes de Internet y TV en Cúcuta — Tu Norte Portal" },
+      { name: "description", content: "Internet fibra óptica + TV desde $50.000. 100 canales Full HD por $35.000. Promoción 200 Mbps por $15.000 sin cláusula de permanencia." },
+      { property: "og:title", content: "Planes de Internet y TV en Cúcuta — Tu Norte Portal" },
+      { property: "og:description", content: "Combos desde $50.000/mes con 100 canales Full HD. Planes de 700 y 900 Mb incluyen Win+ o Disney+." },
+      { property: "og:url", content: "/planes" },
     ],
+    links: [{ rel: "canonical", href: "/planes" }],
   }),
   component: PlanesPage,
 });
 
-const internetPlans = [
-  { name: "Inicio", speed: 10, price: "35.000", perks: ["10 Mbps por fibra óptica", "Plan simétrico", "Router WiFi incluido", "Soporte 24/7"] },
-  { name: "Básico", speed: 20, price: "40.000", perks: ["20 Mbps por fibra óptica", "Plan simétrico", "Router WiFi incluido", "Soporte 24/7"] },
-  { name: "Hogar", speed: 50, price: "65.000", popular: true, perks: ["50 Mbps por fibra óptica", "Plan simétrico", "WiFi de alto rendimiento", "Instalación incluida", "Soporte 24/7"] },
-  { name: "Familiar", speed: 100, price: "95.000", perks: ["100 Mbps por fibra óptica", "Plan simétrico", "WiFi de alto rendimiento", "Instalación incluida", "Soporte prioritario"] },
-  { name: "Premium", speed: 200, price: "145.000", perks: ["200 Mbps por fibra óptica", "Plan simétrico", "WiFi mesh recomendado", "Instalación incluida", "Soporte VIP"] },
+const comboPlans = [
+  { name: "200 MB + TV", speed: 200, channels: 100, price: "50.000", perks: ["200 Mb por fibra óptica", "100 canales Full HD", "TV Digital FTTH", "Sin cláusula de permanencia"] },
+  { name: "300 MB + TV", speed: 300, channels: 100, price: "65.000", perks: ["300 Mb por fibra óptica", "100 canales Full HD", "TV Digital FTTH", "Sin cláusula de permanencia"] },
+  { name: "500 MB + TV", speed: 500, channels: 100, price: "79.000", popular: true, perks: ["500 Mb por fibra óptica", "100 canales Full HD", "TV Digital FTTH", "Instalación incluida", "Sin cláusula de permanencia"] },
+  { name: "700 MB + TV", speed: 700, channels: 100, price: "119.000", streaming: true, perks: ["700 Mb por fibra óptica", "100 canales Full HD", "Incluye Win+ ó Disney+", "Instalación incluida", "Soporte prioritario"] },
+  { name: "900 MB + TV", speed: 900, channels: 100, price: "139.000", streaming: true, perks: ["900 Mb por fibra óptica", "100 canales Full HD", "Incluye Win+ ó Disney+", "Instalación incluida", "Soporte VIP"] },
 ];
 
-const comboPlans = [
-  { name: "Combo 10", speed: 10, channels: 180, price: "45.000", perks: ["10 Mbps + TV Digital FTTH", "+180 canales (Full HD y Análogo)", "1 decodificador", "Soporte 24/7"] },
-  { name: "Combo 20", speed: 20, channels: 180, price: "50.000", perks: ["20 Mbps + TV Digital FTTH", "+180 canales (Full HD y Análogo)", "1 decodificador", "Soporte 24/7"] },
-  { name: "Combo 50", speed: 50, channels: 180, price: "85.000", popular: true, perks: ["50 Mbps + TV Digital FTTH", "+180 canales (Full HD y Análogo)", "1 decodificador", "Instalación incluida", "Soporte 24/7"] },
-  { name: "Combo 100", speed: 100, channels: 180, price: "105.000", perks: ["100 Mbps + TV Digital FTTH", "+180 canales (Full HD y Análogo)", "2 decodificadores", "Instalación incluida", "Soporte prioritario"] },
-  { name: "Combo 200", speed: 200, channels: 180, price: "155.000", perks: ["200 Mbps + TV Digital FTTH", "+180 canales (Full HD y Análogo)", "2 decodificadores", "Instalación incluida", "Soporte VIP"] },
-];
 
 type Channel = { name: string; category: string; hd?: boolean };
 
