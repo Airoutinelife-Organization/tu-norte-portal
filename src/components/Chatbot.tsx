@@ -14,7 +14,7 @@ type Lead = { name?: string; phone?: string; address?: string; plan?: string };
 
 const initialMsg: Msg = {
   role: "bot",
-  text: "¡Hola! Soy Nori 👋 Tu asistente virtual de Tu Norte Portal. ¿Cómo puedo ayudarte hoy?",
+  text: "¡Hola! Soy Buen Servicio 👋 Tu asistente virtual de Tu Norte Portal. ¿Cómo puedo ayudarte hoy?",
   actions: [
     { label: "🛒 Quiero contratar", reply: "Quiero contratar un plan", intent: "buy" },
     { label: "Mi internet no funciona", reply: "Mi internet no funciona" },
