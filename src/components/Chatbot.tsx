@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Send, X, Sparkles } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-const noriAvatar = "/images/nori-avatar.png";
+const botAvatar = "/images/buen-servicio-avatar.png";
 
 type Msg = {
   role: "bot" | "user";
@@ -262,11 +262,11 @@ export function Chatbot() {
           aria-label="Abrir chat con Nori"
         >
           <div className="relative w-12 h-12 rounded-full bg-white/20 backdrop-blur flex items-center justify-center overflow-hidden">
-            <img src={noriAvatar} alt="" className="w-10 h-10 object-contain" width={40} height={40} />
+            <img src={botAvatar} alt="" className="w-10 h-10 object-contain" width={40} height={40} />
             <span className="absolute bottom-0.5 right-0.5 w-3 h-3 rounded-full bg-success ring-2 ring-white" />
           </div>
           <div className="text-left pr-1">
-            <div className="text-sm font-semibold leading-tight">Hola, soy Nori</div>
+            <div className="text-sm font-semibold leading-tight">Hola, soy Buen Servicio</div>
             <div className="text-[11px] opacity-90">Resuelvo tus dudas al instante</div>
           </div>
         </button>
@@ -276,11 +276,11 @@ export function Chatbot() {
         <div className="fixed bottom-6 right-6 z-50 w-[380px] max-w-[calc(100vw-2rem)] h-[580px] max-h-[calc(100vh-2rem)] bg-background rounded-3xl flex flex-col overflow-hidden shadow-glow border border-border animate-in slide-in-from-bottom-4 duration-300">
           <div className="p-4 bg-gradient-brand flex items-center gap-3">
             <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur flex items-center justify-center ring-2 ring-white/40 overflow-hidden">
-              <img src={noriAvatar} alt="" className="w-10 h-10 object-contain" width={40} height={40} />
+              <img src={botAvatar} alt="" className="w-10 h-10 object-contain" width={40} height={40} />
             </div>
             <div className="flex-1 text-primary-foreground">
               <div className="font-semibold flex items-center gap-1.5">
-                Nori <Sparkles className="w-3.5 h-3.5" />
+                Buen Servicio <Sparkles className="w-3.5 h-3.5" />
               </div>
               <div className="text-[11px] opacity-90 flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" /> Asistente virtual · en línea
