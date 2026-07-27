@@ -259,7 +259,7 @@ export function Chatbot() {
         <button
           onClick={() => setOpen(true)}
           className="fixed bottom-6 right-6 z-50 group flex items-center gap-3 pl-2 pr-5 py-2 rounded-full bg-gradient-brand text-primary-foreground shadow-glow hover:scale-105 transition-all animate-float"
-          aria-label="Abrir chat con Nori"
+          aria-label="Abrir chat con Buen Servicio"
         >
           <div className="relative w-12 h-12 rounded-full bg-white/20 backdrop-blur flex items-center justify-center overflow-hidden">
             <img src={botAvatar} alt="" className="w-10 h-10 object-contain" width={40} height={40} />
