@@ -24,9 +24,9 @@ export function Header() {
       <div className="w-full bg-gradient-brand text-primary-foreground">
         <div className="mx-auto flex max-w-7xl items-center justify-center gap-2 px-4 py-1.5 text-[12px] font-semibold md:justify-end md:gap-3 md:text-xs">
           <span className="hidden sm:inline opacity-90">Tu Asistente 24 horas, 7 días disponible</span>
-          <a href="tel:+16075759847" className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 ring-1 ring-white/25 transition hover:bg-white/25">
+          <a href="tel:+573330333696" className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 ring-1 ring-white/25 transition hover:bg-white/25">
             <Phone className="h-3.5 w-3.5" />
-            (607) 575-9847
+            333 033 3696
           </a>
         </div>
       </div>

@@ -285,7 +285,7 @@ function CoberturaPage() {
                         <p className="mt-1 text-sm text-muted-foreground">Estamos expandiendo nuestra red. Déjanos tus datos y te avisamos.</p>
                         <div className="mt-5 flex flex-col gap-2">
                           <Button onClick={reset} variant="outline">Probar otra dirección</Button>
-                          <a href="tel:+576075759847" className="inline-flex items-center justify-center gap-2 rounded-md bg-gradient-brand px-5 py-2 text-sm font-semibold text-primary-foreground">
+                          <a href="tel:+573330333696" className="inline-flex items-center justify-center gap-2 rounded-md bg-gradient-brand px-5 py-2 text-sm font-semibold text-primary-foreground">
                             <Phone className="h-4 w-4" /> Llamar a un asesor
                           </a>
                         </div>
