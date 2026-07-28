@@ -109,6 +109,9 @@ export function Chatbot() {
   const [leadStep, setLeadStep] = useState<LeadStep>("idle");
   const [lead, setLead] = useState<Lead>({});
   const scrollRef = useRef<HTMLDivElement>(null);
+  const sessionIdRef = useRef<string>(
+    `web-${Math.random().toString(36).slice(2)}${Date.now().toString(36)}`,
+  );
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -216,7 +219,7 @@ export function Chatbot() {
     }
   };
 
-  const send = (text: string, intent?: string) => {
+  const send = async (text: string, intent?: string) => {
     const v = text.trim();
     if (!v) return;
     setMsgs((m) => [...m, { role: "user", text: v }]);
@@ -234,12 +237,25 @@ export function Chatbot() {
       return;
     }
 
-    // Default Q&A
+    // Ask the n8n assistant, fall back to local answers
     setTyping(true);
-    setTimeout(() => {
+    try {
+      const res = await fetch("/api/public/chatbot", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: v, sessionId: sessionIdRef.current }),
+      });
+      const data = (await res.json()) as { reply?: string };
+      setTyping(false);
+      if (res.ok && data.reply) {
+        setMsgs((m) => [...m, { role: "bot", text: data.reply as string }]);
+      } else {
+        setMsgs((m) => [...m, botReply(v)]);
+      }
+    } catch {
       setTyping(false);
       setMsgs((m) => [...m, botReply(v)]);
-    }, 700);
+    }
   };
 
   const placeholder =

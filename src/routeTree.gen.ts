@@ -22,6 +22,7 @@ import { Route as PqrRouteImport } from './routes/pqr'
 import { Route as RecomendadorRouteImport } from './routes/recomendador'
 import { Route as SoporteRouteImport } from './routes/soporte'
 import { Route as TestVelocidadRouteImport } from './routes/test-velocidad'
+import { Route as ApiPublicChatbotRouteImport } from './routes/api/public/chatbot'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -88,6 +89,11 @@ const TestVelocidadRoute = TestVelocidadRouteImport.update({
   path: '/test-velocidad',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicChatbotRoute = ApiPublicChatbotRouteImport.update({
+  id: '/api/public/chatbot',
+  path: '/api/public/chatbot',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -103,6 +109,7 @@ export interface FileRoutesByFullPath {
   '/recomendador': typeof RecomendadorRoute
   '/soporte': typeof SoporteRoute
   '/test-velocidad': typeof TestVelocidadRoute
+  '/api/public/chatbot': typeof ApiPublicChatbotRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -118,6 +125,7 @@ export interface FileRoutesByTo {
   '/recomendador': typeof RecomendadorRoute
   '/soporte': typeof SoporteRoute
   '/test-velocidad': typeof TestVelocidadRoute
+  '/api/public/chatbot': typeof ApiPublicChatbotRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -134,6 +142,7 @@ export interface FileRoutesById {
   '/recomendador': typeof RecomendadorRoute
   '/soporte': typeof SoporteRoute
   '/test-velocidad': typeof TestVelocidadRoute
+  '/api/public/chatbot': typeof ApiPublicChatbotRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -151,6 +160,7 @@ export interface FileRouteTypes {
     | '/recomendador'
     | '/soporte'
     | '/test-velocidad'
+    | '/api/public/chatbot'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -166,6 +176,7 @@ export interface FileRouteTypes {
     | '/recomendador'
     | '/soporte'
     | '/test-velocidad'
+    | '/api/public/chatbot'
   id:
     | '__root__'
     | '/'
@@ -181,6 +192,7 @@ export interface FileRouteTypes {
     | '/recomendador'
     | '/soporte'
     | '/test-velocidad'
+    | '/api/public/chatbot'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -197,6 +209,7 @@ export interface RootRouteChildren {
   RecomendadorRoute: typeof RecomendadorRoute
   SoporteRoute: typeof SoporteRoute
   TestVelocidadRoute: typeof TestVelocidadRoute
+  ApiPublicChatbotRoute: typeof ApiPublicChatbotRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -292,6 +305,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TestVelocidadRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/chatbot': {
+      id: '/api/public/chatbot'
+      path: '/api/public/chatbot'
+      fullPath: '/api/public/chatbot'
+      preLoaderRoute: typeof ApiPublicChatbotRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -309,16 +329,8 @@ const rootRouteChildren: RootRouteChildren = {
   RecomendadorRoute: RecomendadorRoute,
   SoporteRoute: SoporteRoute,
   TestVelocidadRoute: TestVelocidadRoute,
+  ApiPublicChatbotRoute: ApiPublicChatbotRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
