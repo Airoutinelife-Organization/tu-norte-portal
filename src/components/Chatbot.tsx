@@ -109,6 +109,9 @@ export function Chatbot() {
   const [leadStep, setLeadStep] = useState<LeadStep>("idle");
   const [lead, setLead] = useState<Lead>({});
   const scrollRef = useRef<HTMLDivElement>(null);
+  const sessionIdRef = useRef<string>(
+    `web-${Math.random().toString(36).slice(2)}${Date.now().toString(36)}`,
+  );
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
