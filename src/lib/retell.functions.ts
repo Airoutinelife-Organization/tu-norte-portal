@@ -44,13 +44,32 @@ const TRANSFER_REASONS = new Set([
 
 const ABANDON_REASONS = new Set([
   "user_hangup",
-  "dial_no_answer",
-  "dial_busy",
-  "dial_failed",
   "voicemail_reached",
   "no_valid_payment",
   "inactivity",
 ]);
+
+// Llamadas que nunca llegaron al IVR/PBX ni se entregaron a la cola
+const NOT_PROCESSED_REASONS = new Set([
+  "dial_no_answer",
+  "dial_busy",
+  "dial_failed",
+  "no_answer",
+  "registered_call_timeout",
+  "concurrency_limit_reached",
+  "telephony_provider_unavailable",
+  "machine_detected",
+]);
+
+function isNotProcessed(reason: string, durationMs: number) {
+  return (
+    NOT_PROCESSED_REASONS.has(reason) ||
+    reason.startsWith("error") ||
+    reason.includes("dial_failed") ||
+    durationMs <= 0
+  );
+}
+
 
 function dayLabel(d: Date) {
   return d.toLocaleDateString("es-CO", { day: "2-digit", month: "short", timeZone: "America/Bogota" });
