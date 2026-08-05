@@ -147,6 +147,7 @@ export const getRetellMetrics = createServerFn({ method: "POST" })
         abandonadas: 0,
         transferidas: 0,
         noResueltas: 0,
+        noProcesadas: 0,
       });
     }
 
