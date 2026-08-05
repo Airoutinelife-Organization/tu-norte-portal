@@ -589,6 +589,77 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
           </div>
         </section>
 
+        {/* Detalle por llamada: tiempos en IA / transferencia */}
+        <section className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+          <div className="border-b border-border px-6 py-4">
+            <h2 className="text-sm font-semibold text-foreground">
+              Detalle por llamada · tiempos de IA y transferencia
+            </h2>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Tiempo hablando con la IA, tiempo intentando transferir, tiempo ya transferido a un
+              humano y si la llamada regresó a la IA.
+            </p>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-muted/50 text-xs uppercase text-muted-foreground">
+                <tr>
+                  <th className="px-6 py-3 text-left font-medium">Inicio</th>
+                  <th className="px-4 py-3 text-left font-medium">ID</th>
+                  <th className="px-4 py-3 text-right font-medium">Duración</th>
+                  <th className="px-4 py-3 text-right font-medium">En IA</th>
+                  <th className="px-4 py-3 text-right font-medium">Transfiriendo</th>
+                  <th className="px-4 py-3 text-right font-medium">Transferida</th>
+                  <th className="px-4 py-3 text-center font-medium">Regresó</th>
+                  <th className="px-6 py-3 text-left font-medium">Desenlace</th>
+                </tr>
+              </thead>
+              <tbody>
+                {callRows.length === 0 ? (
+                  <tr>
+                    <td colSpan={8} className="px-6 py-6 text-center text-muted-foreground">
+                      {loading ? "Cargando llamadas…" : "Sin llamadas en el periodo seleccionado."}
+                    </td>
+                  </tr>
+                ) : (
+                  callRows.map((c) => (
+                    <tr key={c.callId} className="border-t border-border">
+                      <td className="whitespace-nowrap px-6 py-3 font-medium text-foreground">
+                        {c.inicio}
+                      </td>
+                      <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
+                        {c.callId.slice(-8)}
+                      </td>
+                      <td className="px-4 py-3 text-right text-foreground">{fmtDur(c.duracionSeg)}</td>
+                      <td className="px-4 py-3 text-right text-foreground">{fmtDur(c.tiempoIASeg)}</td>
+                      <td className="px-4 py-3 text-right text-foreground">
+                        {c.transferida ? fmtDur(c.tiempoTransfiriendoSeg) : "—"}
+                      </td>
+                      <td className="px-4 py-3 text-right text-foreground">
+                        {c.transferida ? fmtDur(c.tiempoTransferidoSeg) : "—"}
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        {c.regreso ? (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+                            <RotateCcw className="h-3 w-3" /> Sí
+                          </span>
+                        ) : (
+                          <span className="text-xs text-muted-foreground">No</span>
+                        )}
+                      </td>
+                      <td className="whitespace-nowrap px-6 py-3 text-xs text-muted-foreground">
+                        {c.desenlace}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+
+
         <p className="pb-6 text-center text-xs text-muted-foreground">
           {loading
             ? "Cargando datos de Retell…"
