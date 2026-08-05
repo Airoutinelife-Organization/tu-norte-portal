@@ -412,17 +412,21 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
               <AreaChart data={data}>
                 <defs>
                   <linearGradient id="gA" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.35} />
-                    <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                    <stop offset="0%" stopColor="var(--chart-1)" stopOpacity={0.35} />
+                    <stop offset="100%" stopColor="var(--chart-1)" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="gR" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="var(--chart-2)" stopOpacity={0.35} />
+                    <stop offset="100%" stopColor="var(--chart-2)" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis dataKey="dia" tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
-                <YAxis tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                <XAxis dataKey="dia" tick={{ fontSize: 12 }} stroke="var(--muted-foreground)" />
+                <YAxis tick={{ fontSize: 12 }} stroke="var(--muted-foreground)" />
                 <Tooltip
                   contentStyle={{
-                    background: "hsl(var(--card))",
-                    border: "1px solid hsl(var(--border))",
+                    background: "var(--card)",
+                    border: "1px solid var(--border)",
                     borderRadius: 12,
                     fontSize: 12,
                   }}
@@ -432,7 +436,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                   type="monotone"
                   dataKey="atendidas"
                   name="Atendidas"
-                  stroke="hsl(var(--primary))"
+                  stroke="var(--chart-1)"
                   fill="url(#gA)"
                   strokeWidth={2}
                 />
@@ -440,8 +444,8 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                   type="monotone"
                   dataKey="resueltas"
                   name="Resueltas por IA"
-                  stroke="hsl(var(--accent))"
-                  fill="transparent"
+                  stroke="var(--chart-2)"
+                  fill="url(#gR)"
                   strokeWidth={2}
                 />
               </AreaChart>
