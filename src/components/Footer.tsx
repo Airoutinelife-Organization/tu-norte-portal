@@ -16,7 +16,7 @@ const reportingChannels = [
 export function Footer() {
   return (
     <footer className="bg-gradient-dark text-primary-foreground">
-      <div className="mx-auto max-w-7xl px-4 py-16 md:px-6">
+      <div className="mx-auto max-w-7xl px-4 pt-16 pb-28 md:px-6 md:pb-20">
         <div className="grid gap-10 md:grid-cols-4">
           <div>
             <div className="flex items-center gap-3">
