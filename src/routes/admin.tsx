@@ -30,6 +30,7 @@ import {
   PhoneCall,
   PhoneMissed,
   PhoneOff,
+  RotateCcw,
   ShieldCheck,
   UserRoundCheck,
   UserRoundX,
@@ -122,11 +123,12 @@ const MOTIVOS = [
 ];
 
 const PIE_COLORS = [
-  "hsl(var(--primary))",
-  "hsl(var(--accent))",
-  "hsl(var(--chart-3, var(--primary)))",
-  "hsl(var(--muted-foreground))",
-  "hsl(var(--secondary-foreground))",
+  "var(--chart-1)",
+  "var(--chart-2)",
+  "var(--chart-3)",
+  "var(--chart-5)",
+  "var(--chart-6)",
+  "var(--chart-4)",
 ];
 
 /* ---------------------------------------------------------------------- */
@@ -337,6 +339,14 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
     },
   ];
 
+  const callRows = live?.detalleLlamadas ?? [];
+
+  const fmtDur = (sec: number) => {
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    return m > 0 ? `${m}m ${s}s` : `${s}s`;
+  };
+
   return (
     <main className="min-h-screen bg-muted/30">
       <header className="border-b border-border bg-card">
@@ -402,17 +412,21 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
               <AreaChart data={data}>
                 <defs>
                   <linearGradient id="gA" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.35} />
-                    <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                    <stop offset="0%" stopColor="var(--chart-1)" stopOpacity={0.35} />
+                    <stop offset="100%" stopColor="var(--chart-1)" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="gR" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="var(--chart-2)" stopOpacity={0.35} />
+                    <stop offset="100%" stopColor="var(--chart-2)" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis dataKey="dia" tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
-                <YAxis tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                <XAxis dataKey="dia" tick={{ fontSize: 12 }} stroke="var(--muted-foreground)" />
+                <YAxis tick={{ fontSize: 12 }} stroke="var(--muted-foreground)" />
                 <Tooltip
                   contentStyle={{
-                    background: "hsl(var(--card))",
-                    border: "1px solid hsl(var(--border))",
+                    background: "var(--card)",
+                    border: "1px solid var(--border)",
                     borderRadius: 12,
                     fontSize: 12,
                   }}
@@ -422,7 +436,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                   type="monotone"
                   dataKey="atendidas"
                   name="Atendidas"
-                  stroke="hsl(var(--primary))"
+                  stroke="var(--chart-1)"
                   fill="url(#gA)"
                   strokeWidth={2}
                 />
@@ -430,8 +444,8 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                   type="monotone"
                   dataKey="resueltas"
                   name="Resueltas por IA"
-                  stroke="hsl(var(--accent))"
-                  fill="transparent"
+                  stroke="var(--chart-2)"
+                  fill="url(#gR)"
                   strokeWidth={2}
                 />
               </AreaChart>
@@ -446,52 +460,52 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
               Desenlace de las llamadas por día
             </h2>
             <div className="h-72 w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                  <XAxis
-                    dataKey="dia"
-                    tick={{ fontSize: 12 }}
-                    stroke="hsl(var(--muted-foreground))"
-                  />
-                  <YAxis tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
-                  <Tooltip
-                    contentStyle={{
-                      background: "hsl(var(--card))",
-                      border: "1px solid hsl(var(--border))",
-                      borderRadius: 12,
-                      fontSize: 12,
-                    }}
-                  />
-                  <Legend wrapperStyle={{ fontSize: 12 }} />
-                  <Bar
-                    dataKey="resueltas"
-                    name="Resueltas IA"
-                    stackId="a"
-                    fill="hsl(var(--primary))"
-                    radius={[0, 0, 0, 0]}
-                  />
-                  <Bar
-                    dataKey="transferidas"
-                    name="Transferidas"
-                    stackId="a"
-                    fill="hsl(var(--accent))"
-                  />
-                  <Bar
-                    dataKey="abandonadas"
-                    name="Abandonadas"
-                    stackId="a"
-                    fill="hsl(var(--muted-foreground))"
-                  />
-                  <Bar
-                    dataKey="noProcesadas"
-                    name="No procesadas (PBX/IVR)"
-                    stackId="a"
-                    fill="hsl(var(--destructive))"
-                    radius={[6, 6, 0, 0]}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={data}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                <XAxis
+                  dataKey="dia"
+                  tick={{ fontSize: 12 }}
+                  stroke="var(--muted-foreground)"
+                />
+                <YAxis tick={{ fontSize: 12 }} stroke="var(--muted-foreground)" />
+                <Tooltip
+                  contentStyle={{
+                    background: "var(--card)",
+                    border: "1px solid var(--border)",
+                    borderRadius: 12,
+                    fontSize: 12,
+                  }}
+                />
+                <Legend wrapperStyle={{ fontSize: 12 }} />
+                <Bar
+                  dataKey="resueltas"
+                  name="Resueltas IA"
+                  stackId="a"
+                  fill="var(--chart-2)"
+                  radius={[0, 0, 0, 0]}
+                />
+                <Bar
+                  dataKey="transferidas"
+                  name="Transferidas"
+                  stackId="a"
+                  fill="var(--chart-3)"
+                />
+                <Bar
+                  dataKey="abandonadas"
+                  name="Abandonadas"
+                  stackId="a"
+                  fill="var(--chart-5)"
+                />
+                <Bar
+                  dataKey="noProcesadas"
+                  name="No procesadas (PBX/IVR)"
+                  stackId="a"
+                  fill="var(--chart-4)"
+                  radius={[6, 6, 0, 0]}
+                />
+              </BarChart>
+            </ResponsiveContainer>
             </div>
           </section>
 
@@ -516,8 +530,8 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                   <Tooltip
                     formatter={(v: number) => `${v}%`}
                     contentStyle={{
-                      background: "hsl(var(--card))",
-                      border: "1px solid hsl(var(--border))",
+                      background: "var(--card)",
+                      border: "1px solid var(--border)",
                       borderRadius: 12,
                       fontSize: 12,
                     }}
@@ -537,13 +551,19 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={hourlyData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis dataKey="hora" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
-                <YAxis tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
+                <defs>
+                  <linearGradient id="gH" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="var(--chart-1)" stopOpacity={0.9} />
+                    <stop offset="100%" stopColor="var(--chart-5)" stopOpacity={0.7} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                <XAxis dataKey="hora" tick={{ fontSize: 11 }} stroke="var(--muted-foreground)" />
+                <YAxis tick={{ fontSize: 12 }} stroke="var(--muted-foreground)" />
                 <Tooltip
                   contentStyle={{
-                    background: "hsl(var(--card))",
-                    border: "1px solid hsl(var(--border))",
+                    background: "var(--card)",
+                    border: "1px solid var(--border)",
                     borderRadius: 12,
                     fontSize: 12,
                   }}
@@ -551,7 +571,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                 <Bar
                   dataKey="llamadas"
                   name="Llamadas"
-                  fill="hsl(var(--primary))"
+                  fill="url(#gH)"
                   radius={[6, 6, 0, 0]}
                 />
               </BarChart>

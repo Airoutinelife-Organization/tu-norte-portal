@@ -36,6 +36,12 @@
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
   --color-warning: var(--warning);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-chart-6: var(--chart-6);
 
   --font-display: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
   --font-sans: "Inter", system-ui, sans-serif;
@@ -92,6 +98,14 @@
   --border: oklch(0.9 0.015 220);
   --input: oklch(0.93 0.015 220);
   --ring: oklch(0.78 0.16 210);
+
+  /* Chart palette (distinct but on-brand) */
+  --chart-1: oklch(0.42 0.18 250);
+  --chart-2: oklch(0.7 0.16 160);
+  --chart-3: oklch(0.78 0.16 70);
+  --chart-4: oklch(0.62 0.22 25);
+  --chart-5: oklch(0.78 0.16 210);
+  --chart-6: oklch(0.55 0.14 300);
 }
 
 .dark {
@@ -114,6 +128,14 @@
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 12%);
   --ring: oklch(0.78 0.16 210);
+
+  /* Chart palette (brighter for dark surfaces) */
+  --chart-1: oklch(0.72 0.16 250);
+  --chart-2: oklch(0.75 0.18 160);
+  --chart-3: oklch(0.85 0.16 70);
+  --chart-4: oklch(0.72 0.2 25);
+  --chart-5: oklch(0.82 0.14 210);
+  --chart-6: oklch(0.7 0.16 300);
 }
 
 @layer base {
