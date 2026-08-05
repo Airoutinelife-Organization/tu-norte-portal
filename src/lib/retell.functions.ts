@@ -10,6 +10,18 @@ export type RetellDayRow = {
   noProcesadas: number;
 };
 
+export type RetellCallDetail = {
+  callId: string;
+  inicio: string;
+  duracionSeg: number;
+  tiempoIASeg: number;
+  tiempoTransfiriendoSeg: number;
+  tiempoTransferidoSeg: number;
+  transferida: boolean;
+  regreso: boolean;
+  desenlace: string;
+};
+
 export type RetellMetrics = {
   source: "retell" | "unavailable";
   error?: string;
@@ -18,6 +30,14 @@ export type RetellMetrics = {
   hourly: { hora: string; llamadas: number }[];
   motivos: { name: string; value: number }[];
   avgDurationSec: number;
+  detalleLlamadas: RetellCallDetail[];
+};
+
+type TranscriptEntry = {
+  role?: string;
+  words?: { start?: number; end?: number }[];
+  tool_call_id?: string;
+  name?: string;
 };
 
 type RetellCall = {
@@ -27,12 +47,14 @@ type RetellCall = {
   duration_ms?: number;
   disconnection_reason?: string;
   transfer_destination_number?: string;
+  transcript_with_tool_calls?: TranscriptEntry[];
   call_analysis?: {
     call_successful?: boolean;
     user_sentiment?: string;
     custom_analysis_data?: Record<string, unknown>;
   };
 };
+
 
 const TRANSFER_REASONS = new Set([
   "call_transfer",
@@ -75,6 +97,51 @@ function dayLabel(d: Date) {
   return d.toLocaleDateString("es-CO", { day: "2-digit", month: "short", timeZone: "America/Bogota" });
 }
 
+/**
+ * Estima los tiempos de la llamada a partir del transcript con tool calls:
+ * - iaSeg: segundos hablando con la IA antes de iniciar la transferencia
+ * - transfiriendoSeg: segundos entre el inicio de la transferencia y la primera
+ *   actividad posterior (conexión con el agente humano o regreso a la IA)
+ * - transferidoSeg: segundos ya transferido / posteriores al intento
+ * - regreso: hubo actividad de la IA después del intento de transferencia
+ */
+function transferTiming(c: RetellCall, durationMs: number) {
+  const totalSeg = Math.max(0, Math.round(durationMs / 1000));
+  const entries = c.transcript_with_tool_calls ?? [];
+
+  const timeOf = (e: TranscriptEntry) => {
+    const w = e.words ?? [];
+    const first = w[0]?.start;
+    return typeof first === "number" ? first : null;
+  };
+
+  const transferIdx = entries.findIndex(
+    (e) =>
+      (e.role ?? "").includes("tool") &&
+      /transfer/i.test(String(e.name ?? "")),
+  );
+
+  if (transferIdx === -1) {
+    const transferred =
+      TRANSFER_REASONS.has((c.disconnection_reason ?? "").toLowerCase()) ||
+      Boolean(c.transfer_destination_number);
+    return transferred
+      ? { iaSeg: totalSeg, transfiriendoSeg: 0, transferidoSeg: 0, regreso: false }
+      : { iaSeg: totalSeg, transfiriendoSeg: 0, transferidoSeg: 0, regreso: false };
+  }
+
+  const transferAt = timeOf(entries[transferIdx] as TranscriptEntry) ?? totalSeg;
+  const after = entries.slice(transferIdx + 1);
+  const nextAt = after.map(timeOf).find((t): t is number => typeof t === "number");
+  const regreso = after.some((e) => (e.role ?? "") === "agent" || (e.role ?? "") === "user");
+
+  const iaSeg = Math.max(0, Math.round(transferAt));
+  const transfiriendoSeg = Math.max(0, Math.round((nextAt ?? totalSeg) - transferAt));
+  const transferidoSeg = Math.max(0, totalSeg - iaSeg - transfiriendoSeg);
+
+  return { iaSeg, transfiriendoSeg, transferidoSeg, regreso };
+}
+
 export const getRetellMetrics = createServerFn({ method: "POST" })
   .inputValidator((input: { days?: number }) => ({
     days: Math.min(Math.max(Number(input?.days) || 7, 1), 90),
@@ -87,7 +154,9 @@ export const getRetellMetrics = createServerFn({ method: "POST" })
       hourly: [],
       motivos: [],
       avgDurationSec: 0,
+      detalleLlamadas: [],
     };
+
 
     const apiKey = process.env["RETELL_API_KEY"];
     if (!apiKey) return { ...empty, error: "missing_api_key" };
@@ -157,8 +226,10 @@ export const getRetellMetrics = createServerFn({ method: "POST" })
     }));
 
     const motivoCount = new Map<string, number>();
+    const detalleRaw: { ts: number; detail: RetellCallDetail }[] = [];
     let durationTotal = 0;
     let durationCount = 0;
+
 
     for (const c of calls) {
       const ts = c.start_timestamp ?? c.end_timestamp;
@@ -215,7 +286,43 @@ export const getRetellMetrics = createServerFn({ method: "POST" })
         (c.call_analysis?.user_sentiment ? `Sentimiento: ${c.call_analysis.user_sentiment}` : "Sin clasificar");
       const motivo = String(rawMotivo).slice(0, 40);
       motivoCount.set(motivo, (motivoCount.get(motivo) ?? 0) + 1);
+
+      const t = transferTiming(c, durationMs);
+      const desenlace = transferred
+        ? successful === false
+          ? "Transferida no resuelta"
+          : "Transferida"
+        : isNotProcessed(reason, durationMs)
+          ? "No procesada (PBX/IVR)"
+          : ABANDON_REASONS.has(reason) && durationMs < 20000
+            ? "Abandonada"
+            : successful === false
+              ? "No resuelta"
+              : "Resuelta por IA";
+
+      detalleRaw.push({
+        ts,
+        detail: {
+          callId: c.call_id ?? "—",
+          inicio: new Intl.DateTimeFormat("es-CO", {
+            day: "2-digit",
+            month: "short",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+            timeZone: "America/Bogota",
+          }).format(d),
+          duracionSeg: Math.round(durationMs / 1000),
+          tiempoIASeg: t.iaSeg,
+          tiempoTransfiriendoSeg: t.transfiriendoSeg,
+          tiempoTransferidoSeg: t.transferidoSeg,
+          transferida: transferred,
+          regreso: t.regreso,
+          desenlace,
+        },
+      });
     }
+
 
     const totalCalls = calls.length;
     const motivos = [...motivoCount.entries()]
@@ -232,6 +339,12 @@ export const getRetellMetrics = createServerFn({ method: "POST" })
       series: orderedDays.map((label) => byDay.get(label)!),
       hourly: hourly.filter((h) => h.llamadas > 0).length ? hourly : hourly,
       motivos,
+      detalleLlamadas: detalleRaw
+        .sort((a, b) => b.ts - a.ts)
+        .slice(0, 50)
+        .map((r) => r.detail),
+
+
       avgDurationSec: durationCount ? Math.round(durationTotal / durationCount / 1000) : 0,
     };
   });
