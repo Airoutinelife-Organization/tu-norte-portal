@@ -23,6 +23,7 @@ import {
   CheckCircle2,
   LogOut,
   PhoneCall,
+  PhoneMissed,
   PhoneOff,
   ShieldCheck,
   UserRoundCheck,
