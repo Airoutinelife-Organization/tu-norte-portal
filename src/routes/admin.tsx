@@ -560,9 +560,13 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
         </section>
 
         <p className="pb-6 text-center text-xs text-muted-foreground">
-          Datos de demostración. Puedo conectarlos a tu central telefónica o a n8n para mostrar
-          métricas reales.
+          {loading
+            ? "Cargando datos de Retell…"
+            : isLive
+              ? `Datos en vivo de Retell · ${live!.totalCalls.toLocaleString("es-CO")} llamadas · duración promedio ${live!.avgDurationSec}s`
+              : `Mostrando datos de demostración${live?.error ? ` (Retell: ${live.error})` : ""}. Verifica la API Key o el rango de fechas.`}
         </p>
+
       </div>
     </main>
   );
