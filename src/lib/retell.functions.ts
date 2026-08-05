@@ -97,6 +97,51 @@ function dayLabel(d: Date) {
   return d.toLocaleDateString("es-CO", { day: "2-digit", month: "short", timeZone: "America/Bogota" });
 }
 
+/**
+ * Estima los tiempos de la llamada a partir del transcript con tool calls:
+ * - iaSeg: segundos hablando con la IA antes de iniciar la transferencia
+ * - transfiriendoSeg: segundos entre el inicio de la transferencia y la primera
+ *   actividad posterior (conexión con el agente humano o regreso a la IA)
+ * - transferidoSeg: segundos ya transferido / posteriores al intento
+ * - regreso: hubo actividad de la IA después del intento de transferencia
+ */
+function transferTiming(c: RetellCall, durationMs: number) {
+  const totalSeg = Math.max(0, Math.round(durationMs / 1000));
+  const entries = c.transcript_with_tool_calls ?? [];
+
+  const timeOf = (e: TranscriptEntry) => {
+    const w = e.words ?? [];
+    const first = w[0]?.start;
+    return typeof first === "number" ? first : null;
+  };
+
+  const transferIdx = entries.findIndex(
+    (e) =>
+      (e.role ?? "").includes("tool") &&
+      /transfer/i.test(String(e.name ?? "")),
+  );
+
+  if (transferIdx === -1) {
+    const transferred =
+      TRANSFER_REASONS.has((c.disconnection_reason ?? "").toLowerCase()) ||
+      Boolean(c.transfer_destination_number);
+    return transferred
+      ? { iaSeg: totalSeg, transfiriendoSeg: 0, transferidoSeg: 0, regreso: false }
+      : { iaSeg: totalSeg, transfiriendoSeg: 0, transferidoSeg: 0, regreso: false };
+  }
+
+  const transferAt = timeOf(entries[transferIdx] as TranscriptEntry) ?? totalSeg;
+  const after = entries.slice(transferIdx + 1);
+  const nextAt = after.map(timeOf).find((t): t is number => typeof t === "number");
+  const regreso = after.some((e) => (e.role ?? "") === "agent" || (e.role ?? "") === "user");
+
+  const iaSeg = Math.max(0, Math.round(transferAt));
+  const transfiriendoSeg = Math.max(0, Math.round((nextAt ?? totalSeg) - transferAt));
+  const transferidoSeg = Math.max(0, totalSeg - iaSeg - transfiriendoSeg);
+
+  return { iaSeg, transfiriendoSeg, transferidoSeg, regreso };
+}
+
 export const getRetellMetrics = createServerFn({ method: "POST" })
   .inputValidator((input: { days?: number }) => ({
     days: Math.min(Math.max(Number(input?.days) || 7, 1), 90),
@@ -109,7 +154,9 @@ export const getRetellMetrics = createServerFn({ method: "POST" })
       hourly: [],
       motivos: [],
       avgDurationSec: 0,
+      detalleLlamadas: [],
     };
+
 
     const apiKey = process.env["RETELL_API_KEY"];
     if (!apiKey) return { ...empty, error: "missing_api_key" };
