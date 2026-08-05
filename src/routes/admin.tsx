@@ -123,11 +123,12 @@ const MOTIVOS = [
 ];
 
 const PIE_COLORS = [
-  "hsl(var(--primary))",
-  "hsl(var(--accent))",
-  "hsl(var(--chart-3, var(--primary)))",
-  "hsl(var(--muted-foreground))",
-  "hsl(var(--secondary-foreground))",
+  "var(--chart-1)",
+  "var(--chart-2)",
+  "var(--chart-3)",
+  "var(--chart-5)",
+  "var(--chart-6)",
+  "var(--chart-4)",
 ];
 
 /* ---------------------------------------------------------------------- */
