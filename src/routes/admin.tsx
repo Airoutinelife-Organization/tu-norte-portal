@@ -30,6 +30,7 @@ import {
   PhoneCall,
   PhoneMissed,
   PhoneOff,
+  RotateCcw,
   ShieldCheck,
   UserRoundCheck,
   UserRoundX,
