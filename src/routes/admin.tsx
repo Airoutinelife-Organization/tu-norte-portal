@@ -562,7 +562,8 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                   <th className="px-4 py-3 text-right font-medium">Resueltas IA</th>
                   <th className="px-4 py-3 text-right font-medium">Abandonadas</th>
                   <th className="px-4 py-3 text-right font-medium">Transferidas</th>
-                  <th className="px-6 py-3 text-right font-medium">No resueltas</th>
+                  <th className="px-4 py-3 text-right font-medium">No resueltas</th>
+                  <th className="px-6 py-3 text-right font-medium">No procesadas</th>
                 </tr>
               </thead>
               <tbody>
