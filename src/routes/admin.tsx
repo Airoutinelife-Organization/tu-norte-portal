@@ -70,6 +70,7 @@ type DayRow = {
   abandonadas: number;
   transferidas: number;
   noResueltas: number;
+  noProcesadas: number;
 };
 
 function buildSeries(days: number): DayRow[] {
@@ -83,6 +84,7 @@ function buildSeries(days: number): DayRow[] {
     const abandonadas = Math.round(atendidas * (0.05 + (seed % 5) / 100));
     const transferidas = Math.round(atendidas * (0.16 + (seed % 4) / 100));
     const noResueltas = Math.round(transferidas * (0.22 + (seed % 3) / 100));
+    const noProcesadas = Math.round(atendidas * (0.03 + (seed % 4) / 200));
     const resueltas = atendidas - abandonadas - transferidas;
     out.push({
       dia: d.toLocaleDateString("es-CO", { day: "2-digit", month: "short" }),
@@ -91,6 +93,7 @@ function buildSeries(days: number): DayRow[] {
       abandonadas,
       transferidas,
       noResueltas,
+      noProcesadas,
     });
   }
   return out;
