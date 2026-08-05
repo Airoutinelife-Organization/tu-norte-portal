@@ -190,15 +190,20 @@ export const getRetellMetrics = createServerFn({ method: "POST" })
       const transferred = TRANSFER_REASONS.has(reason) || Boolean(c.transfer_destination_number);
       const successful = c.call_analysis?.call_successful;
 
-      if (transferred) {
-        row.transferidas += 1;
-        if (successful === false) row.noResueltas += 1;
-      } else if (ABANDON_REASONS.has(reason) && durationMs < 20000) {
-        row.abandonadas += 1;
-      } else if (successful === false) {
-        row.noResueltas += 1;
+      if (!transferred && isNotProcessed(reason, durationMs)) {
+        row.noProcesadas += 1;
       } else {
-        row.resueltas += 1;
+        row.atendidas += 1;
+        if (transferred) {
+          row.transferidas += 1;
+          if (successful === false) row.noResueltas += 1;
+        } else if (ABANDON_REASONS.has(reason) && durationMs < 20000) {
+          row.abandonadas += 1;
+        } else if (successful === false) {
+          row.noResueltas += 1;
+        } else {
+          row.resueltas += 1;
+        }
       }
 
       const custom = c.call_analysis?.custom_analysis_data ?? {};
