@@ -7,6 +7,7 @@ export type RetellDayRow = {
   abandonadas: number;
   transferidas: number;
   noResueltas: number;
+  noProcesadas: number;
 };
 
 export type RetellMetrics = {
