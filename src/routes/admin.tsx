@@ -374,7 +374,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
 
       <div className="mx-auto max-w-7xl space-y-6 px-4 py-8">
         {/* KPIs */}
-        <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
           {kpis.map((k) => (
             <div key={k.label} className="rounded-2xl border border-border bg-card p-5 shadow-sm">
               <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10">
