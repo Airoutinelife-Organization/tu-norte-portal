@@ -224,7 +224,37 @@ const RANGES = [
 
 function Dashboard({ onLogout }: { onLogout: () => void }) {
   const [days, setDays] = useState(7);
-  const data = useMemo(() => buildSeries(days), [days]);
+  const [live, setLive] = useState<RetellMetrics | null>(null);
+  const [loading, setLoading] = useState(true);
+  const fetchMetrics = useServerFn(getRetellMetrics);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    fetchMetrics({ data: { days } })
+      .then((res) => {
+        if (!cancelled) setLive(res);
+      })
+      .catch(() => {
+        if (!cancelled) setLive(null);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [days, fetchMetrics]);
+
+  const isLive = live?.source === "retell" && live.series.length > 0;
+  const data = useMemo(
+    () => (isLive ? (live!.series as DayRow[]) : buildSeries(days)),
+    [isLive, live, days],
+  );
+  const hourlyData = isLive && live!.hourly.length ? live!.hourly : HOURLY;
+  const motivosData = isLive && live!.motivos.length ? live!.motivos : MOTIVOS;
+
+
 
   const totals = useMemo(
     () =>
