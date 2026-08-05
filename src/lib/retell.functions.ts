@@ -290,9 +290,11 @@ export const getRetellMetrics = createServerFn({ method: "POST" })
       series: orderedDays.map((label) => byDay.get(label)!),
       hourly: hourly.filter((h) => h.llamadas > 0).length ? hourly : hourly,
       motivos,
-      detalleLlamadas: detalleLlamadas
-        .sort((a, b) => b.inicio.localeCompare(a.inicio))
-        .slice(0, 50),
+      detalleLlamadas: detalleRaw
+        .sort((a, b) => b.ts - a.ts)
+        .slice(0, 50)
+        .map((r) => r.detail),
+
 
       avgDurationSec: durationCount ? Math.round(durationTotal / durationCount / 1000) : 0,
     };
