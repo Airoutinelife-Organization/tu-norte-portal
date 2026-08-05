@@ -469,14 +469,14 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
-                    data={MOTIVOS}
+                    data={motivosData}
                     dataKey="value"
                     nameKey="name"
                     innerRadius={55}
                     outerRadius={90}
                     paddingAngle={3}
                   >
-                    {MOTIVOS.map((m, i) => (
+                    {motivosData.map((m, i) => (
                       <Cell key={m.name} fill={PIE_COLORS[i % PIE_COLORS.length]} />
                     ))}
                   </Pie>
@@ -503,7 +503,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
           </h2>
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={HOURLY}>
+              <BarChart data={hourlyData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis dataKey="hora" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
                 <YAxis tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
