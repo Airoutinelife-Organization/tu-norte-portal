@@ -179,8 +179,10 @@ export const getRetellMetrics = createServerFn({ method: "POST" })
     }));
 
     const motivoCount = new Map<string, number>();
+    const detalleRaw: { ts: number; detail: RetellCallDetail }[] = [];
     let durationTotal = 0;
     let durationCount = 0;
+
 
     for (const c of calls) {
       const ts = c.start_timestamp ?? c.end_timestamp;
