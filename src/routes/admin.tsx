@@ -574,7 +574,8 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                     <td className="px-4 py-3 text-right text-foreground">{r.resueltas}</td>
                     <td className="px-4 py-3 text-right text-foreground">{r.abandonadas}</td>
                     <td className="px-4 py-3 text-right text-foreground">{r.transferidas}</td>
-                    <td className="px-6 py-3 text-right text-foreground">{r.noResueltas}</td>
+                    <td className="px-4 py-3 text-right text-foreground">{r.noResueltas}</td>
+                    <td className="px-6 py-3 text-right text-foreground">{r.noProcesadas ?? 0}</td>
                   </tr>
                 ))}
               </tbody>
