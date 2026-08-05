@@ -23,6 +23,7 @@ import {
   CheckCircle2,
   LogOut,
   PhoneCall,
+  PhoneMissed,
   PhoneOff,
   ShieldCheck,
   UserRoundCheck,
@@ -70,6 +71,7 @@ type DayRow = {
   abandonadas: number;
   transferidas: number;
   noResueltas: number;
+  noProcesadas: number;
 };
 
 function buildSeries(days: number): DayRow[] {
@@ -83,6 +85,7 @@ function buildSeries(days: number): DayRow[] {
     const abandonadas = Math.round(atendidas * (0.05 + (seed % 5) / 100));
     const transferidas = Math.round(atendidas * (0.16 + (seed % 4) / 100));
     const noResueltas = Math.round(transferidas * (0.22 + (seed % 3) / 100));
+    const noProcesadas = Math.round(atendidas * (0.03 + (seed % 4) / 200));
     const resueltas = atendidas - abandonadas - transferidas;
     out.push({
       dia: d.toLocaleDateString("es-CO", { day: "2-digit", month: "short" }),
@@ -91,6 +94,7 @@ function buildSeries(days: number): DayRow[] {
       abandonadas,
       transferidas,
       noResueltas,
+      noProcesadas,
     });
   }
   return out;
@@ -268,14 +272,24 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
           abandonadas: a.abandonadas + r.abandonadas,
           transferidas: a.transferidas + r.transferidas,
           noResueltas: a.noResueltas + r.noResueltas,
+          noProcesadas: a.noProcesadas + (r.noProcesadas ?? 0),
         }),
-        { atendidas: 0, resueltas: 0, abandonadas: 0, transferidas: 0, noResueltas: 0 },
+        {
+          atendidas: 0,
+          resueltas: 0,
+          abandonadas: 0,
+          transferidas: 0,
+          noResueltas: 0,
+          noProcesadas: 0,
+        },
       ),
     [data],
   );
 
   const pct = (n: number) =>
     totals.atendidas ? `${((n / totals.atendidas) * 100).toFixed(1)}%` : "0%";
+
+  const totalEntrantes = totals.atendidas + totals.noProcesadas;
 
   const kpis = [
     {
@@ -307,6 +321,14 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
       value: totals.noResueltas,
       hint: `${pct(totals.noResueltas)} de las atendidas`,
       icon: UserRoundX,
+    },
+    {
+      label: "No procesadas por PBX / IVR",
+      value: totals.noProcesadas,
+      hint: totalEntrantes
+        ? `${((totals.noProcesadas / totalEntrantes) * 100).toFixed(1)}% de las entrantes · no entregadas a la cola`
+        : "No entregadas a la cola",
+      icon: PhoneMissed,
     },
   ];
 
@@ -352,7 +374,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
 
       <div className="mx-auto max-w-7xl space-y-6 px-4 py-8">
         {/* KPIs */}
-        <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
           {kpis.map((k) => (
             <div key={k.label} className="rounded-2xl border border-border bg-card p-5 shadow-sm">
               <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10">
@@ -455,6 +477,12 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                     name="Abandonadas"
                     stackId="a"
                     fill="hsl(var(--muted-foreground))"
+                  />
+                  <Bar
+                    dataKey="noProcesadas"
+                    name="No procesadas (PBX/IVR)"
+                    stackId="a"
+                    fill="hsl(var(--destructive))"
                     radius={[6, 6, 0, 0]}
                   />
                 </BarChart>
@@ -540,7 +568,8 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                   <th className="px-4 py-3 text-right font-medium">Resueltas IA</th>
                   <th className="px-4 py-3 text-right font-medium">Abandonadas</th>
                   <th className="px-4 py-3 text-right font-medium">Transferidas</th>
-                  <th className="px-6 py-3 text-right font-medium">No resueltas</th>
+                  <th className="px-4 py-3 text-right font-medium">No resueltas</th>
+                  <th className="px-6 py-3 text-right font-medium">No procesadas</th>
                 </tr>
               </thead>
               <tbody>
@@ -551,7 +580,8 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                     <td className="px-4 py-3 text-right text-foreground">{r.resueltas}</td>
                     <td className="px-4 py-3 text-right text-foreground">{r.abandonadas}</td>
                     <td className="px-4 py-3 text-right text-foreground">{r.transferidas}</td>
-                    <td className="px-6 py-3 text-right text-foreground">{r.noResueltas}</td>
+                    <td className="px-4 py-3 text-right text-foreground">{r.noResueltas}</td>
+                    <td className="px-6 py-3 text-right text-foreground">{r.noProcesadas ?? 0}</td>
                   </tr>
                 ))}
               </tbody>

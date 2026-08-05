@@ -7,6 +7,7 @@ export type RetellDayRow = {
   abandonadas: number;
   transferidas: number;
   noResueltas: number;
+  noProcesadas: number;
 };
 
 export type RetellMetrics = {
@@ -43,13 +44,32 @@ const TRANSFER_REASONS = new Set([
 
 const ABANDON_REASONS = new Set([
   "user_hangup",
-  "dial_no_answer",
-  "dial_busy",
-  "dial_failed",
   "voicemail_reached",
   "no_valid_payment",
   "inactivity",
 ]);
+
+// Llamadas que nunca llegaron al IVR/PBX ni se entregaron a la cola
+const NOT_PROCESSED_REASONS = new Set([
+  "dial_no_answer",
+  "dial_busy",
+  "dial_failed",
+  "no_answer",
+  "registered_call_timeout",
+  "concurrency_limit_reached",
+  "telephony_provider_unavailable",
+  "machine_detected",
+]);
+
+function isNotProcessed(reason: string, durationMs: number) {
+  return (
+    NOT_PROCESSED_REASONS.has(reason) ||
+    reason.startsWith("error") ||
+    reason.includes("dial_failed") ||
+    durationMs <= 0
+  );
+}
+
 
 function dayLabel(d: Date) {
   return d.toLocaleDateString("es-CO", { day: "2-digit", month: "short", timeZone: "America/Bogota" });
@@ -127,6 +147,7 @@ export const getRetellMetrics = createServerFn({ method: "POST" })
         abandonadas: 0,
         transferidas: 0,
         noResueltas: 0,
+        noProcesadas: 0,
       });
     }
 
@@ -169,15 +190,20 @@ export const getRetellMetrics = createServerFn({ method: "POST" })
       const transferred = TRANSFER_REASONS.has(reason) || Boolean(c.transfer_destination_number);
       const successful = c.call_analysis?.call_successful;
 
-      if (transferred) {
-        row.transferidas += 1;
-        if (successful === false) row.noResueltas += 1;
-      } else if (ABANDON_REASONS.has(reason) && durationMs < 20000) {
-        row.abandonadas += 1;
-      } else if (successful === false) {
-        row.noResueltas += 1;
+      if (!transferred && isNotProcessed(reason, durationMs)) {
+        row.noProcesadas += 1;
       } else {
-        row.resueltas += 1;
+        row.atendidas += 1;
+        if (transferred) {
+          row.transferidas += 1;
+          if (successful === false) row.noResueltas += 1;
+        } else if (ABANDON_REASONS.has(reason) && durationMs < 20000) {
+          row.abandonadas += 1;
+        } else if (successful === false) {
+          row.noResueltas += 1;
+        } else {
+          row.resueltas += 1;
+        }
       }
 
       const custom = c.call_analysis?.custom_analysis_data ?? {};
