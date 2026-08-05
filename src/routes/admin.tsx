@@ -1,6 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { getRetellMetrics, type RetellMetrics } from "@/lib/retell.functions";
+import {
+  getRetellMetrics,
+  type RetellCallDetail,
+  type RetellMetrics,
+} from "@/lib/retell.functions";
+
 import { useEffect, useMemo, useState } from "react";
 
 import {
