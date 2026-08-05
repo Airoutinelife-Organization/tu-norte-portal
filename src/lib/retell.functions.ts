@@ -237,7 +237,43 @@ export const getRetellMetrics = createServerFn({ method: "POST" })
         (c.call_analysis?.user_sentiment ? `Sentimiento: ${c.call_analysis.user_sentiment}` : "Sin clasificar");
       const motivo = String(rawMotivo).slice(0, 40);
       motivoCount.set(motivo, (motivoCount.get(motivo) ?? 0) + 1);
+
+      const t = transferTiming(c, durationMs);
+      const desenlace = transferred
+        ? successful === false
+          ? "Transferida no resuelta"
+          : "Transferida"
+        : isNotProcessed(reason, durationMs)
+          ? "No procesada (PBX/IVR)"
+          : ABANDON_REASONS.has(reason) && durationMs < 20000
+            ? "Abandonada"
+            : successful === false
+              ? "No resuelta"
+              : "Resuelta por IA";
+
+      detalleRaw.push({
+        ts,
+        detail: {
+          callId: c.call_id ?? "—",
+          inicio: new Intl.DateTimeFormat("es-CO", {
+            day: "2-digit",
+            month: "short",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+            timeZone: "America/Bogota",
+          }).format(d),
+          duracionSeg: Math.round(durationMs / 1000),
+          tiempoIASeg: t.iaSeg,
+          tiempoTransfiriendoSeg: t.transfiriendoSeg,
+          tiempoTransferidoSeg: t.transferidoSeg,
+          transferida: transferred,
+          regreso: t.regreso,
+          desenlace,
+        },
+      });
     }
+
 
     const totalCalls = calls.length;
     const motivos = [...motivoCount.entries()]
