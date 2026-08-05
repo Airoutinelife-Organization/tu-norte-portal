@@ -530,8 +530,8 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                   <Tooltip
                     formatter={(v: number) => `${v}%`}
                     contentStyle={{
-                      background: "hsl(var(--card))",
-                      border: "1px solid hsl(var(--border))",
+                      background: "var(--card)",
+                      border: "1px solid var(--border)",
                       borderRadius: 12,
                       fontSize: 12,
                     }}
