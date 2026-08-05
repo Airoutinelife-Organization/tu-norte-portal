@@ -10,6 +10,18 @@ export type RetellDayRow = {
   noProcesadas: number;
 };
 
+export type RetellCallDetail = {
+  callId: string;
+  inicio: string;
+  duracionSeg: number;
+  tiempoIASeg: number;
+  tiempoTransfiriendoSeg: number;
+  tiempoTransferidoSeg: number;
+  transferida: boolean;
+  regreso: boolean;
+  desenlace: string;
+};
+
 export type RetellMetrics = {
   source: "retell" | "unavailable";
   error?: string;
@@ -18,6 +30,14 @@ export type RetellMetrics = {
   hourly: { hora: string; llamadas: number }[];
   motivos: { name: string; value: number }[];
   avgDurationSec: number;
+  detalleLlamadas: RetellCallDetail[];
+};
+
+type TranscriptEntry = {
+  role?: string;
+  words?: { start?: number; end?: number }[];
+  tool_call_id?: string;
+  name?: string;
 };
 
 type RetellCall = {
@@ -27,12 +47,14 @@ type RetellCall = {
   duration_ms?: number;
   disconnection_reason?: string;
   transfer_destination_number?: string;
+  transcript_with_tool_calls?: TranscriptEntry[];
   call_analysis?: {
     call_successful?: boolean;
     user_sentiment?: string;
     custom_analysis_data?: Record<string, unknown>;
   };
 };
+
 
 const TRANSFER_REASONS = new Set([
   "call_transfer",
