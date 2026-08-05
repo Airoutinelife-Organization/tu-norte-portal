@@ -106,7 +106,9 @@ export function Footer() {
           <div className="flex gap-6">
             <Link to="/" className="hover:text-brand">Política de Privacidad</Link>
             <Link to="/" className="hover:text-brand">Términos y Condiciones</Link>
+            <Link to="/admin" className="hover:text-brand">Admin</Link>
           </div>
+
         </div>
       </div>
     </footer>
