@@ -271,14 +271,24 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
           abandonadas: a.abandonadas + r.abandonadas,
           transferidas: a.transferidas + r.transferidas,
           noResueltas: a.noResueltas + r.noResueltas,
+          noProcesadas: a.noProcesadas + (r.noProcesadas ?? 0),
         }),
-        { atendidas: 0, resueltas: 0, abandonadas: 0, transferidas: 0, noResueltas: 0 },
+        {
+          atendidas: 0,
+          resueltas: 0,
+          abandonadas: 0,
+          transferidas: 0,
+          noResueltas: 0,
+          noProcesadas: 0,
+        },
       ),
     [data],
   );
 
   const pct = (n: number) =>
     totals.atendidas ? `${((n / totals.atendidas) * 100).toFixed(1)}%` : "0%";
+
+  const totalEntrantes = totals.atendidas + totals.noProcesadas;
 
   const kpis = [
     {
@@ -310,6 +320,14 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
       value: totals.noResueltas,
       hint: `${pct(totals.noResueltas)} de las atendidas`,
       icon: UserRoundX,
+    },
+    {
+      label: "No procesadas por PBX / IVR",
+      value: totals.noProcesadas,
+      hint: totalEntrantes
+        ? `${((totals.noProcesadas / totalEntrantes) * 100).toFixed(1)}% de las entrantes · no entregadas a la cola`
+        : "No entregadas a la cola",
+      icon: PhoneMissed,
     },
   ];
 
