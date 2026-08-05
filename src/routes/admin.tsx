@@ -551,13 +551,19 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={hourlyData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis dataKey="hora" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
-                <YAxis tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
+                <defs>
+                  <linearGradient id="gH" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="var(--chart-1)" stopOpacity={0.9} />
+                    <stop offset="100%" stopColor="var(--chart-5)" stopOpacity={0.7} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                <XAxis dataKey="hora" tick={{ fontSize: 11 }} stroke="var(--muted-foreground)" />
+                <YAxis tick={{ fontSize: 12 }} stroke="var(--muted-foreground)" />
                 <Tooltip
                   contentStyle={{
-                    background: "hsl(var(--card))",
-                    border: "1px solid hsl(var(--border))",
+                    background: "var(--card)",
+                    border: "1px solid var(--border)",
                     borderRadius: 12,
                     fontSize: 12,
                   }}
@@ -565,7 +571,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                 <Bar
                   dataKey="llamadas"
                   name="Llamadas"
-                  fill="hsl(var(--primary))"
+                  fill="url(#gH)"
                   radius={[6, 6, 0, 0]}
                 />
               </BarChart>
