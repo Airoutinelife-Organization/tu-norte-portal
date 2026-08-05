@@ -477,6 +477,12 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                     name="Abandonadas"
                     stackId="a"
                     fill="hsl(var(--muted-foreground))"
+                  />
+                  <Bar
+                    dataKey="noProcesadas"
+                    name="No procesadas (PBX/IVR)"
+                    stackId="a"
+                    fill="hsl(var(--destructive))"
                     radius={[6, 6, 0, 0]}
                   />
                 </BarChart>
