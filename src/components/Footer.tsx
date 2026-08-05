@@ -16,7 +16,7 @@ const reportingChannels = [
 export function Footer() {
   return (
     <footer className="bg-gradient-dark text-primary-foreground">
-      <div className="mx-auto max-w-7xl px-4 py-16 md:px-6">
+      <div className="mx-auto max-w-7xl px-4 pt-16 pb-28 md:px-6 md:pb-20">
         <div className="grid gap-10 md:grid-cols-4">
           <div>
             <div className="flex items-center gap-3">
@@ -101,13 +101,14 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-xs text-white/50 md:flex-row">
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-xs text-white/50 md:flex-row md:pr-56">
           <p>© {new Date().getFullYear()} Tu Norte TV. Todos los derechos reservados.</p>
-          <div className="flex gap-6">
+          <div className="flex flex-wrap justify-center gap-6">
             <Link to="/" className="hover:text-brand">Política de Privacidad</Link>
             <Link to="/" className="hover:text-brand">Términos y Condiciones</Link>
-            <Link to="/admin" className="hover:text-brand">Admin</Link>
+            <Link to="/admin" className="rounded-full bg-white/10 px-3 py-1 font-semibold text-white/80 hover:bg-brand hover:text-primary">Admin</Link>
           </div>
+
 
         </div>
       </div>
