@@ -338,6 +338,14 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
     },
   ];
 
+  const callRows = live?.detalleLlamadas ?? [];
+
+  const fmtDur = (sec: number) => {
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    return m > 0 ? `${m}m ${s}s` : `${s}s`;
+  };
+
   return (
     <main className="min-h-screen bg-muted/30">
       <header className="border-b border-border bg-card">
