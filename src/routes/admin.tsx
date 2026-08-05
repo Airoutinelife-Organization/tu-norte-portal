@@ -1,5 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { getRetellMetrics, type RetellMetrics } from "@/lib/retell.functions";
 import { useEffect, useMemo, useState } from "react";
+
 import {
   Area,
   AreaChart,
@@ -224,7 +227,37 @@ const RANGES = [
 
 function Dashboard({ onLogout }: { onLogout: () => void }) {
   const [days, setDays] = useState(7);
-  const data = useMemo(() => buildSeries(days), [days]);
+  const [live, setLive] = useState<RetellMetrics | null>(null);
+  const [loading, setLoading] = useState(true);
+  const fetchMetrics = useServerFn(getRetellMetrics);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    fetchMetrics({ data: { days } })
+      .then((res) => {
+        if (!cancelled) setLive(res);
+      })
+      .catch(() => {
+        if (!cancelled) setLive(null);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [days, fetchMetrics]);
+
+  const isLive = live?.source === "retell" && live.series.length > 0;
+  const data = useMemo(
+    () => (isLive ? (live!.series as DayRow[]) : buildSeries(days)),
+    [isLive, live, days],
+  );
+  const hourlyData = isLive && live!.hourly.length ? live!.hourly : HOURLY;
+  const motivosData = isLive && live!.motivos.length ? live!.motivos : MOTIVOS;
+
+
 
   const totals = useMemo(
     () =>
@@ -436,14 +469,14 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
-                    data={MOTIVOS}
+                    data={motivosData}
                     dataKey="value"
                     nameKey="name"
                     innerRadius={55}
                     outerRadius={90}
                     paddingAngle={3}
                   >
-                    {MOTIVOS.map((m, i) => (
+                    {motivosData.map((m, i) => (
                       <Cell key={m.name} fill={PIE_COLORS[i % PIE_COLORS.length]} />
                     ))}
                   </Pie>
@@ -470,7 +503,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
           </h2>
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={HOURLY}>
+              <BarChart data={hourlyData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis dataKey="hora" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
                 <YAxis tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
@@ -527,9 +560,13 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
         </section>
 
         <p className="pb-6 text-center text-xs text-muted-foreground">
-          Datos de demostración. Puedo conectarlos a tu central telefónica o a n8n para mostrar
-          métricas reales.
+          {loading
+            ? "Cargando datos de Retell…"
+            : isLive
+              ? `Datos en vivo de Retell · ${live!.totalCalls.toLocaleString("es-CO")} llamadas · duración promedio ${live!.avgDurationSec}s`
+              : `Mostrando datos de demostración${live?.error ? ` (Retell: ${live.error})` : ""}. Verifica la API Key o el rango de fechas.`}
         </p>
+
       </div>
     </main>
   );
