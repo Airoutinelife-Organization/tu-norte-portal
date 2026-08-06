@@ -300,14 +300,13 @@ export const getRetellMetrics = createServerFn({ method: "POST" })
       const desenlace = transferred
         ? successful === false
           ? "Transferida no resuelta"
-          : "Transferida"
+          : "Escalada en el proceso"
         : isNotProcessed(reason, durationMs)
           ? "No procesada (PBX/IVR)"
-          : ABANDON_REASONS.has(reason) && durationMs < 20000
-            ? "Abandonada"
-            : successful === false
-              ? "No resuelta"
-              : "Resuelta por IA";
+          : abandonada
+            ? "Abandonada por el usuario"
+            : "Resuelta por IA";
+
 
       detalleRaw.push({
         ts,
