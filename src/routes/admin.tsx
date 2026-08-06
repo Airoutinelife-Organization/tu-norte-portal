@@ -662,10 +662,10 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
 
         <p className="pb-6 text-center text-xs text-muted-foreground">
           {loading
-            ? "Cargando datos de Retell…"
+            ? "Cargando datos de AIRP…"
             : isLive
-              ? `Datos en vivo de Retell · ${live!.totalCalls.toLocaleString("es-CO")} llamadas · duración promedio ${live!.avgDurationSec}s`
-              : `Sin datos de Retell${live?.error ? ` (${live.error})` : ""}. Verifica la API Key o el rango de fechas.`}
+              ? `Datos en vivo desde AIRP · ${live!.totalCalls.toLocaleString("es-CO")} llamadas · duración promedio ${live!.avgDurationSec}s`
+              : `Sin datos de AIRP${live?.error ? ` (${live.error})` : ""}. Verifica la API Key o el rango de fechas.`}
         </p>
 
       </div>
