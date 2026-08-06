@@ -644,7 +644,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
               <tbody>
                 {callRows.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="px-6 py-6 text-center text-muted-foreground">
+                    <td colSpan={9} className="px-6 py-6 text-center text-muted-foreground">
                       {loading ? "Cargando llamadas…" : "Sin llamadas en el periodo seleccionado."}
                     </td>
                   </tr>
