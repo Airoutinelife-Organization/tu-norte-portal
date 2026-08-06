@@ -308,35 +308,36 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
     {
       label: "Resueltas por IA",
       value: totals.resueltas,
-      hint: `${pct(totals.resueltas)} de las atendidas`,
+      hint: `${pct(totals.resueltas)} · finalizan sin transferencia`,
       icon: CheckCircle2,
     },
     {
       label: "Abandonadas durante IA",
       value: totals.abandonadas,
-      hint: `${pct(totals.abandonadas)} de las atendidas`,
+      hint: `${pct(totals.abandonadas)} · el usuario colgó frustrado`,
       icon: PhoneOff,
     },
     {
-      label: "Transferidas a humano",
+      label: "Escaladas dentro del proceso",
       value: totals.transferidas,
-      hint: `${pct(totals.transferidas)} de las atendidas`,
+      hint: `${pct(totals.transferidas)} · requieren gestión humana`,
       icon: UserRoundCheck,
     },
     {
       label: "Transferidas no resueltas",
       value: totals.noResueltas,
-      hint: `${pct(totals.noResueltas)} de las atendidas`,
+      hint: `${pct(totals.noResueltas)} · la IA no pudo resolver`,
       icon: UserRoundX,
     },
     {
       label: "No procesadas por PBX / IVR",
       value: totals.noProcesadas,
       hint: totalEntrantes
-        ? `${((totals.noProcesadas / totalEntrantes) * 100).toFixed(1)}% de las entrantes · no entregadas a la cola`
-        : "No entregadas a la cola",
+        ? `${((totals.noProcesadas / totalEntrantes) * 100).toFixed(1)}% de las entrantes · rechazadas o sin entrar a la cola`
+        : "Rechazadas por el PBX o sin entrar a la cola",
       icon: PhoneMissed,
     },
+
   ];
 
   const callRows = live?.detalleLlamadas ?? [];
