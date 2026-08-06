@@ -67,7 +67,7 @@ const ADMIN_PASS = "TuNorte2026*";
 const STORAGE_KEY = "tunorte_admin_session";
 
 /* ---------------------------------------------------------------------- */
-/* Datos demo (reemplazables por tu API / n8n)                             */
+/* Tipos (todos los datos provienen de la API de Retell)                    */
 /* ---------------------------------------------------------------------- */
 
 type DayRow = {
@@ -80,47 +80,6 @@ type DayRow = {
   noProcesadas: number;
 };
 
-function buildSeries(days: number): DayRow[] {
-  const out: DayRow[] = [];
-  const today = new Date();
-  for (let i = days - 1; i >= 0; i--) {
-    const d = new Date(today);
-    d.setDate(today.getDate() - i);
-    const seed = (d.getDate() * 37 + d.getMonth() * 11) % 23;
-    const atendidas = 120 + seed * 7;
-    const abandonadas = Math.round(atendidas * (0.05 + (seed % 5) / 100));
-    const transferidas = Math.round(atendidas * (0.16 + (seed % 4) / 100));
-    const noResueltas = Math.round(transferidas * (0.22 + (seed % 3) / 100));
-    const noProcesadas = Math.round(atendidas * (0.03 + (seed % 4) / 200));
-    const resueltas = atendidas - abandonadas - transferidas;
-    out.push({
-      dia: d.toLocaleDateString("es-CO", { day: "2-digit", month: "short" }),
-      atendidas,
-      resueltas,
-      abandonadas,
-      transferidas,
-      noResueltas,
-      noProcesadas,
-    });
-  }
-  return out;
-}
-
-const HOURLY = Array.from({ length: 12 }, (_, i) => {
-  const h = 7 + i;
-  return {
-    hora: `${String(h).padStart(2, "0")}:00`,
-    llamadas: 8 + Math.round(22 * Math.sin((i / 11) * Math.PI) + (i % 3) * 4),
-  };
-});
-
-const MOTIVOS = [
-  { name: "Soporte técnico", value: 38 },
-  { name: "Facturación / pagos", value: 27 },
-  { name: "Ventas y planes", value: 18 },
-  { name: "Cobertura", value: 10 },
-  { name: "PQR", value: 7 },
-];
 
 const PIE_COLORS = [
   "var(--chart-1)",
