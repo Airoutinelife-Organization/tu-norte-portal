@@ -665,7 +665,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
             ? "Cargando datos de Retell…"
             : isLive
               ? `Datos en vivo de Retell · ${live!.totalCalls.toLocaleString("es-CO")} llamadas · duración promedio ${live!.avgDurationSec}s`
-              : `Mostrando datos de demostración${live?.error ? ` (Retell: ${live.error})` : ""}. Verifica la API Key o el rango de fechas.`}
+              : `Sin datos de Retell${live?.error ? ` (${live.error})` : ""}. Verifica la API Key o el rango de fechas.`}
         </p>
 
       </div>
