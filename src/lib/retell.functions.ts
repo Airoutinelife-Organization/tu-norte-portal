@@ -20,6 +20,7 @@ export type RetellCallDetail = {
   transferida: boolean;
   regreso: boolean;
   desenlace: string;
+  score: number | null;
 };
 
 export type RetellMetrics = {
@@ -296,7 +297,20 @@ export const getRetellMetrics = createServerFn({ method: "POST" })
       const motivo = String(rawMotivo).slice(0, 40);
       motivoCount.set(motivo, (motivoCount.get(motivo) ?? 0) + 1);
 
+      const scoreRaw =
+        custom["score"] ??
+        custom["puntaje"] ??
+        custom["calificacion"] ??
+        custom["calificación"] ??
+        custom["rating"] ??
+        custom["csat"] ??
+        custom["encuesta"] ??
+        custom["nota"];
+      const scoreNum = Number(String(scoreRaw ?? "").replace(",", "."));
+      const score = Number.isFinite(scoreNum) && String(scoreRaw ?? "").trim() !== "" ? scoreNum : null;
+
       const t = transferTiming(c, durationMs);
+
       const desenlace = transferred
         ? successful === false
           ? "Transferida no resuelta"
@@ -327,6 +341,7 @@ export const getRetellMetrics = createServerFn({ method: "POST" })
           transferida: transferred,
           regreso: t.regreso,
           desenlace,
+          score,
         },
       });
     }

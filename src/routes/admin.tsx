@@ -637,13 +637,14 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                   <th className="px-4 py-3 text-right font-medium">Transfiriendo</th>
                   <th className="px-4 py-3 text-right font-medium">Transferida</th>
                   <th className="px-4 py-3 text-center font-medium">Regresó</th>
+                  <th className="px-4 py-3 text-center font-medium">Score</th>
                   <th className="px-6 py-3 text-left font-medium">Desenlace</th>
                 </tr>
               </thead>
               <tbody>
                 {callRows.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="px-6 py-6 text-center text-muted-foreground">
+                    <td colSpan={9} className="px-6 py-6 text-center text-muted-foreground">
                       {loading ? "Cargando llamadas…" : "Sin llamadas en el periodo seleccionado."}
                     </td>
                   </tr>
@@ -671,6 +672,23 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                           </span>
                         ) : (
                           <span className="text-xs text-muted-foreground">No</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        {c.score !== null && c.score !== undefined ? (
+                          <span
+                            className={`inline-flex min-w-8 items-center justify-center rounded-full px-2 py-0.5 text-xs font-semibold ${
+                              c.score >= 4
+                                ? "bg-emerald-500/10 text-emerald-600"
+                                : c.score >= 3
+                                  ? "bg-amber-500/10 text-amber-600"
+                                  : "bg-destructive/10 text-destructive"
+                            }`}
+                          >
+                            {c.score}
+                          </span>
+                        ) : (
+                          <span className="text-xs text-muted-foreground">—</span>
                         )}
                       </td>
                       <td className="whitespace-nowrap px-6 py-3 text-xs text-muted-foreground">
