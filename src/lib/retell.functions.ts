@@ -20,6 +20,7 @@ export type RetellCallDetail = {
   transferida: boolean;
   regreso: boolean;
   desenlace: string;
+  score: number | null;
 };
 
 export type RetellMetrics = {
