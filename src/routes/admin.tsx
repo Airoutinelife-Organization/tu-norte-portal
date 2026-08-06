@@ -219,13 +219,10 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
     };
   }, [days, fetchMetrics]);
 
-  const isLive = live?.source === "retell" && live.series.length > 0;
-  const data = useMemo(
-    () => (isLive ? (live!.series as DayRow[]) : buildSeries(days)),
-    [isLive, live, days],
-  );
-  const hourlyData = isLive && live!.hourly.length ? live!.hourly : HOURLY;
-  const motivosData = isLive && live!.motivos.length ? live!.motivos : MOTIVOS;
+  const isLive = live?.source === "retell";
+  const data = useMemo<DayRow[]>(() => (live?.series as DayRow[]) ?? [], [live]);
+  const hourlyData = live?.hourly ?? [];
+  const motivosData = live?.motivos ?? [];
 
 
 
