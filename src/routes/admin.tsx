@@ -674,6 +674,23 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                           <span className="text-xs text-muted-foreground">No</span>
                         )}
                       </td>
+                      <td className="px-4 py-3 text-center">
+                        {c.score !== null && c.score !== undefined ? (
+                          <span
+                            className={`inline-flex min-w-8 items-center justify-center rounded-full px-2 py-0.5 text-xs font-semibold ${
+                              c.score >= 4
+                                ? "bg-emerald-500/10 text-emerald-600"
+                                : c.score >= 3
+                                  ? "bg-amber-500/10 text-amber-600"
+                                  : "bg-destructive/10 text-destructive"
+                            }`}
+                          >
+                            {c.score}
+                          </span>
+                        ) : (
+                          <span className="text-xs text-muted-foreground">—</span>
+                        )}
+                      </td>
                       <td className="whitespace-nowrap px-6 py-3 text-xs text-muted-foreground">
                         {c.desenlace}
                       </td>
