@@ -238,7 +238,8 @@ export const getRetellMetrics = createServerFn({ method: "POST" })
       const row = byDay.get(dayLabel(d));
       if (!row) continue;
 
-      row.atendidas += 1;
+
+
 
       const bogotaHour = Number(
         new Intl.DateTimeFormat("es-CO", {
