@@ -341,6 +341,7 @@ export const getRetellMetrics = createServerFn({ method: "POST" })
           transferida: transferred,
           regreso: t.regreso,
           desenlace,
+          score,
         },
       });
     }
