@@ -308,35 +308,36 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
     {
       label: "Resueltas por IA",
       value: totals.resueltas,
-      hint: `${pct(totals.resueltas)} de las atendidas`,
+      hint: `${pct(totals.resueltas)} · finalizan sin transferencia`,
       icon: CheckCircle2,
     },
     {
       label: "Abandonadas durante IA",
       value: totals.abandonadas,
-      hint: `${pct(totals.abandonadas)} de las atendidas`,
+      hint: `${pct(totals.abandonadas)} · el usuario colgó frustrado`,
       icon: PhoneOff,
     },
     {
-      label: "Transferidas a humano",
+      label: "Escaladas dentro del proceso",
       value: totals.transferidas,
-      hint: `${pct(totals.transferidas)} de las atendidas`,
+      hint: `${pct(totals.transferidas)} · requieren gestión humana`,
       icon: UserRoundCheck,
     },
     {
       label: "Transferidas no resueltas",
       value: totals.noResueltas,
-      hint: `${pct(totals.noResueltas)} de las atendidas`,
+      hint: `${pct(totals.noResueltas)} · la IA no pudo resolver`,
       icon: UserRoundX,
     },
     {
       label: "No procesadas por PBX / IVR",
       value: totals.noProcesadas,
       hint: totalEntrantes
-        ? `${((totals.noProcesadas / totalEntrantes) * 100).toFixed(1)}% de las entrantes · no entregadas a la cola`
-        : "No entregadas a la cola",
+        ? `${((totals.noProcesadas / totalEntrantes) * 100).toFixed(1)}% de las entrantes · rechazadas o sin entrar a la cola`
+        : "Rechazadas por el PBX o sin entrar a la cola",
       icon: PhoneMissed,
     },
+
   ];
 
   const callRows = live?.detalleLlamadas ?? [];
@@ -487,7 +488,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                 />
                 <Bar
                   dataKey="transferidas"
-                  name="Transferidas"
+                  name="Escaladas"
                   stackId="a"
                   fill="var(--chart-3)"
                 />
@@ -592,8 +593,8 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                   <th className="px-4 py-3 text-right font-medium">Atendidas</th>
                   <th className="px-4 py-3 text-right font-medium">Resueltas IA</th>
                   <th className="px-4 py-3 text-right font-medium">Abandonadas</th>
-                  <th className="px-4 py-3 text-right font-medium">Transferidas</th>
-                  <th className="px-4 py-3 text-right font-medium">No resueltas</th>
+                  <th className="px-4 py-3 text-right font-medium">Escaladas</th>
+                  <th className="px-4 py-3 text-right font-medium">Transf. no resueltas</th>
                   <th className="px-6 py-3 text-right font-medium">No procesadas</th>
                 </tr>
               </thead>

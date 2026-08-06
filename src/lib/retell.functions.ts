@@ -262,21 +262,29 @@ export const getRetellMetrics = createServerFn({ method: "POST" })
       const transferred = TRANSFER_REASONS.has(reason) || Boolean(c.transfer_destination_number);
       const successful = c.call_analysis?.call_successful;
 
+      // Abandono real: el usuario se frustró y colgó (llamada corta y sin éxito).
+      // Si recibió respuesta y colgó al final, sigue siendo resuelta por la IA.
+      const abandonada =
+        !transferred &&
+        ABANDON_REASONS.has(reason) &&
+        durationMs < 20000 &&
+        successful === false;
+
       if (!transferred && isNotProcessed(reason, durationMs)) {
         row.noProcesadas += 1;
       } else {
         row.atendidas += 1;
         if (transferred) {
-          row.transferidas += 1;
+          // Escalada dentro del proceso vs. transferencia por problema de la IA
           if (successful === false) row.noResueltas += 1;
-        } else if (ABANDON_REASONS.has(reason) && durationMs < 20000) {
+          else row.transferidas += 1;
+        } else if (abandonada) {
           row.abandonadas += 1;
-        } else if (successful === false) {
-          row.noResueltas += 1;
         } else {
           row.resueltas += 1;
         }
       }
+
 
       const custom = c.call_analysis?.custom_analysis_data ?? {};
       const rawMotivo =
@@ -292,14 +300,13 @@ export const getRetellMetrics = createServerFn({ method: "POST" })
       const desenlace = transferred
         ? successful === false
           ? "Transferida no resuelta"
-          : "Transferida"
+          : "Escalada en el proceso"
         : isNotProcessed(reason, durationMs)
           ? "No procesada (PBX/IVR)"
-          : ABANDON_REASONS.has(reason) && durationMs < 20000
-            ? "Abandonada"
-            : successful === false
-              ? "No resuelta"
-              : "Resuelta por IA";
+          : abandonada
+            ? "Abandonada por el usuario"
+            : "Resuelta por IA";
+
 
       detalleRaw.push({
         ts,
