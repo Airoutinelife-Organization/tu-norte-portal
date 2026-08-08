@@ -117,7 +117,7 @@ function CoberturaPage() {
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr] lg:items-stretch">
             {/* LIVE MAP PANEL */}
-            <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white shadow-card ring-1 ring-black/10">
+            <div className="relative z-0 overflow-hidden rounded-3xl border border-white/10 bg-white shadow-card ring-1 ring-black/10">
               <CucutaFiberMap className="h-[420px] w-full md:h-[560px] lg:h-full" highlight={status === "covered" ? selected : null} address={status === "covered" ? address : null} />
 
               <div className="pointer-events-none absolute inset-x-0 top-0 flex flex-wrap items-center justify-between gap-2 p-4">
