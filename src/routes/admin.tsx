@@ -5,6 +5,10 @@ import {
   type RetellCallDetail,
   type RetellMetrics,
 } from "@/lib/retell.functions";
+import {
+  getRedisCallsVentas,
+  type RedisCall,
+} from "@/lib/redis.functions";
 
 import { useEffect, useMemo, useState } from "react";
 
@@ -26,11 +30,15 @@ import {
 import {
   BotMessageSquare,
   CheckCircle2,
+  ChevronDown,
+  ChevronUp,
+  Database,
   LogOut,
   PhoneCall,
   PhoneMissed,
   PhoneOff,
   RotateCcw,
+  Search,
   ShieldCheck,
   UserRoundCheck,
   UserRoundX,
@@ -200,6 +208,51 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
   const [live, setLive] = useState<RetellMetrics | null>(null);
   const [loading, setLoading] = useState(true);
   const fetchMetrics = useServerFn(getRetellMetrics);
+
+  // ── Redis calls ──────────────────────────────────────────────────────
+  const [redisCalls, setRedisCalls] = useState<RedisCall[]>([]);
+  const [redisLoading, setRedisLoading] = useState(true);
+  const [redisError, setRedisError] = useState<string | null>(null);
+  const [redisSearch, setRedisSearch] = useState("");
+  const [expandedKey, setExpandedKey] = useState<string | null>(null);
+  const fetchRedisCalls = useServerFn(getRedisCallsVentas);
+
+  useEffect(() => {
+    let cancelled = false;
+    setRedisLoading(true);
+    fetchRedisCalls()
+      .then((res) => {
+        if (!cancelled) {
+          setRedisCalls(res.calls);
+          setRedisError(res.error ?? null);
+        }
+      })
+      .catch((e) => {
+        if (!cancelled) setRedisError(String(e));
+      })
+      .finally(() => {
+        if (!cancelled) setRedisLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [fetchRedisCalls]);
+
+  const filteredCalls = useMemo(() => {
+    const q = redisSearch.toLowerCase();
+    if (!q) return redisCalls;
+    return redisCalls.filter(
+      (c) =>
+        c.caller_name.toLowerCase().includes(q) ||
+        c.user_number.includes(q) ||
+        c.external_id.includes(q) ||
+        c.type.toLowerCase().includes(q) ||
+        c.specialist.toLowerCase().includes(q) ||
+        c.notes.toLowerCase().includes(q) ||
+        c.request.toLowerCase().includes(q),
+    );
+  }, [redisCalls, redisSearch]);
+  // ─────────────────────────────────────────────────────────────────────
 
   useEffect(() => {
     let cancelled = false;
@@ -659,6 +712,186 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
         </section>
 
 
+
+        {/* ── Sección Redis: reporte de llamadas ─────────────────── */}
+        <section className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+          {/* Encabezado */}
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border px-6 py-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-violet-500/10">
+                <Database className="h-4 w-4 text-violet-500" />
+              </div>
+              <div>
+                <h2 className="text-sm font-semibold text-foreground">
+                  Reporte de llamadas · Redis
+                </h2>
+                <p className="text-xs text-muted-foreground">
+                  {redisLoading
+                    ? "Cargando desde el webhook…"
+                    : redisError
+                      ? `Error: ${redisError}`
+                      : `${redisCalls.length} registros · ${filteredCalls.length} mostrados`}
+                </p>
+              </div>
+            </div>
+            {/* Buscador */}
+            <div className="relative w-full max-w-xs">
+              <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+              <input
+                value={redisSearch}
+                onChange={(e) => setRedisSearch(e.target.value)}
+                placeholder="Buscar por nombre, número, tipo…"
+                className="w-full rounded-lg border border-input bg-background py-2 pl-9 pr-3 text-xs text-foreground outline-none focus:border-violet-500"
+              />
+            </div>
+          </div>
+
+          {/* Tabla */}
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-muted/50 text-xs uppercase text-muted-foreground">
+                <tr>
+                  <th className="px-4 py-3 text-left font-medium">Fecha</th>
+                  <th className="px-4 py-3 text-left font-medium">Cliente</th>
+                  <th className="px-4 py-3 text-left font-medium">Teléfono</th>
+                  <th className="px-4 py-3 text-left font-medium">Tipo</th>
+                  <th className="px-4 py-3 text-left font-medium">Especialista</th>
+                  <th className="px-4 py-3 text-center font-medium">Score</th>
+                  <th className="px-4 py-3 text-center font-medium">Transferencia</th>
+                  <th className="px-4 py-3 text-center font-medium">Estado</th>
+                  <th className="px-4 py-3 text-center font-medium">Detalle</th>
+                </tr>
+              </thead>
+              <tbody>
+                {redisLoading ? (
+                  <tr>
+                    <td colSpan={9} className="px-6 py-8 text-center text-muted-foreground">
+                      <div className="flex items-center justify-center gap-2">
+                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-violet-500 border-t-transparent" />
+                        Consultando base de datos Redis…
+                      </div>
+                    </td>
+                  </tr>
+                ) : filteredCalls.length === 0 ? (
+                  <tr>
+                    <td colSpan={9} className="px-6 py-8 text-center text-muted-foreground">
+                      {redisError ? `Error al cargar: ${redisError}` : "Sin registros encontrados."}
+                    </td>
+                  </tr>
+                ) : (
+                  filteredCalls.map((c) => {
+                    const isExpanded = expandedKey === c.callKey;
+                    const hasDetail = !!(c.notes || c.request);
+                    return (
+                      <>
+                        <tr
+                          key={c.callKey}
+                          className={`border-t border-border transition-colors ${
+                            isExpanded ? "bg-violet-500/5" : "hover:bg-muted/30"
+                          }`}
+                        >
+                          <td className="whitespace-nowrap px-4 py-3 text-xs text-muted-foreground">
+                            {c.date}
+                          </td>
+                          <td className="px-4 py-3">
+                            <p className="font-medium text-foreground">{c.caller_name || "—"}</p>
+                            <p className="text-xs text-muted-foreground">ID: {c.external_id || "—"}</p>
+                          </td>
+                          <td className="px-4 py-3 font-mono text-xs text-foreground">
+                            {c.user_number || "—"}
+                          </td>
+                          <td className="px-4 py-3">
+                            <span className="inline-flex rounded-full bg-blue-500/10 px-2 py-0.5 text-xs font-medium text-blue-600">
+                              {c.type || "—"}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 text-xs text-foreground">{c.specialist || "—"}</td>
+                          <td className="px-4 py-3 text-center">
+                            <span
+                              className={`inline-flex min-w-8 items-center justify-center rounded-full px-2 py-0.5 text-xs font-semibold ${
+                                Number(c.score) >= 4
+                                  ? "bg-emerald-500/10 text-emerald-600"
+                                  : Number(c.score) >= 2
+                                    ? "bg-amber-500/10 text-amber-600"
+                                    : "bg-muted text-muted-foreground"
+                              }`}
+                            >
+                              {c.score}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 text-center">
+                            <span
+                              className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
+                                c.call_transfer === "Yes" || c.call_transfer === "Si"
+                                  ? "bg-amber-500/10 text-amber-600"
+                                  : "bg-muted text-muted-foreground"
+                              }`}
+                            >
+                              {c.call_transfer}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 text-center">
+                            <span
+                              className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
+                                c.status === "Resolved"
+                                  ? "bg-emerald-500/10 text-emerald-600"
+                                  : c.status === "Created"
+                                    ? "bg-sky-500/10 text-sky-600"
+                                    : "bg-muted text-muted-foreground"
+                              }`}
+                            >
+                              {c.status || "—"}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 text-center">
+                            {hasDetail ? (
+                              <button
+                                onClick={() =>
+                                  setExpandedKey(isExpanded ? null : c.callKey)
+                                }
+                                className="inline-flex items-center gap-1 rounded-lg border border-border px-2 py-1 text-xs text-muted-foreground transition hover:border-violet-500 hover:text-violet-500"
+                              >
+                                {isExpanded ? (
+                                  <ChevronUp className="h-3.5 w-3.5" />
+                                ) : (
+                                  <ChevronDown className="h-3.5 w-3.5" />
+                                )}
+                                {isExpanded ? "Cerrar" : "Ver"}
+                              </button>
+                            ) : (
+                              <span className="text-xs text-muted-foreground">—</span>
+                            )}
+                          </td>
+                        </tr>
+                        {isExpanded && hasDetail && (
+                          <tr key={`${c.callKey}-detail`} className="border-t border-violet-500/20 bg-violet-500/5">
+                            <td colSpan={9} className="px-6 py-4">
+                              <div className="grid gap-3 sm:grid-cols-2">
+                                {c.request && (
+                                  <div>
+                                    <p className="mb-1 text-xs font-semibold uppercase text-violet-500">Solicitud</p>
+                                    <p className="text-xs text-foreground">{c.request}</p>
+                                  </div>
+                                )}
+                                {c.notes && (
+                                  <div>
+                                    <p className="mb-1 text-xs font-semibold uppercase text-violet-500">Notas</p>
+                                    <p className="text-xs text-foreground">{c.notes}</p>
+                                  </div>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
+        {/* ─────────────────────────────────────────────────────── */}
 
         <p className="pb-6 text-center text-xs text-muted-foreground">
           {loading
