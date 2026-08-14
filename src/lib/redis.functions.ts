@@ -19,6 +19,7 @@ export type RedisCall = {
   pbx: string;
   source: string;
   date: string;
+  end_reason: string;
 };
 
 export type RedisCallsResult = {
@@ -32,7 +33,7 @@ export type RedisCallsResult = {
 /* ---------------------------------------------------------------------- */
 
 const WEBHOOK_URL =
-  "https://vmi3345591.contaboserver.net/webhook/redis-call-get-ventas";
+  "https://vmi3345591.contaboserver.net/webhook/redis-call-get-range";
 
 export const getRedisCallsVentas = createServerFn().handler(
   async (): Promise<RedisCallsResult> => {
@@ -71,6 +72,7 @@ export const getRedisCallsVentas = createServerFn().handler(
           pbx: val.pbx ?? "",
           source: val.source ?? "",
           date: val.date ?? "",
+          end_reason: val.end_reason ?? "",
         }))
         .sort(
           (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),

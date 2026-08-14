@@ -144,8 +144,10 @@ function transferTiming(c: RetellCall, durationMs: number) {
 }
 
 export const getRetellMetrics = createServerFn({ method: "POST" })
-  .inputValidator((input: { days?: number }) => ({
+  .inputValidator((input: { days?: number; startMs?: number; endMs?: number }) => ({
     days: Math.min(Math.max(Number(input?.days) || 7, 1), 90),
+    startMs: input?.startMs ?? null,
+    endMs: input?.endMs ?? null,
   }))
   .handler(async ({ data }): Promise<RetellMetrics> => {
     const empty: RetellMetrics = {
@@ -158,12 +160,12 @@ export const getRetellMetrics = createServerFn({ method: "POST" })
       detalleLlamadas: [],
     };
 
-
     const apiKey = process.env["RETELL_API_KEY"];
     if (!apiKey) return { ...empty, error: "missing_api_key" };
 
     const now = Date.now();
-    const from = now - data.days * 24 * 60 * 60 * 1000;
+    const from = data.startMs ?? (now - data.days * 24 * 60 * 60 * 1000);
+    const to = data.endMs ?? now;
 
     const calls: RetellCall[] = [];
     try {
@@ -177,7 +179,7 @@ export const getRetellMetrics = createServerFn({ method: "POST" })
           },
           body: JSON.stringify({
             filter_criteria: {
-              start_timestamp: { lower_threshold: from, upper_threshold: now },
+              start_timestamp: { lower_threshold: from, upper_threshold: to },
             },
             sort_order: "descending",
             limit: 1000,
@@ -203,11 +205,12 @@ export const getRetellMetrics = createServerFn({ method: "POST" })
       return { ...empty, error: "network_error" };
     }
 
-    // Buckets per day
+    // Buckets per day — derived from the actual from/to range
+    const totalDays = Math.max(1, Math.ceil((to - from) / (24 * 60 * 60 * 1000)));
     const byDay = new Map<string, RetellDayRow>();
     const orderedDays: string[] = [];
-    for (let i = data.days - 1; i >= 0; i--) {
-      const d = new Date(now - i * 24 * 60 * 60 * 1000);
+    for (let i = totalDays - 1; i >= 0; i--) {
+      const d = new Date(to - i * 24 * 60 * 60 * 1000);
       const label = dayLabel(d);
       orderedDays.push(label);
       byDay.set(label, {
