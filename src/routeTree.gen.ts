@@ -16,6 +16,7 @@ import { Route as CoberturaRouteImport } from './routes/cobertura'
 import { Route as DiagnosticoRouteImport } from './routes/diagnostico'
 import { Route as EmpresaRouteImport } from './routes/empresa'
 import { Route as MediosDePagoRouteImport } from './routes/medios-de-pago'
+import { Route as MiCuentaRouteImport } from './routes/mi-cuenta'
 import { Route as MisTicketsRouteImport } from './routes/mis-tickets'
 import { Route as PagarRouteImport } from './routes/pagar'
 import { Route as PlanesRouteImport } from './routes/planes'
@@ -24,6 +25,7 @@ import { Route as RecomendadorRouteImport } from './routes/recomendador'
 import { Route as SoporteRouteImport } from './routes/soporte'
 import { Route as TestVelocidadRouteImport } from './routes/test-velocidad'
 import { Route as ApiPublicChatbotRouteImport } from './routes/api/public/chatbot'
+import { Route as ApiPublicSaeRouteImport } from './routes/api/public/sae'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -58,6 +60,11 @@ const EmpresaRoute = EmpresaRouteImport.update({
 const MediosDePagoRoute = MediosDePagoRouteImport.update({
   id: '/medios-de-pago',
   path: '/medios-de-pago',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MiCuentaRoute = MiCuentaRouteImport.update({
+  id: '/mi-cuenta',
+  path: '/mi-cuenta',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MisTicketsRoute = MisTicketsRouteImport.update({
@@ -100,6 +107,11 @@ const ApiPublicChatbotRoute = ApiPublicChatbotRouteImport.update({
   path: '/api/public/chatbot',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicSaeRoute = ApiPublicSaeRouteImport.update({
+  id: '/api/public/sae',
+  path: '/api/public/sae',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -109,6 +121,7 @@ export interface FileRoutesByFullPath {
   '/diagnostico': typeof DiagnosticoRoute
   '/empresa': typeof EmpresaRoute
   '/medios-de-pago': typeof MediosDePagoRoute
+  '/mi-cuenta': typeof MiCuentaRoute
   '/mis-tickets': typeof MisTicketsRoute
   '/pagar': typeof PagarRoute
   '/planes': typeof PlanesRoute
@@ -117,6 +130,7 @@ export interface FileRoutesByFullPath {
   '/soporte': typeof SoporteRoute
   '/test-velocidad': typeof TestVelocidadRoute
   '/api/public/chatbot': typeof ApiPublicChatbotRoute
+  '/api/public/sae': typeof ApiPublicSaeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -126,6 +140,7 @@ export interface FileRoutesByTo {
   '/diagnostico': typeof DiagnosticoRoute
   '/empresa': typeof EmpresaRoute
   '/medios-de-pago': typeof MediosDePagoRoute
+  '/mi-cuenta': typeof MiCuentaRoute
   '/mis-tickets': typeof MisTicketsRoute
   '/pagar': typeof PagarRoute
   '/planes': typeof PlanesRoute
@@ -134,6 +149,7 @@ export interface FileRoutesByTo {
   '/soporte': typeof SoporteRoute
   '/test-velocidad': typeof TestVelocidadRoute
   '/api/public/chatbot': typeof ApiPublicChatbotRoute
+  '/api/public/sae': typeof ApiPublicSaeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -144,6 +160,7 @@ export interface FileRoutesById {
   '/diagnostico': typeof DiagnosticoRoute
   '/empresa': typeof EmpresaRoute
   '/medios-de-pago': typeof MediosDePagoRoute
+  '/mi-cuenta': typeof MiCuentaRoute
   '/mis-tickets': typeof MisTicketsRoute
   '/pagar': typeof PagarRoute
   '/planes': typeof PlanesRoute
@@ -152,6 +169,7 @@ export interface FileRoutesById {
   '/soporte': typeof SoporteRoute
   '/test-velocidad': typeof TestVelocidadRoute
   '/api/public/chatbot': typeof ApiPublicChatbotRoute
+  '/api/public/sae': typeof ApiPublicSaeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -163,6 +181,7 @@ export interface FileRouteTypes {
     | '/diagnostico'
     | '/empresa'
     | '/medios-de-pago'
+    | '/mi-cuenta'
     | '/mis-tickets'
     | '/pagar'
     | '/planes'
@@ -171,6 +190,7 @@ export interface FileRouteTypes {
     | '/soporte'
     | '/test-velocidad'
     | '/api/public/chatbot'
+    | '/api/public/sae'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -180,6 +200,7 @@ export interface FileRouteTypes {
     | '/diagnostico'
     | '/empresa'
     | '/medios-de-pago'
+    | '/mi-cuenta'
     | '/mis-tickets'
     | '/pagar'
     | '/planes'
@@ -188,6 +209,7 @@ export interface FileRouteTypes {
     | '/soporte'
     | '/test-velocidad'
     | '/api/public/chatbot'
+    | '/api/public/sae'
   id:
     | '__root__'
     | '/'
@@ -197,6 +219,7 @@ export interface FileRouteTypes {
     | '/diagnostico'
     | '/empresa'
     | '/medios-de-pago'
+    | '/mi-cuenta'
     | '/mis-tickets'
     | '/pagar'
     | '/planes'
@@ -205,6 +228,7 @@ export interface FileRouteTypes {
     | '/soporte'
     | '/test-velocidad'
     | '/api/public/chatbot'
+    | '/api/public/sae'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -215,6 +239,7 @@ export interface RootRouteChildren {
   DiagnosticoRoute: typeof DiagnosticoRoute
   EmpresaRoute: typeof EmpresaRoute
   MediosDePagoRoute: typeof MediosDePagoRoute
+  MiCuentaRoute: typeof MiCuentaRoute
   MisTicketsRoute: typeof MisTicketsRoute
   PagarRoute: typeof PagarRoute
   PlanesRoute: typeof PlanesRoute
@@ -223,6 +248,7 @@ export interface RootRouteChildren {
   SoporteRoute: typeof SoporteRoute
   TestVelocidadRoute: typeof TestVelocidadRoute
   ApiPublicChatbotRoute: typeof ApiPublicChatbotRoute
+  ApiPublicSaeRoute: typeof ApiPublicSaeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -274,6 +300,13 @@ declare module '@tanstack/react-router' {
       path: '/medios-de-pago'
       fullPath: '/medios-de-pago'
       preLoaderRoute: typeof MediosDePagoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mi-cuenta': {
+      id: '/mi-cuenta'
+      path: '/mi-cuenta'
+      fullPath: '/mi-cuenta'
+      preLoaderRoute: typeof MiCuentaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mis-tickets': {
@@ -332,6 +365,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicChatbotRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/sae': {
+      id: '/api/public/sae'
+      path: '/api/public/sae'
+      fullPath: '/api/public/sae'
+      preLoaderRoute: typeof ApiPublicSaeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -343,6 +383,7 @@ const rootRouteChildren: RootRouteChildren = {
   DiagnosticoRoute: DiagnosticoRoute,
   EmpresaRoute: EmpresaRoute,
   MediosDePagoRoute: MediosDePagoRoute,
+  MiCuentaRoute: MiCuentaRoute,
   MisTicketsRoute: MisTicketsRoute,
   PagarRoute: PagarRoute,
   PlanesRoute: PlanesRoute,
@@ -351,6 +392,7 @@ const rootRouteChildren: RootRouteChildren = {
   SoporteRoute: SoporteRoute,
   TestVelocidadRoute: TestVelocidadRoute,
   ApiPublicChatbotRoute: ApiPublicChatbotRoute,
+  ApiPublicSaeRoute: ApiPublicSaeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

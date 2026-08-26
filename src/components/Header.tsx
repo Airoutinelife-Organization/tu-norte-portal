@@ -59,7 +59,7 @@ export function Header() {
 
         <div className="flex items-center gap-2">
           <Button asChild variant="ghost" size="sm" className="hidden md:inline-flex">
-            <Link to="/pagar">
+            <Link to="/mi-cuenta">
               <LayoutDashboard className="mr-1 h-4 w-4" /> Mi cuenta
             </Link>
           </Button>
@@ -94,8 +94,8 @@ export function Header() {
                 {l.label}
               </Link>
             ))}
-            <Link to="/pagar" onClick={() => setOpen(false)} className="rounded-lg px-4 py-3 text-sm font-medium text-foreground hover:bg-muted">
-              Mi factura
+            <Link to="/mi-cuenta" onClick={() => setOpen(false)} className="rounded-lg px-4 py-3 text-sm font-medium text-foreground hover:bg-muted">
+              Mi cuenta
             </Link>
             <Link to="/agendar" onClick={() => setOpen(false)} className="mt-2 rounded-lg bg-gradient-brand px-4 py-3 text-center text-sm font-semibold text-primary-foreground">
               Contratar / Agendar
