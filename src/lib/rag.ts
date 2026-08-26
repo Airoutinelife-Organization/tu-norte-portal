@@ -43,8 +43,14 @@ export function retrieve(query: string, topK = 4): KbChunk[] {
     .map((s) => s.chunk);
 }
 
+// Bloques que SIEMPRE deben ir en el contexto (precios y contacto públicos del portal).
+const PINNED_TITLES = [
+  "Planes y precios vigentes (portal Tu Norte)",
+  "Contacto y canales de atención (portal)",
+];
+
 export function buildContext(query: string, topK = 4): string {
-  return retrieve(query, topK)
-    .map((c) => c.text)
-    .join("\n\n---\n\n");
+  const pinned = KB_CHUNKS.filter((c) => PINNED_TITLES.includes(c.title));
+  const retrieved = retrieve(query, topK).filter((c) => !PINNED_TITLES.includes(c.title));
+  return [...pinned, ...retrieved].map((c) => c.text).join("\n\n---\n\n");
 }

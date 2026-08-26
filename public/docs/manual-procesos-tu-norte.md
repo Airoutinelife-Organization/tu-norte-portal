@@ -117,3 +117,25 @@ Los traslados pueden atenderse en oficinas o por Odoo, siempre que tengan todos 
 
 ## Suscripción (referencia SAE Plus)
 Ejemplo de suscripción mensual: INTERNET GPON (paquete básico) $50.000 y TV GPON (paquete básico), total suscripción $50.000. En el formulario solo se seleccionan los ítems que dicen "plan 25 ftth" y la capacidad deseada por el usuario.
+
+## Planes y precios vigentes (portal Tu Norte)
+Planes Internet fibra óptica + TV Digital FTTH (100 canales Full HD, sin cláusula de permanencia). Precios mensuales:
+- 200 Mb + TV: $50.000/mes
+- 300 Mb + TV: $65.000/mes
+- 500 Mb + TV: $79.000/mes (el más popular, instalación incluida)
+- 700 Mb + TV: $119.000/mes (incluye Win+ o Disney+, WiFi 6, instalación incluida, soporte prioritario)
+- 900 Mb + TV: $139.000/mes (incluye Win+ o Disney+, WiFi 6, instalación incluida, soporte VIP)
+
+Solo Televisión Digital FTTH: $35.000/mes con 100 canales Full HD.
+
+El plan más económico es Solo TV por $35.000/mes; el combo de internet + TV más económico es 200 Mb + TV por $50.000/mes.
+
+Promoción vigente: 200 Mbps por $15.000 mensuales para usuarios que aplican al subsidio ("Tu Norte te subsidia siempre"), sin cláusula de permanencia y sujeta a términos y condiciones.
+
+Costos adicionales del portal: punto de TV adicional $15.000, traslado $15.000 (traslado Gobernación $20.000), IP pública $25.000 mensuales, repetidor WiFi desde $150.000, metro adicional de cable UTP $1.000 (3 metros gratis).
+
+## Contacto y canales de atención (portal)
+- WhatsApp / línea de atención: 333 033 3696
+- Línea adicional: 321 756 0178 · Conmutador: (607) 575-9847
+- Sitio: portal Tu Norte (secciones Planes, Cobertura, Pagar, Diagnóstico, Mi Cuenta, Soporte)
+- Medios de pago: PSE en línea, SAE PAY (costo adicional $1.190), SuperGiros, Apuestas Cúcuta y oficinas Tu Norte.
