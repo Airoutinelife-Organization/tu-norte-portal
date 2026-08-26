@@ -325,6 +325,20 @@ function MiCuentaPage() {
             </Card>
           </div>
 
+          {detalles.length > 0 && (
+            <Card className="mt-6 border-border/60 bg-white p-6 shadow-soft">
+              <h2 className="font-display text-lg font-bold">Detalles del contrato</h2>
+              <dl className="mt-4 grid gap-x-8 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
+                {detalles.map((d) => (
+                  <div key={d.label}>
+                    <dt className="text-xs uppercase tracking-wide text-muted-foreground">{d.label}</dt>
+                    <dd className="mt-0.5 text-sm font-semibold">{d.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            </Card>
+          )}
+
           {facturas.length > 0 && (
             <Card className="mt-6 overflow-hidden border-border/60 bg-white shadow-soft">
               <div className="border-b border-border p-5">
