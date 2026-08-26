@@ -1,6 +1,5 @@
 import "@tanstack/react-start";
 import { createFileRoute } from "@tanstack/react-router";
-import { env } from "cloudflare:workers";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -47,7 +46,7 @@ export const Route = createFileRoute("/api/public/sae")({
     handlers: {
       OPTIONS: async () => new Response(null, { status: 204, headers: corsHeaders }),
       POST: async ({ request }) => {
-        const webhook = env.SAE_WEBHOOK_URL || process.env["SAE_WEBHOOK_URL"];
+        const webhook = process.env["SAE_WEBHOOK_URL"];
         if (!webhook) return json({ error: "not_configured" }, 503);
 
         let body: Record<string, unknown>;
