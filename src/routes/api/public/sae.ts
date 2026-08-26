@@ -46,15 +46,8 @@ export const Route = createFileRoute("/api/public/sae")({
     handlers: {
       OPTIONS: async () => new Response(null, { status: 204, headers: corsHeaders }),
       POST: async ({ request }) => {
-        let webhook = process.env["SAE_WEBHOOK_URL"];
-        if (!webhook) {
-          try {
-            const { env } = await import("cloudflare:workers");
-            webhook = env.SAE_WEBHOOK_URL;
-          } catch {
-            /* The Cloudflare binding module is unavailable outside Workers. */
-          }
-        }
+        const globalEnv = (globalThis as unknown as { SAE_WEBHOOK_URL?: string }).SAE_WEBHOOK_URL;
+        const webhook = process.env["SAE_WEBHOOK_URL"] || globalEnv;
         if (!webhook) return json({ error: "not_configured" }, 503);
 
         let body: Record<string, unknown>;
