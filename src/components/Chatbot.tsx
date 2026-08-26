@@ -243,8 +243,15 @@ export function Chatbot() {
       const res = await fetch("/api/public/chatbot", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: v, sessionId: sessionIdRef.current }),
+        body: JSON.stringify({
+          message: v,
+          sessionId: sessionIdRef.current,
+          history: msgs
+            .slice(-8)
+            .map((m) => ({ role: m.role === "user" ? "user" : "assistant", content: m.text })),
+        }),
       });
+
       const data = (await res.json()) as { reply?: string };
       setTyping(false);
       if (res.ok && data.reply) {
