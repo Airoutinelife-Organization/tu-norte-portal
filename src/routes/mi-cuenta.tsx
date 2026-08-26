@@ -55,6 +55,16 @@ function str(v: unknown) {
   return v === null || v === undefined ? "" : String(v);
 }
 
+function formatCOP(v: string) {
+  const n = Number(String(v).replace(/[^\d.-]/g, ""));
+  if (!Number.isFinite(n)) return v;
+  return new Intl.NumberFormat("es-CO", {
+    style: "currency",
+    currency: "COP",
+    maximumFractionDigits: 0,
+  }).format(n);
+}
+
 function pick(acc: Account, keys: string[]) {
   for (const k of keys) {
     const v = acc[k];
