@@ -214,13 +214,37 @@ function MiCuentaPage() {
     );
   }
 
-  const nombre = account ? pick(account, ["nombre", "name", "cliente", "titular"]) : session.nombre ?? "";
-  const plan = account ? pick(account, ["plan", "servicio", "paquete", "producto"]) : "";
-  const estado = account ? pick(account, ["estado", "status", "estado_servicio"]) : "";
-  const saldo = account ? pick(account, ["saldo", "saldo_pendiente", "valor", "total", "deuda"]) : "";
-  const vence = account ? pick(account, ["vencimiento", "fecha_vencimiento", "proximo_pago", "fecha_corte"]) : "";
-  const direccion = account ? pick(account, ["direccion", "address", "barrio"]) : "";
+  const nombre = account
+    ? pick(account, ["cliente", "nombre", "name", "titular"])
+    : session.nombre ?? "";
+  const plan = account
+    ? pick(account, ["det_tipo_servicio", "det_suscripcion_act", "det_suscripcion", "plan", "servicio", "paquete", "producto"])
+    : "";
+  const estado = account ? pick(account, ["nombrestatus", "estado", "status", "estado_servicio"]) : "";
+  const saldoRaw = account ? pick(account, ["saldo", "saldo_pendiente", "valor", "total", "deuda"]) : "";
+  const saldo = saldoRaw ? formatCOP(saldoRaw) : "";
+  const mensualidad = account ? pick(account, ["suscripcion_act", "suscripcion", "monto_susc_int"]) : "";
+  const vence = account
+    ? pick(account, ["vencimiento", "fecha_vencimiento", "proximo_pago", "fecha_corte", "ult_factura"])
+    : "";
+  const direccion = account ? pick(account, ["direccion_fiscal", "direccion", "address", "barrio"]) : "";
+  const contrato = account ? pick(account, ["nro_contrato", "contrato", "contrato_fisico"]) : "";
+  const tipoFact = account ? pick(account, ["tipo_fact"]) : "";
+  const franquicia = account ? pick(account, ["nombre_franq"]) : "";
+  const telefono = account ? pick(account, ["telefono", "telf_casa", "telf_adic"]) : "";
+  const detTv = account ? pick(account, ["det_susc_tv"]) : "";
+  const detInt = account ? pick(account, ["det_susc_int"]) : "";
   const facturas = account && Array.isArray(account["facturas"]) ? (account["facturas"] as Record<string, unknown>[]) : [];
+  const detalles = [
+    { label: "Contrato", value: contrato },
+    { label: "Facturación", value: tipoFact },
+    { label: "Sede", value: franquicia },
+    { label: "Teléfono", value: telefono },
+    { label: "Internet", value: detInt },
+    { label: "Televisión", value: detTv },
+    { label: "Mensualidad", value: mensualidad ? formatCOP(mensualidad) : "" },
+    { label: "Última factura", value: vence },
+  ].filter((d) => d.value);
 
   return (
     <section className="mx-auto max-w-6xl px-4 py-12 md:px-6 md:py-16">
