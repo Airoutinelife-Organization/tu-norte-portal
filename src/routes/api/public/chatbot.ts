@@ -90,7 +90,7 @@ export const Route = createFileRoute("/api/public/chatbot")({
         const apiKey = process.env["LOVABLE_API_KEY"];
         if (apiKey) {
           try {
-            const context = buildContext(message, 4);
+            const context = buildContext(message, 7);
             const controller = new AbortController();
             const timeout = setTimeout(() => controller.abort(), 25000);
             const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
