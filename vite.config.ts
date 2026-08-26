@@ -6,4 +6,14 @@
 // You can pass additional config via defineConfig({ vite: { ... } }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
-export default defineConfig();
+export default defineConfig({
+  vite: {
+    build: {
+      rollupOptions: {
+        // Cloudflare provides this virtual module at runtime. Keeping it external
+        // also protects production builds from stale transformed server chunks.
+        external: ["cloudflare:workers"],
+      },
+    },
+  },
+});
