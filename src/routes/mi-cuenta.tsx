@@ -73,6 +73,16 @@ function pick(acc: Account, keys: string[]) {
   return "";
 }
 
+function accountFromResponse(data: Record<string, unknown>): Account {
+  for (const key of ["cuenta", "account", "data", "result"]) {
+    const value = data[key];
+    if (value && typeof value === "object" && !Array.isArray(value)) {
+      return value as Account;
+    }
+  }
+  return data;
+}
+
 function MiCuentaPage() {
   const [session, setSession] = useState<Session | null>(null);
   const [account, setAccount] = useState<Account | null>(null);
@@ -87,8 +97,7 @@ function MiCuentaPage() {
     setError("");
     try {
       const data = await callSae({ action: "account", cedula: s.cedula, token: s.token });
-      const raw = (data["cuenta"] ?? data["account"] ?? data["cliente"] ?? data) as Account;
-      setAccount(raw);
+      setAccount(accountFromResponse(data));
     } catch (e) {
       setError(e instanceof Error ? e.message : "Error");
     } finally {
@@ -128,8 +137,10 @@ function MiCuentaPage() {
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
       setSession(s);
-      const raw = (data["cuenta"] ?? data["account"] ?? data["cliente"]) as Account | undefined;
-      if (raw && typeof raw === "object") setAccount(raw);
+      const raw = accountFromResponse(data);
+      const hasAccountData = ["cliente", "nombrestatus", "saldo", "nro_contrato", "det_tipo_servicio"]
+        .some((key) => raw[key] !== undefined && raw[key] !== null);
+      if (hasAccountData) setAccount(raw);
       else await loadAccount(s);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error");
