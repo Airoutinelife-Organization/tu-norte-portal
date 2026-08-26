@@ -10,9 +10,9 @@ export default defineConfig({
   vite: {
     build: {
       rollupOptions: {
-        // Cloudflare provides this virtual module at runtime. Keeping it external
-        // also protects production builds from stale transformed server chunks.
-        external: ["cloudflare:workers"],
+        // Cloudflare provides these virtual modules at runtime. Keeping the full
+        // namespace external also covers transitive imports such as sockets.
+        external: [/^cloudflare:/],
       },
     },
   },
