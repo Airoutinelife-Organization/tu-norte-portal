@@ -15,5 +15,18 @@ export default defineConfig({
         external: [/^cloudflare:/],
       },
     },
+    // In Vite's multi-environment build, build.rollupOptions.external only
+    // applies to the "client" environment. The SSR environment needs its own
+    // external declaration so Rollup doesn't try to bundle cloudflare:* modules
+    // (e.g. "cloudflare:workers") when compiling the server output.
+    environments: {
+      ssr: {
+        build: {
+          rollupOptions: {
+            external: [/^cloudflare:/],
+          },
+        },
+      },
+    },
   },
 });
