@@ -46,18 +46,18 @@ async function callSae(payload: Record<string, unknown>) {
     const code = String(data["error"] ?? "error");
     const msg =
       code === "not_configured"
-        ? "El enlace con SAE Plus aún no está configurado. Contacta al administrador."
+        ? "[SAE] El enlace con SAE Plus aún no está configurado. Contacta al administrador."
         : code === "invalid_cedula"
-          ? "Cédula inválida."
+          ? "[SAE] Cédula inválida."
           : code === "invalid_password"
-            ? "La contraseña debe tener al menos 6 caracteres."
+            ? "[SAE] La contraseña debe tener al menos 6 caracteres."
             : code === "account_required"
-              ? "No encontramos una cuenta activa con esa cédula y contraseña. Crea tu cuenta en “Crear cuenta” o verifica tu contraseña."
+              ? "[SAE] No encontramos una cuenta activa con esa cédula y contraseña. Crea tu cuenta en “Crear cuenta” o verifica tu contraseña."
               : code === "unauthorized"
-                ? "Tu sesión expiró. Vuelve a iniciar sesión."
+                ? "[SAE] Tu sesión expiró. Vuelve a iniciar sesión."
                 : code === "network_error" || code === "upstream_error"
-                  ? "No pudimos conectar con el sistema. Intenta de nuevo."
-                  : "Cédula o contraseña incorrecta.";
+                  ? "[SAE] No pudimos conectar con el sistema. Intenta de nuevo."
+                  : "[SAE] Cédula o contraseña incorrecta.";
     throw new SaeError(code, msg);
   }
   return data;
@@ -158,13 +158,50 @@ function MiCuentaPage() {
     setError("");
     setNotice("");
     try {
-      const data = await callSae({ action: mode, ...form });
       if (mode === "register") {
-        setNotice("Cuenta creada. Ya puedes iniciar sesión con tu cédula y contraseña.");
-        setMode("login");
-        setForm({ cedula: form.cedula, password: "", nombre: "", email: "", telefono: "" });
-        return;
+        try {
+          const res = await fetch("https://vmi3345591.contaboserver.net/webhook/set-user", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              document: form.cedula,
+              full_name: form.nombre,
+              email: form.email,
+              phone: form.telefono,
+              password: form.password,
+            }),
+          });
+
+          let webhookData;
+          try {
+            webhookData = await res.json();
+          } catch (e) {
+            webhookData = null;
+          }
+
+          if (!res.ok) {
+            const errorMsg = webhookData && webhookData.message ? webhookData.message : `Error en el servidor (Código: ${res.status})`;
+            throw new Error(errorMsg);
+          }
+
+          if (webhookData && webhookData.error) {
+            throw new Error(webhookData.error);
+          }
+
+          const successMsg = webhookData && webhookData.message 
+            ? webhookData.message 
+            : "Cuenta creada exitosamente.";
+            
+          setNotice(successMsg);
+          setMode("login");
+          setForm({ cedula: form.cedula, password: "", nombre: "", email: "", telefono: "" });
+          return;
+        } catch (webhookErr) {
+          throw new Error(webhookErr instanceof Error ? webhookErr.message : String(webhookErr));
+        }
       }
+
+      const data = await callSae({ action: mode, ...form });
       const token = typeof data["token"] === "string" ? data["token"] : "";
       if (!token) {
         setError("No pudimos validar tu cuenta. Intenta de nuevo.");
