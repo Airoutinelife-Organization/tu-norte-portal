@@ -611,7 +611,8 @@ function initEventListeners() {
   // Botón Salir
   elements.btnExit?.addEventListener('click', () => {
     if (confirm('¿Deseas cerrar la sesión del panel administrativo?')) {
-      alert('Sesión cerrada con éxito.');
+      localStorage.removeItem('tunorte_admin_session');
+      window.location.href = '/';
     }
   });
 }

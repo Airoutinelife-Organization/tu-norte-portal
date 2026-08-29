@@ -104,28 +104,23 @@ const PIE_COLORS = [
 /* ---------------------------------------------------------------------- */
 
 function AdminPage() {
-  const [authed, setAuthed] = useState(false);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    setAuthed(localStorage.getItem(STORAGE_KEY) === "ok");
-    setReady(true);
+    if (localStorage.getItem(STORAGE_KEY) === "ok") {
+      window.location.href = "/calls-dashboard/index.html";
+    } else {
+      setReady(true);
+    }
   }, []);
 
   if (!ready) return <div className="min-h-screen bg-background" />;
 
-  return authed ? (
-    <Dashboard
-      onLogout={() => {
-        localStorage.removeItem(STORAGE_KEY);
-        setAuthed(false);
-      }}
-    />
-  ) : (
+  return (
     <Login
       onSuccess={() => {
         localStorage.setItem(STORAGE_KEY, "ok");
-        setAuthed(true);
+        window.location.href = "/calls-dashboard/index.html";
       }}
     />
   );
