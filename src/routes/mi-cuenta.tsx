@@ -105,24 +105,45 @@ function MiCuentaPage() {
   const [notice, setNotice] = useState("");
   const [form, setForm] = useState({ cedula: "", password: "", nombre: "", email: "", telefono: "" });
 
-  const loadAccount = useCallback(async (s: Session) => {
-    setLoading(true);
-    setError("");
-    try {
-      const data = await callSae({ action: "account", cedula: s.cedula, token: s.token });
-      setAccount(accountFromResponse(data));
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Error");
-    } finally {
-      setLoading(false);
-    }
+  const clearSession = useCallback(() => {
+    localStorage.removeItem(STORAGE_KEY);
+    setSession(null);
+    setAccount(null);
   }, []);
+
+  const loadAccount = useCallback(
+    async (s: Session) => {
+      if (!s.token) {
+        clearSession();
+        setError("Tu sesión expiró. Vuelve a iniciar sesión.");
+        return;
+      }
+      setLoading(true);
+      setError("");
+      try {
+        const data = await callSae({ action: "account", cedula: s.cedula, token: s.token });
+        setAccount(accountFromResponse(data));
+      } catch (e) {
+        if (e instanceof SaeError && (e.code === "unauthorized" || e.code === "account_required")) {
+          clearSession();
+        }
+        setError(e instanceof Error ? e.message : "Error");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [clearSession],
+  );
 
   useEffect(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         const s = JSON.parse(stored) as Session;
+        if (!s.token) {
+          localStorage.removeItem(STORAGE_KEY);
+          return;
+        }
         setSession(s);
         void loadAccount(s);
       }
@@ -138,14 +159,20 @@ function MiCuentaPage() {
     setNotice("");
     try {
       const data = await callSae({ action: mode, ...form });
-      if (mode === "register" && data["pendiente"]) {
-        setNotice("Cuenta creada. Ya puedes iniciar sesión.");
+      if (mode === "register") {
+        setNotice("Cuenta creada. Ya puedes iniciar sesión con tu cédula y contraseña.");
         setMode("login");
+        setForm({ cedula: form.cedula, password: "", nombre: "", email: "", telefono: "" });
+        return;
+      }
+      const token = typeof data["token"] === "string" ? data["token"] : "";
+      if (!token) {
+        setError("No pudimos validar tu cuenta. Intenta de nuevo.");
         return;
       }
       const s: Session = {
         cedula: form.cedula.replace(/\D/g, ""),
-        token: typeof data["token"] === "string" ? data["token"] : undefined,
+        token,
         nombre: pick(data as Account, ["nombre", "name", "cliente"]) || undefined,
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
@@ -155,6 +182,7 @@ function MiCuentaPage() {
         .some((key) => raw[key] !== undefined && raw[key] !== null);
       if (hasAccountData) setAccount(raw);
       else await loadAccount(s);
+
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error");
     } finally {
