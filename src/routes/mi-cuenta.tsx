@@ -27,6 +27,14 @@ const STORAGE_KEY = "tn_session";
 type Session = { cedula: string; token?: string; nombre?: string };
 type Account = Record<string, unknown>;
 
+class SaeError extends Error {
+  code: string;
+  constructor(code: string, message: string) {
+    super(message);
+    this.code = code;
+  }
+}
+
 async function callSae(payload: Record<string, unknown>) {
   const res = await fetch("/api/public/sae", {
     method: "POST",
@@ -43,13 +51,18 @@ async function callSae(payload: Record<string, unknown>) {
           ? "Cédula inválida."
           : code === "invalid_password"
             ? "La contraseña debe tener al menos 6 caracteres."
-            : code === "network_error" || code === "upstream_error"
-              ? "No pudimos conectar con el sistema. Intenta de nuevo."
-              : String(data["message"] ?? "Datos incorrectos. Verifica e intenta otra vez.");
-    throw new Error(msg);
+            : code === "account_required"
+              ? "No encontramos una cuenta activa con esa cédula y contraseña. Crea tu cuenta en “Crear cuenta” o verifica tu contraseña."
+              : code === "unauthorized"
+                ? "Tu sesión expiró. Vuelve a iniciar sesión."
+                : code === "network_error" || code === "upstream_error"
+                  ? "No pudimos conectar con el sistema. Intenta de nuevo."
+                  : "Cédula o contraseña incorrecta.";
+    throw new SaeError(code, msg);
   }
   return data;
 }
+
 
 function str(v: unknown) {
   return v === null || v === undefined ? "" : String(v);
