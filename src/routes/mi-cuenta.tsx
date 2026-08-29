@@ -27,6 +27,14 @@ const STORAGE_KEY = "tn_session";
 type Session = { cedula: string; token?: string; nombre?: string };
 type Account = Record<string, unknown>;
 
+class SaeError extends Error {
+  code: string;
+  constructor(code: string, message: string) {
+    super(message);
+    this.code = code;
+  }
+}
+
 async function callSae(payload: Record<string, unknown>) {
   const res = await fetch("/api/public/sae", {
     method: "POST",
@@ -43,13 +51,18 @@ async function callSae(payload: Record<string, unknown>) {
           ? "Cédula inválida."
           : code === "invalid_password"
             ? "La contraseña debe tener al menos 6 caracteres."
-            : code === "network_error" || code === "upstream_error"
-              ? "No pudimos conectar con el sistema. Intenta de nuevo."
-              : String(data["message"] ?? "Datos incorrectos. Verifica e intenta otra vez.");
-    throw new Error(msg);
+            : code === "account_required"
+              ? "No encontramos una cuenta activa con esa cédula y contraseña. Crea tu cuenta en “Crear cuenta” o verifica tu contraseña."
+              : code === "unauthorized"
+                ? "Tu sesión expiró. Vuelve a iniciar sesión."
+                : code === "network_error" || code === "upstream_error"
+                  ? "No pudimos conectar con el sistema. Intenta de nuevo."
+                  : "Cédula o contraseña incorrecta.";
+    throw new SaeError(code, msg);
   }
   return data;
 }
+
 
 function str(v: unknown) {
   return v === null || v === undefined ? "" : String(v);
@@ -92,24 +105,45 @@ function MiCuentaPage() {
   const [notice, setNotice] = useState("");
   const [form, setForm] = useState({ cedula: "", password: "", nombre: "", email: "", telefono: "" });
 
-  const loadAccount = useCallback(async (s: Session) => {
-    setLoading(true);
-    setError("");
-    try {
-      const data = await callSae({ action: "account", cedula: s.cedula, token: s.token });
-      setAccount(accountFromResponse(data));
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Error");
-    } finally {
-      setLoading(false);
-    }
+  const clearSession = useCallback(() => {
+    localStorage.removeItem(STORAGE_KEY);
+    setSession(null);
+    setAccount(null);
   }, []);
+
+  const loadAccount = useCallback(
+    async (s: Session) => {
+      if (!s.token) {
+        clearSession();
+        setError("Tu sesión expiró. Vuelve a iniciar sesión.");
+        return;
+      }
+      setLoading(true);
+      setError("");
+      try {
+        const data = await callSae({ action: "account", cedula: s.cedula, token: s.token });
+        setAccount(accountFromResponse(data));
+      } catch (e) {
+        if (e instanceof SaeError && (e.code === "unauthorized" || e.code === "account_required")) {
+          clearSession();
+        }
+        setError(e instanceof Error ? e.message : "Error");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [clearSession],
+  );
 
   useEffect(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         const s = JSON.parse(stored) as Session;
+        if (!s.token) {
+          localStorage.removeItem(STORAGE_KEY);
+          return;
+        }
         setSession(s);
         void loadAccount(s);
       }
@@ -125,14 +159,20 @@ function MiCuentaPage() {
     setNotice("");
     try {
       const data = await callSae({ action: mode, ...form });
-      if (mode === "register" && data["pendiente"]) {
-        setNotice("Cuenta creada. Ya puedes iniciar sesión.");
+      if (mode === "register") {
+        setNotice("Cuenta creada. Ya puedes iniciar sesión con tu cédula y contraseña.");
         setMode("login");
+        setForm({ cedula: form.cedula, password: "", nombre: "", email: "", telefono: "" });
+        return;
+      }
+      const token = typeof data["token"] === "string" ? data["token"] : "";
+      if (!token) {
+        setError("No pudimos validar tu cuenta. Intenta de nuevo.");
         return;
       }
       const s: Session = {
         cedula: form.cedula.replace(/\D/g, ""),
-        token: typeof data["token"] === "string" ? data["token"] : undefined,
+        token,
         nombre: pick(data as Account, ["nombre", "name", "cliente"]) || undefined,
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
@@ -142,6 +182,7 @@ function MiCuentaPage() {
         .some((key) => raw[key] !== undefined && raw[key] !== null);
       if (hasAccountData) setAccount(raw);
       else await loadAccount(s);
+
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error");
     } finally {
@@ -150,11 +191,13 @@ function MiCuentaPage() {
   };
 
   const logout = () => {
-    localStorage.removeItem(STORAGE_KEY);
-    setSession(null);
-    setAccount(null);
+    if (session?.token) {
+      void callSae({ action: "logout", cedula: session.cedula, token: session.token }).catch(() => {});
+    }
+    clearSession();
     setForm({ cedula: "", password: "", nombre: "", email: "", telefono: "" });
   };
+
 
   if (!session) {
     return (
