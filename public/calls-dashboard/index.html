@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monitoreo del asistente IA · Tu Norte</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <!-- Estilos CSS Modulares -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+
+<body>
+
+  <!-- Encabezado Principal -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="brand-icon" aria-label="Logo Asistente IA">
+        <!-- SVG Bot Icon -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path
+            d="M12 2a2 2 0 0 1 2 2v2h2a4 4 0 0 1 4 4v5a4 4 0 0 1-4 4h-2v3a2 2 0 0 1-3.4 1.4L7.8 20H6a4 4 0 0 1-4-4v-5a4 4 0 0 1 4-4h2V4a2 2 0 0 1 2-2z" />
+          <line x1="9" y1="13" x2="9.01" y2="13" />
+          <line x1="15" y1="13" x2="15.01" y2="13" />
+        </svg>
+      </div>
+      <div class="brand-info">
+        <h1 class="brand-title">Monitoreo del asistente IA</h1>
+      </div>
+    </div>
+
+    <!-- Navegación por Pestañas (inline en header) -->
+    <nav class="header-nav" aria-label="Navegación principal">
+      <ul class="nav-tabs" role="tablist">
+        <li role="presentation">
+          <button type="button" class="nav-tab-btn active" data-target="panel-general" role="tab" aria-selected="true">
+            <!-- Icon Grid -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" />
+            </svg>
+            <span>Panel General</span>
+          </button>
+        </li>
+        <li role="presentation">
+          <button type="button" class="nav-tab-btn" data-target="ventas" role="tab" aria-selected="false">
+            <!-- Icon Shopping Bag -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <path d="M16 10a4 4 0 0 1-8 0" />
+            </svg>
+            <span>Ventas</span>
+          </button>
+        </li>
+        <li role="presentation">
+          <button type="button" class="nav-tab-btn" data-target="servicio-cliente" role="tab" aria-selected="false">
+            <!-- Icon Headset -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M3 18v-6a9 9 0 0 1 18 0v6" />
+              <path
+                d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z" />
+            </svg>
+            <span>Servicio al Cliente</span>
+          </button>
+        </li>
+
+      </ul>
+    </nav>
+
+    <div class="header-right">
+      <!-- Botón Salir -->
+      <button type="button" class="btn-exit" id="btnExit" aria-label="Cerrar sesión">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+          <polyline points="16 17 21 12 16 7" />
+          <line x1="21" y1="12" x2="9" y2="12" />
+        </svg>
+        <span>Salir</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Contenido Principal -->
+  <main class="main-content">
+
+    <!-- 1. VISTA: Panel General -->
+    <section id="panel-general" class="page-view active" role="tabpanel">
+
+      <!-- Filtros de Período (exclusivos de Panel General) -->
+      <div class="panel-toolbar">
+        <div class="date-filters-group" role="group" aria-label="Filtro de período">
+          <button type="button" class="filter-btn active" data-preset="today">Hoy</button>
+          <button type="button" class="filter-btn" data-preset="7days">7 días</button>
+          <button type="button" class="filter-btn" data-preset="14days">14 días</button>
+          <button type="button" class="filter-btn" data-preset="30days">30 días</button>
+          <button type="button" class="filter-btn" data-preset="custom">Rango</button>
+        </div>
+        <!-- Banner de Rango Activo -->
+        <div class="active-range-banner">
+          <div>
+            <span class="range-label" id="activeRangeLabelText">Hoy</span>:
+            <span class="range-dates" id="activeRangeDatesText">--</span>
+          </div>
+          <small style="color: var(--text-secondary);">Métricas sincronizadas</small>
+        </div>
+      </div>
+      <div class="kpi-grid">
+
+        <!-- KPI 1: Llamadas Atendidas (ACTIVO / CONECTADO A WEBHOOK) -->
+        <article class="kpi-card" id="cardLlamadasAtendidas">
+          <div class="kpi-header">
+            <div class="kpi-icon-wrapper" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path
+                  d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+              </svg>
+            </div>
+            <div class="kpi-value" id="kpiLlamadasAtendidas">0</div>
+          </div>
+          <h2 class="kpi-title">Llamadas Atendidas</h2>
+        </article>
+
+        <!-- KPI 2: Resueltas por IA -->
+        <article class="kpi-card">
+          <div class="kpi-header">
+            <div class="kpi-icon-wrapper" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                <polyline points="22 4 12 14.01 9 11.01" />
+              </svg>
+            </div>
+            <div style="display: flex; align-items: baseline; gap: 8px;">
+              <div class="kpi-value" id="kpiResueltasIA">0</div>
+              <div class="kpi-percentage" id="kpiResueltasIASubtitle">(0%)</div>
+            </div>
+          </div>
+          <h2 class="kpi-title">Resueltas por IA</h2>
+        </article>
+
+        <!-- KPI 3: Abandonadas -->
+        <article class="kpi-card">
+          <div class="kpi-header">
+            <div class="kpi-icon-wrapper" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <line x1="1" y1="1" x2="23" y2="23" />
+                <path d="M9 9v.01" />
+                <path d="M15 15v.01" />
+                <path
+                  d="M10.68 5.67a2 2 0 0 1 2.44-.45 12.84 12.84 0 0 1 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07" />
+                <path d="M4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91" />
+              </svg>
+            </div>
+            <div style="display: flex; align-items: baseline; gap: 8px;">
+              <div class="kpi-value" id="kpiAbandonadas">0</div>
+              <div class="kpi-percentage" id="kpiAbandonadasSubtitle">(0%)</div>
+            </div>
+          </div>
+          <h2 class="kpi-title">Abandonadas por usuario</h2>
+        </article>
+
+        <!-- KPI 4: Transferidas a Call Center -->
+        <article class="kpi-card">
+          <div class="kpi-header">
+            <div class="kpi-icon-wrapper" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                <circle cx="8.5" cy="7" r="4" />
+                <polyline points="17 11 19 13 23 9" />
+              </svg>
+            </div>
+            <div style="display: flex; align-items: baseline; gap: 8px;">
+              <div class="kpi-value" id="kpiEscaladasProceso">0</div>
+              <div class="kpi-percentage" id="kpiEscaladasProcesoSubtitle">(0%)</div>
+            </div>
+          </div>
+          <h2 class="kpi-title">Transferidas a Call Center</h2>
+        </article>
+
+        <!-- KPI 5: Transferencia fallida por PBX -->
+        <article class="kpi-card">
+          <div class="kpi-header">
+            <div class="kpi-icon-wrapper" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path
+                  d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91" />
+                <line x1="23" y1="1" x2="1" y2="23" />
+              </svg>
+            </div>
+            <div style="display: flex; align-items: baseline; gap: 8px;">
+              <div class="kpi-value" id="kpiTransferenciaFallidaPbx">0</div>
+              <div class="kpi-percentage" id="kpiTransferenciaFallidaPbxSubtitle">(0%)</div>
+            </div>
+          </div>
+          <h2 class="kpi-title">Transferencia fallida pbx</h2>
+        </article>
+
+        <!-- KPI 6: Pending -->
+        <article class="kpi-card">
+          <div class="kpi-header">
+            <div class="kpi-icon-wrapper" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                <circle cx="8.5" cy="7" r="4" />
+                <line x1="18" y1="8" x2="23" y2="13" />
+                <line x1="23" y1="8" x2="18" y2="13" />
+              </svg>
+            </div>
+            <div style="display: flex; align-items: baseline; gap: 8px;">
+              <div class="kpi-value">0</div>
+              <div class="kpi-percentage">(0%)</div>
+            </div>
+          </div>
+          <h2 class="kpi-title">Pending</h2>
+        </article>
+
+
+      </div>
+
+      <!-- Fila de Gráficos -->
+      <div class="charts-row">
+
+        <!-- Gráfico: Tendencia diaria de llamadas -->
+        <div class="chart-card" id="chartCard">
+          <div class="chart-header">
+            <h3 class="chart-title">Tendencia diaria de llamadas</h3>
+            <div class="chart-legend">
+              <span class="legend-dot" style="background:#0b57d0"></span><span class="legend-label">Atendidas</span>
+              <span class="legend-dot" style="background:#16a34a"></span><span class="legend-label">Resueltas por
+                IA</span>
+            </div>
+          </div>
+          <div class="chart-body">
+            <canvas id="llamadasChart" aria-label="Gráfico de tendencia diaria de llamadas"></canvas>
+          </div>
+        </div>
+
+        <!-- Gráfico: Tendencia horaria de llamadas atendidas -->
+        <div class="chart-card" id="chartHourCard">
+          <div class="chart-header">
+            <h3 class="chart-title">Tendencia horaria de llamadas atendidas</h3>
+            <div class="chart-legend">
+              <span class="legend-dot" style="background:#0b57d0"></span><span class="legend-label">Atendidas</span>
+            </div>
+          </div>
+          <div class="chart-body">
+            <canvas id="llamadasHoraChart" aria-label="Gráfico de tendencia horaria de llamadas atendidas"></canvas>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Fila de Gráficos Secundarios -->
+      <div class="charts-row">
+        <!-- Gráfico: Sentimiento -->
+        <div class="chart-card" id="chartSentimentCard">
+          <div class="chart-header">
+            <h3 class="chart-title">Sentimiento de llamadas segun AI</h3>
+          </div>
+          <div class="chart-body" style="display: flex; justify-content: center; height: 300px;">
+            <canvas id="sentimentChart" aria-label="Gráfico de sentimiento de llamadas"></canvas>
+          </div>
+        </div>
+        
+        <!-- Gráfico: Resultado Llamada segun AI -->
+        <div class="chart-card" id="chartOutcomeCard">
+          <div class="chart-header">
+            <h3 class="chart-title">Resultado Llamada segun AI</h3>
+          </div>
+          <div class="chart-body" style="display: flex; justify-content: center; height: 300px;">
+            <canvas id="outcomeChart" aria-label="Gráfico de resultado de llamadas según AI"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Selector de Rango Personalizado (dentro de Panel General) -->
+      <div class="modal-overlay" id="rangeModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-container">
+          <div class="modal-header">
+            <h2 class="modal-title" id="modalTitle">Seleccionar Rango de Fechas</h2>
+            <button type="button" class="modal-close-btn" id="modalCloseBtn" aria-label="Cerrar modal">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          </div>
+          <form class="modal-form" onsubmit="event.preventDefault();">
+            <div class="form-group">
+              <label for="inputDateBegin" class="form-label">Fecha de Inicio (Begin)</label>
+              <input type="date" id="inputDateBegin" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label for="inputDateEnd" class="form-label">Fecha Final (End)</label>
+              <input type="date" id="inputDateEnd" class="form-input" required>
+            </div>
+            <div class="modal-actions">
+              <button type="button" class="btn-secondary" id="btnCancelRange">Cancelar</button>
+              <button type="button" class="btn-primary" id="btnApplyRange">Aplicar Rango</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- 2. VISTA: Ventas -->
+    <section id="ventas" class="page-view" role="tabpanel">
+      <div class="view-header" style="margin-bottom: 24px;">
+        <h2 style="font-size: 1.2rem; font-weight: 600; color: var(--text-primary);">Registro de Ventas (Purchasing)
+        </h2>
+      </div>
+
+      <div class="table-container" id="ventasTableContainer">
+        <!-- Loader inicial -->
+        <div class="empty-state" id="ventasLoading" style="padding: 40px; text-align: center;">
+          <p style="color: var(--text-secondary); font-size: 0.95rem;">Cargando datos de ventas...</p>
+        </div>
+
+        <!-- Estado vacío o error -->
+        <div class="empty-state" id="ventasEmpty" style="display: none; padding: 40px; text-align: center;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="width: 48px; height: 48px; color: var(--text-muted); margin-bottom: 16px;">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          <p style="color: var(--text-secondary); font-size: 0.95rem;">No hay registros disponibles o el webhook está
+            inactivo.</p>
+        </div>
+
+        <!-- Tabla dinámica -->
+        <div class="table-responsive" id="ventasTableWrapper" style="display: none;">
+          <table class="data-table" id="ventasTable">
+            <thead id="ventasTableHeader">
+              <!-- Se generan dinámicamente -->
+            </thead>
+            <tbody id="ventasTableBody">
+              <!-- Se generan dinámicamente -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. VISTA: Servicio al Cliente -->
+    <section id="servicio-cliente" class="page-view" role="tabpanel">
+      <div class="view-header" style="margin-bottom: 24px;">
+        <h2 style="font-size: 1.2rem; font-weight: 600; color: var(--text-primary);">Servicio al Cliente (Service)</h2>
+      </div>
+
+      <div class="table-container" id="serviceTableContainer">
+        <!-- Loader inicial -->
+        <div class="empty-state" id="serviceLoading" style="padding: 40px; text-align: center;">
+          <p style="color: var(--text-secondary); font-size: 0.95rem;">Cargando datos de servicio al cliente...</p>
+        </div>
+
+        <!-- Estado vacío o error -->
+        <div class="empty-state" id="serviceEmpty" style="display: none; padding: 40px; text-align: center;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="width: 48px; height: 48px; color: var(--text-muted); margin-bottom: 16px;">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          <p style="color: var(--text-secondary); font-size: 0.95rem;">No hay registros disponibles o el webhook está
+            inactivo.</p>
+        </div>
+
+        <!-- Tabla dinámica -->
+        <div class="table-responsive" id="serviceTableWrapper" style="display: none;">
+          <table class="data-table" id="serviceTable">
+            <thead id="serviceTableHeader">
+              <!-- Se generan dinámicamente -->
+            </thead>
+            <tbody id="serviceTableBody">
+              <!-- Se generan dinámicamente -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+    <!-- Modal for Call Summary -->
+    <div class="modal-overlay" id="summaryModal" role="dialog" aria-modal="true" aria-labelledby="summaryModalTitle" style="display: none;">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h2 class="modal-title" id="summaryModalTitle">Resumen de Llamada</h2>
+          <button type="button" class="modal-close-btn" onclick="closeSummaryModal()" aria-label="Cerrar modal">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body" style="padding: 1.5rem; max-height: 60vh; overflow-y: auto;">
+          <p id="summaryModalContent" style="white-space: pre-wrap; font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5; margin: 0;"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal for Notes Edit -->
+    <div class="modal-overlay" id="notesModal" role="dialog" aria-modal="true" aria-labelledby="notesModalTitle" style="display: none;">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h2 class="modal-title" id="notesModalTitle">Editar Notas</h2>
+          <button type="button" class="modal-close-btn" onclick="closeNotesModal()" aria-label="Cerrar modal">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+          <textarea id="notesModalContent" class="form-input" style="min-height: 150px; resize: vertical; padding: 10px; width: 100%; box-sizing: border-box;"></textarea>
+          <div style="display: flex; justify-content: flex-end; gap: 8px;">
+            <button type="button" class="btn-secondary" onclick="closeNotesModal()">Cancelar</button>
+            <button type="button" class="btn-primary" id="btnSaveNotes" onclick="saveNotes()">Guardar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Script global para modales -->
+  <script>
+    function openSummaryModal(title, summaryEncoded) {
+      document.getElementById('summaryModalTitle').textContent = title || 'Resumen de Llamada';
+      try {
+        document.getElementById('summaryModalContent').textContent = decodeURIComponent(summaryEncoded) || 'Sin resumen disponible.';
+      } catch (e) {
+        document.getElementById('summaryModalContent').textContent = summaryEncoded || 'Sin resumen disponible.';
+      }
+      document.getElementById('summaryModal').style.display = 'flex';
+      document.getElementById('summaryModal').classList.add('active');
+    }
+
+    function closeSummaryModal() {
+      document.getElementById('summaryModal').style.display = 'none';
+      document.getElementById('summaryModal').classList.remove('active');
+    }
+
+    // --- Lógica para Cerrar Llamada ---
+    async function confirmCloseCall(callId) {
+      if (confirm('¿Estás seguro de que deseas cerrar esta llamada? (' + callId + ')')) {
+        try {
+          const payload = { call_id: callId };
+          const response = await fetch('https://vmi3345591.contaboserver.net/webhook/set-status', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+          });
+          
+          if (response.ok) {
+            alert('Proceso finalizado con éxito.');
+            location.reload();
+          } else {
+            alert('Hubo un error al cerrar la llamada. Intenta nuevamente.');
+          }
+        } catch (error) {
+          console.error('Error closing call:', error);
+          alert('Hubo un error de conexión al intentar cerrar la llamada.');
+        }
+      }
+    }
+
+    // --- Lógica para Notas ---
+    let currentNotesCallId = null;
+
+    function openNotesModal(callId, notesEncoded) {
+      currentNotesCallId = callId;
+      document.getElementById('notesModalTitle').textContent = 'Notas - ' + callId;
+      try {
+        document.getElementById('notesModalContent').value = decodeURIComponent(notesEncoded) || '';
+      } catch (e) {
+        document.getElementById('notesModalContent').value = notesEncoded || '';
+      }
+      document.getElementById('notesModal').style.display = 'flex';
+      document.getElementById('notesModal').classList.add('active');
+    }
+
+    function closeNotesModal() {
+      document.getElementById('notesModal').style.display = 'none';
+      document.getElementById('notesModal').classList.remove('active');
+      currentNotesCallId = null;
+    }
+
+    async function saveNotes() {
+      if (!currentNotesCallId) return;
+      
+      const newNotes = document.getElementById('notesModalContent').value;
+      const btn = document.getElementById('btnSaveNotes');
+      const originalText = btn.textContent;
+      
+      try {
+        btn.textContent = 'Guardando...';
+        btn.disabled = true;
+        
+        const payload = {
+          call_id: currentNotesCallId,
+          notes: newNotes
+        };
+        
+        const response = await fetch('https://vmi3345591.contaboserver.net/webhook/call-set-notes', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+        
+        if (response.ok) {
+          closeNotesModal();
+          location.reload();
+        } else {
+          alert('Hubo un error al guardar las notas. Intenta nuevamente.');
+        }
+      } catch (error) {
+        console.error('Error saving notes:', error);
+        alert('Hubo un error al guardar las notas. Verifica tu conexión.');
+      } finally {
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }
+    }
+  </script>
+
+  <!-- Scripts Modulares -->
+  <script type="module" src="js/app.js"></script>
+</body>
+
+</html>
