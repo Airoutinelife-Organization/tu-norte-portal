@@ -191,11 +191,13 @@ function MiCuentaPage() {
   };
 
   const logout = () => {
-    localStorage.removeItem(STORAGE_KEY);
-    setSession(null);
-    setAccount(null);
+    if (session?.token) {
+      void callSae({ action: "logout", cedula: session.cedula, token: session.token }).catch(() => {});
+    }
+    clearSession();
     setForm({ cedula: "", password: "", nombre: "", email: "", telefono: "" });
   };
+
 
   if (!session) {
     return (
