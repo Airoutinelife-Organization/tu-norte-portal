@@ -88,3 +88,76 @@ export const getRedisCallsVentas = createServerFn().handler(
     }
   },
 );
+
+export type PurchasingCall = {
+  key?: string;
+  status?: string;
+  channel?: string;
+  start_timestamp?: string;
+  agent?: string;
+  specialist?: string;
+  phone?: string;
+  external_id?: string;
+  caller_name?: string;
+  zone?: string;
+  call_summary?: string;
+  notes?: string;
+  url?: string;
+  disconnection_reason?: string;
+  assignedTo?: string;
+};
+
+export const getPurchasingCalls = createServerFn().handler(
+  async (): Promise<{ calls: PurchasingCall[]; error?: string }> => {
+    try {
+      const res = await fetch("https://vmi3345591.contaboserver.net/webhook/get-purchasing", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
+      });
+      if (!res.ok) return { calls: [], error: await res.text() };
+      const raw = await res.json();
+      const data = Array.isArray(raw) ? raw : (raw ? [raw] : []);
+      return { calls: data };
+    } catch (err) {
+      return { calls: [], error: String(err) };
+    }
+  }
+);
+
+export type ServiceCall = {
+  key?: string;
+  status?: string;
+  start_timestamp?: string;
+  channel?: string;
+  agent?: string;
+  specialist?: string;
+  phone?: string;
+  external_id?: string;
+  caller_name?: string;
+  call_summary?: string;
+  notes?: string;
+  url?: string;
+  call_transfer?: string;
+  pbx?: string;
+  disconnection_reason?: string;
+  assignedTo?: string;
+};
+
+export const getServiceCalls = createServerFn().handler(
+  async (): Promise<{ calls: ServiceCall[]; error?: string }> => {
+    try {
+      const res = await fetch("https://vmi3345591.contaboserver.net/webhook/get-service", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
+      });
+      if (!res.ok) return { calls: [], error: await res.text() };
+      const raw = await res.json();
+      const data = Array.isArray(raw) ? raw : (raw ? [raw] : []);
+      return { calls: data };
+    } catch (err) {
+      return { calls: [], error: String(err) };
+    }
+  }
+);

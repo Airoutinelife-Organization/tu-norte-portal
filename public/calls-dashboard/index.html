@@ -58,30 +58,8 @@
             <span>Panel General</span>
           </button>
         </li>
-        <li role="presentation">
-          <button type="button" class="nav-tab-btn" data-target="ventas" role="tab" aria-selected="false">
-            <!-- Icon Shopping Bag -->
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-              stroke-linejoin="round">
-              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
-              <line x1="3" y1="6" x2="21" y2="6" />
-              <path d="M16 10a4 4 0 0 1-8 0" />
-            </svg>
-            <span>Ventas</span>
-          </button>
-        </li>
-        <li role="presentation">
-          <button type="button" class="nav-tab-btn" data-target="servicio-cliente" role="tab" aria-selected="false">
-            <!-- Icon Headset -->
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-              stroke-linejoin="round">
-              <path d="M3 18v-6a9 9 0 0 1 18 0v6" />
-              <path
-                d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z" />
-            </svg>
-            <span>Servicio al Cliente</span>
-          </button>
-        </li>
+        
+        
 
       </ul>
     </nav>
@@ -329,82 +307,9 @@
 
     </section>
 
-    <!-- 2. VISTA: Ventas -->
-    <section id="ventas" class="page-view" role="tabpanel">
-      <div class="view-header" style="margin-bottom: 24px;">
-        <h2 style="font-size: 1.2rem; font-weight: 600; color: var(--text-primary);">Registro de Ventas (Purchasing)
-        </h2>
-      </div>
+    
 
-      <div class="table-container" id="ventasTableContainer">
-        <!-- Loader inicial -->
-        <div class="empty-state" id="ventasLoading" style="padding: 40px; text-align: center;">
-          <p style="color: var(--text-secondary); font-size: 0.95rem;">Cargando datos de ventas...</p>
-        </div>
-
-        <!-- Estado vacío o error -->
-        <div class="empty-state" id="ventasEmpty" style="display: none; padding: 40px; text-align: center;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            style="width: 48px; height: 48px; color: var(--text-muted); margin-bottom: 16px;">
-            <circle cx="12" cy="12" r="10" />
-            <line x1="12" y1="8" x2="12" y2="12" />
-            <line x1="12" y1="16" x2="12.01" y2="16" />
-          </svg>
-          <p style="color: var(--text-secondary); font-size: 0.95rem;">No hay registros disponibles o el webhook está
-            inactivo.</p>
-        </div>
-
-        <!-- Tabla dinámica -->
-        <div class="table-responsive" id="ventasTableWrapper" style="display: none;">
-          <table class="data-table" id="ventasTable">
-            <thead id="ventasTableHeader">
-              <!-- Se generan dinámicamente -->
-            </thead>
-            <tbody id="ventasTableBody">
-              <!-- Se generan dinámicamente -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- 3. VISTA: Servicio al Cliente -->
-    <section id="servicio-cliente" class="page-view" role="tabpanel">
-      <div class="view-header" style="margin-bottom: 24px;">
-        <h2 style="font-size: 1.2rem; font-weight: 600; color: var(--text-primary);">Servicio al Cliente (Service)</h2>
-      </div>
-
-      <div class="table-container" id="serviceTableContainer">
-        <!-- Loader inicial -->
-        <div class="empty-state" id="serviceLoading" style="padding: 40px; text-align: center;">
-          <p style="color: var(--text-secondary); font-size: 0.95rem;">Cargando datos de servicio al cliente...</p>
-        </div>
-
-        <!-- Estado vacío o error -->
-        <div class="empty-state" id="serviceEmpty" style="display: none; padding: 40px; text-align: center;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            style="width: 48px; height: 48px; color: var(--text-muted); margin-bottom: 16px;">
-            <circle cx="12" cy="12" r="10" />
-            <line x1="12" y1="8" x2="12" y2="12" />
-            <line x1="12" y1="16" x2="12.01" y2="16" />
-          </svg>
-          <p style="color: var(--text-secondary); font-size: 0.95rem;">No hay registros disponibles o el webhook está
-            inactivo.</p>
-        </div>
-
-        <!-- Tabla dinámica -->
-        <div class="table-responsive" id="serviceTableWrapper" style="display: none;">
-          <table class="data-table" id="serviceTable">
-            <thead id="serviceTableHeader">
-              <!-- Se generan dinámicamente -->
-            </thead>
-            <tbody id="serviceTableBody">
-              <!-- Se generan dinámicamente -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
+    
     <!-- Modal for Call Summary -->
     <div class="modal-overlay" id="summaryModal" role="dialog" aria-modal="true" aria-labelledby="summaryModalTitle" style="display: none;">
       <div class="modal-container">

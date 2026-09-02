@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AgendarRouteImport } from './routes/agendar'
 import { Route as CoberturaRouteImport } from './routes/cobertura'
+import { Route as ContactCenterRouteImport } from './routes/contact-center'
 import { Route as DiagnosticoRouteImport } from './routes/diagnostico'
 import { Route as EmpresaRouteImport } from './routes/empresa'
 import { Route as MediosDePagoRouteImport } from './routes/medios-de-pago'
@@ -24,6 +25,7 @@ import { Route as PqrRouteImport } from './routes/pqr'
 import { Route as RecomendadorRouteImport } from './routes/recomendador'
 import { Route as SoporteRouteImport } from './routes/soporte'
 import { Route as TestVelocidadRouteImport } from './routes/test-velocidad'
+import { Route as VentasRouteImport } from './routes/ventas'
 import { Route as ApiPublicChatbotRouteImport } from './routes/api/public/chatbot'
 import { Route as ApiPublicSaeRouteImport } from './routes/api/public/sae'
 
@@ -45,6 +47,11 @@ const AgendarRoute = AgendarRouteImport.update({
 const CoberturaRoute = CoberturaRouteImport.update({
   id: '/cobertura',
   path: '/cobertura',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactCenterRoute = ContactCenterRouteImport.update({
+  id: '/contact-center',
+  path: '/contact-center',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DiagnosticoRoute = DiagnosticoRouteImport.update({
@@ -102,6 +109,11 @@ const TestVelocidadRoute = TestVelocidadRouteImport.update({
   path: '/test-velocidad',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VentasRoute = VentasRouteImport.update({
+  id: '/ventas',
+  path: '/ventas',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicChatbotRoute = ApiPublicChatbotRouteImport.update({
   id: '/api/public/chatbot',
   path: '/api/public/chatbot',
@@ -118,6 +130,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/agendar': typeof AgendarRoute
   '/cobertura': typeof CoberturaRoute
+  '/contact-center': typeof ContactCenterRoute
   '/diagnostico': typeof DiagnosticoRoute
   '/empresa': typeof EmpresaRoute
   '/medios-de-pago': typeof MediosDePagoRoute
@@ -129,6 +142,7 @@ export interface FileRoutesByFullPath {
   '/recomendador': typeof RecomendadorRoute
   '/soporte': typeof SoporteRoute
   '/test-velocidad': typeof TestVelocidadRoute
+  '/ventas': typeof VentasRoute
   '/api/public/chatbot': typeof ApiPublicChatbotRoute
   '/api/public/sae': typeof ApiPublicSaeRoute
 }
@@ -137,6 +151,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/agendar': typeof AgendarRoute
   '/cobertura': typeof CoberturaRoute
+  '/contact-center': typeof ContactCenterRoute
   '/diagnostico': typeof DiagnosticoRoute
   '/empresa': typeof EmpresaRoute
   '/medios-de-pago': typeof MediosDePagoRoute
@@ -148,6 +163,7 @@ export interface FileRoutesByTo {
   '/recomendador': typeof RecomendadorRoute
   '/soporte': typeof SoporteRoute
   '/test-velocidad': typeof TestVelocidadRoute
+  '/ventas': typeof VentasRoute
   '/api/public/chatbot': typeof ApiPublicChatbotRoute
   '/api/public/sae': typeof ApiPublicSaeRoute
 }
@@ -157,6 +173,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/agendar': typeof AgendarRoute
   '/cobertura': typeof CoberturaRoute
+  '/contact-center': typeof ContactCenterRoute
   '/diagnostico': typeof DiagnosticoRoute
   '/empresa': typeof EmpresaRoute
   '/medios-de-pago': typeof MediosDePagoRoute
@@ -168,6 +185,7 @@ export interface FileRoutesById {
   '/recomendador': typeof RecomendadorRoute
   '/soporte': typeof SoporteRoute
   '/test-velocidad': typeof TestVelocidadRoute
+  '/ventas': typeof VentasRoute
   '/api/public/chatbot': typeof ApiPublicChatbotRoute
   '/api/public/sae': typeof ApiPublicSaeRoute
 }
@@ -178,6 +196,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/agendar'
     | '/cobertura'
+    | '/contact-center'
     | '/diagnostico'
     | '/empresa'
     | '/medios-de-pago'
@@ -189,6 +208,7 @@ export interface FileRouteTypes {
     | '/recomendador'
     | '/soporte'
     | '/test-velocidad'
+    | '/ventas'
     | '/api/public/chatbot'
     | '/api/public/sae'
   fileRoutesByTo: FileRoutesByTo
@@ -197,6 +217,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/agendar'
     | '/cobertura'
+    | '/contact-center'
     | '/diagnostico'
     | '/empresa'
     | '/medios-de-pago'
@@ -208,6 +229,7 @@ export interface FileRouteTypes {
     | '/recomendador'
     | '/soporte'
     | '/test-velocidad'
+    | '/ventas'
     | '/api/public/chatbot'
     | '/api/public/sae'
   id:
@@ -216,6 +238,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/agendar'
     | '/cobertura'
+    | '/contact-center'
     | '/diagnostico'
     | '/empresa'
     | '/medios-de-pago'
@@ -227,6 +250,7 @@ export interface FileRouteTypes {
     | '/recomendador'
     | '/soporte'
     | '/test-velocidad'
+    | '/ventas'
     | '/api/public/chatbot'
     | '/api/public/sae'
   fileRoutesById: FileRoutesById
@@ -236,6 +260,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   AgendarRoute: typeof AgendarRoute
   CoberturaRoute: typeof CoberturaRoute
+  ContactCenterRoute: typeof ContactCenterRoute
   DiagnosticoRoute: typeof DiagnosticoRoute
   EmpresaRoute: typeof EmpresaRoute
   MediosDePagoRoute: typeof MediosDePagoRoute
@@ -247,6 +272,7 @@ export interface RootRouteChildren {
   RecomendadorRoute: typeof RecomendadorRoute
   SoporteRoute: typeof SoporteRoute
   TestVelocidadRoute: typeof TestVelocidadRoute
+  VentasRoute: typeof VentasRoute
   ApiPublicChatbotRoute: typeof ApiPublicChatbotRoute
   ApiPublicSaeRoute: typeof ApiPublicSaeRoute
 }
@@ -279,6 +305,13 @@ declare module '@tanstack/react-router' {
       path: '/cobertura'
       fullPath: '/cobertura'
       preLoaderRoute: typeof CoberturaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact-center': {
+      id: '/contact-center'
+      path: '/contact-center'
+      fullPath: '/contact-center'
+      preLoaderRoute: typeof ContactCenterRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/diagnostico': {
@@ -358,6 +391,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TestVelocidadRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ventas': {
+      id: '/ventas'
+      path: '/ventas'
+      fullPath: '/ventas'
+      preLoaderRoute: typeof VentasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/chatbot': {
       id: '/api/public/chatbot'
       path: '/api/public/chatbot'
@@ -380,6 +420,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   AgendarRoute: AgendarRoute,
   CoberturaRoute: CoberturaRoute,
+  ContactCenterRoute: ContactCenterRoute,
   DiagnosticoRoute: DiagnosticoRoute,
   EmpresaRoute: EmpresaRoute,
   MediosDePagoRoute: MediosDePagoRoute,
@@ -391,6 +432,7 @@ const rootRouteChildren: RootRouteChildren = {
   RecomendadorRoute: RecomendadorRoute,
   SoporteRoute: SoporteRoute,
   TestVelocidadRoute: TestVelocidadRoute,
+  VentasRoute: VentasRoute,
   ApiPublicChatbotRoute: ApiPublicChatbotRoute,
   ApiPublicSaeRoute: ApiPublicSaeRoute,
 }
