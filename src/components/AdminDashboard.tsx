@@ -88,6 +88,12 @@ const TABS: { id: Tab; label: string; icon: React.ElementType }[] = [
 ];
 
 
+type VoiceAgent = {
+  Agent: string;
+  key: string;
+  specialist: string[];
+};
+
 type HumanAgent = {
   agentKey: string;
   name: string;
@@ -108,6 +114,39 @@ export default function AdminDashboard({
 
   // ── Assignment State ──────────────────────────────────────────────────────────
   const [assigningCall, setAssigningCall] = useState<{ key: string; role: string } | null>(null);
+  const [isCreatingTicket, setIsCreatingTicket] = useState(false);
+  const [voiceAgents, setVoiceAgents] = useState<VoiceAgent[]>([]);
+  const [newTicketAgent, setNewTicketAgent] = useState<string>("");
+  const [newTicketSpecialist, setNewTicketSpecialist] = useState<string>("");
+  const [newTicketPhone, setNewTicketPhone] = useState("");
+  const [newTicketName, setNewTicketName] = useState("");
+  const [newTicketDoc, setNewTicketDoc] = useState("");
+  const [newTicketAddress, setNewTicketAddress] = useState("");
+  const [newTicketRequest, setNewTicketRequest] = useState("");
+  const [newTicketNotes, setNewTicketNotes] = useState("");
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let val = e.target.value.replace(/\D/g, "");
+    if (val.length > 10) val = val.slice(0, 10);
+    let formatted = val;
+    if (val.length > 6) {
+      formatted = `${val.slice(0, 3)}-${val.slice(3, 6)}-${val.slice(6, 10)}`;
+    } else if (val.length > 3) {
+      formatted = `${val.slice(0, 3)}-${val.slice(3, 6)}`;
+    }
+    setNewTicketPhone(formatted);
+  };
+  
+  const isTicketFormValid = newTicketAgent && newTicketSpecialist && newTicketPhone.length === 12 && newTicketName.trim() && newTicketDoc.trim() && newTicketRequest.trim();
+
+  useEffect(() => {
+    if (isCreatingTicket && voiceAgents.length === 0) {
+      fetch("https://vmi3345591.contaboserver.net/webhook/voice-agent", { method: "POST" })
+        .then(res => res.json())
+        .then((data: VoiceAgent[]) => setVoiceAgents(data))
+        .catch(err => console.error("Error loading voice agents:", err));
+    }
+  }, [isCreatingTicket, voiceAgents.length]);
   const [availableAgents, setAvailableAgents] = useState<HumanAgent[]>([]);
   const [agentsLoading, setAgentsLoading] = useState(false);
   const [assignedAgents, setAssignedAgents] = useState<Record<string, { initials: string, name: string }>>({});
@@ -939,6 +978,7 @@ export default function AdminDashboard({
         {activeTab === "servicio" && (
           <section className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
             <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border px-6 py-4">
+              <div className="flex items-center justify-between w-full">
               <div className="flex items-center gap-3">
                 <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-500/10">
                   <HeadphonesIcon className="h-4 w-4 text-blue-500" />
@@ -954,6 +994,13 @@ export default function AdminDashboard({
                   </p>
                 </div>
               </div>
+              <button 
+                onClick={() => setIsCreatingTicket(true)}
+                className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
+              >
+                Crear Ticket
+              </button>
+            </div>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
@@ -1199,6 +1246,130 @@ export default function AdminDashboard({
                 className="rounded-lg bg-muted px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-muted/80"
               >
                 Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    
+      {isCreatingTicket && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-lg rounded-xl bg-background p-6 shadow-lg">
+            <h3 className="mb-4 text-lg font-semibold text-foreground">
+              Crear Nuevo Ticket
+            </h3>
+            <div className="flex flex-col gap-4 py-4 max-h-[70vh] overflow-y-auto px-1">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-1">Agente *</label>
+                  <select 
+                    className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground"
+                    value={newTicketAgent}
+                    onChange={e => {
+                      setNewTicketAgent(e.target.value);
+                      setNewTicketSpecialist("");
+                    }}
+                  >
+                    <option value="">Seleccione un agente...</option>
+                    {voiceAgents.map(a => (
+                      <option key={a.key} value={a.Agent}>{a.Agent}</option>
+                    ))}
+                  </select>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-1">Especialista *</label>
+                  <select 
+                    className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground"
+                    value={newTicketSpecialist}
+                    onChange={e => setNewTicketSpecialist(e.target.value)}
+                    disabled={!newTicketAgent}
+                  >
+                    <option value="">Seleccione un especialista...</option>
+                    {voiceAgents.find(a => a.Agent === newTicketAgent)?.specialist.map(s => (
+                      <option key={s} value={s}>{s}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-1">Teléfono *</label>
+                  <input
+                    type="text"
+                    placeholder="###-###-####"
+                    className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground"
+                    value={newTicketPhone}
+                    onChange={handlePhoneChange}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-1">Documento de Identidad *</label>
+                  <input
+                    type="text"
+                    className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground"
+                    value={newTicketDoc}
+                    onChange={e => setNewTicketDoc(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1">Nombre Completo *</label>
+                <input
+                  type="text"
+                  className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground"
+                  value={newTicketName}
+                  onChange={e => setNewTicketName(e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1">Dirección</label>
+                <input
+                  type="text"
+                  className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground"
+                  value={newTicketAddress}
+                  onChange={e => setNewTicketAddress(e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1">Requerimiento *</label>
+                <textarea
+                  className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground min-h-[80px] resize-y"
+                  value={newTicketRequest}
+                  onChange={e => setNewTicketRequest(e.target.value)}
+                ></textarea>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1">Notas</label>
+                <textarea
+                  className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground min-h-[60px] resize-y"
+                  value={newTicketNotes}
+                  onChange={e => setNewTicketNotes(e.target.value)}
+                ></textarea>
+              </div>
+            </div>
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                onClick={() => setIsCreatingTicket(false)}
+                className="rounded-lg bg-muted px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-muted/80"
+              >
+                Cancelar
+              </button>
+              <button
+                disabled={!isTicketFormValid}
+                onClick={() => {
+                  alert("Formulario validado correctamente. En espera del webhook final.");
+                }}
+                className={`rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors ${
+                  isTicketFormValid ? "bg-blue-600 hover:bg-blue-700" : "bg-blue-300 cursor-not-allowed"
+                }`}
+              >
+                Guardar Ticket
               </button>
             </div>
           </div>
