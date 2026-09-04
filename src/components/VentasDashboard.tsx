@@ -52,6 +52,8 @@ import {
   Info,
   Calendar as CalendarIcon,
   UserPlus,
+  Clock,
+  Archive,
 } from "lucide-react";
 
 /* ---------------------------------------------------------------------- */
@@ -79,12 +81,14 @@ const RANGES = [
 
 type FilterMode = "preset" | "range";
 
-type Tab = "general" | "ventas" | "servicio";
+type Tab = "general" | "ventas" | "servicio" | "en_progreso" | "historico";
 
 const TABS: { id: Tab; label: string; icon: React.ElementType }[] = [
-  { id: "general", label: "Panel General", icon: LayoutDashboard },
+  { id: "general", label: "Dashboard", icon: LayoutDashboard },
   { id: "ventas", label: "Ventas", icon: ShoppingBag },
-  { id: "servicio", label: "Tickets", icon: HeadphonesIcon },
+  { id: "servicio", label: "Por Asignar", icon: UserPlus },
+  { id: "en_progreso", label: "En Progreso", icon: Clock },
+  { id: "historico", label: "Historico", icon: Archive },
 ];
 
 
@@ -110,7 +114,7 @@ export default function AdminDashboard({
   onLogout: () => void;
   mode?: "contact-center" | "ventas";
 }) {
-  const [activeTab, setActiveTab] = useState<Tab>(mode === "ventas" ? "ventas" : "servicio");
+  const [activeTab, setActiveTab] = useState<Tab>("ventas");
 
   // ── Assignment State ──────────────────────────────────────────────────────────
   const [assigningCall, setAssigningCall] = useState<{ key: string; role: string } | null>(null);
@@ -124,6 +128,7 @@ export default function AdminDashboard({
   const [newTicketAddress, setNewTicketAddress] = useState("");
   const [newTicketRequest, setNewTicketRequest] = useState("");
   const [newTicketNotes, setNewTicketNotes] = useState("");
+  const [newTicketId, setNewTicketId] = useState<string>("");
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let val = e.target.value.replace(/\D/g, "");
@@ -137,7 +142,7 @@ export default function AdminDashboard({
     setNewTicketPhone(formatted);
   };
   
-  const isTicketFormValid = newTicketAgent && newTicketSpecialist && newTicketPhone.length === 12 && newTicketName.trim() && newTicketDoc.trim() && newTicketRequest.trim();
+  const isTicketFormValid = newTicketAgent && newTicketSpecialist && newTicketRequest.trim();
 
   useEffect(() => {
     if (isCreatingTicket && voiceAgents.length === 0) {
@@ -146,14 +151,26 @@ export default function AdminDashboard({
         .then((data: VoiceAgent[]) => setVoiceAgents(data))
         .catch(err => console.error("Error loading voice agents:", err));
     }
-  }, [isCreatingTicket, voiceAgents.length]);
+    if (isCreatingTicket && !newTicketId) {
+      fetch("https://vmi3345591.contaboserver.net/webhook/get-call-id-manually", { method: "POST" })
+        .then(res => res.json())
+        .then(data => {
+          const num = data["ticket-manual"] || Object.values(data)[0];
+          setNewTicketId(`ticket-manual-${num}`);
+        })
+        .catch(err => console.error(err));
+    }
+    if (!isCreatingTicket && newTicketId) {
+      setNewTicketId("");
+    }
+  }, [isCreatingTicket, voiceAgents.length, newTicketId]);
   const [availableAgents, setAvailableAgents] = useState<HumanAgent[]>([]);
   const [agentsLoading, setAgentsLoading] = useState(false);
-  const [assignedAgents, setAssignedAgents] = useState<Record<string, { initials: string, name: string }>>({});
+  const [assignedAgents, setAssignedAgents] = useState<Record<string, { initials: string, name: string, agentKey?: string }>>({});
 
   const [allAgents, setAllAgents] = useState<Record<string, HumanAgent>>({});
   useEffect(() => {
-    fetch("https://vmi3345591.contaboserver.net/webhook/human-agent", { method: "POST" })
+    fetch("https://vmi3345591.contaboserver.net/webhook/get-human-agent", { method: "POST" })
       .then(res => res.json())
       .then((data: HumanAgent[]) => {
         const map: Record<string, HumanAgent> = {};
@@ -166,14 +183,8 @@ export default function AdminDashboard({
   }, []);
   
   const currentTabs = useMemo(() => {
-    if (mode === "ventas") {
-      return TABS.filter((t) => t.id !== "servicio");
-    }
-    if (mode === "contact-center") {
-      return TABS.filter((t) => t.id !== "ventas");
-    }
-    return TABS;
-  }, [mode]);
+    return TABS.filter((t) => t.id !== "servicio" && t.id !== "en_progreso" && t.id !== "historico");
+  }, []);
 
   const [days, setDays] = useState(7);
   const [filterMode, setFilterMode] = useState<FilterMode>("preset");
@@ -192,7 +203,7 @@ export default function AdminDashboard({
 
   useEffect(() => {
     let cancelled = false;
-    if (mode === "ventas" || activeTab === "ventas") {
+    if (true) {
         setPurchasingLoading(true);
         fetchPurchasing()
           .then((res) => {
@@ -217,7 +228,7 @@ export default function AdminDashboard({
 
   useEffect(() => {
     let cancelled = false;
-    if (mode === "contact-center" || activeTab === "servicio") {
+    if (mode === "contact-center" || activeTab === "servicio" || activeTab === "en_progreso" || activeTab === "historico") {
         setServiceLoading(true);
         fetchService()
           .then((res) => {
@@ -435,9 +446,7 @@ export default function AdminDashboard({
             </div>
             <div>
               <h1 className="text-lg font-bold text-foreground">
-                {mode === "ventas" 
-                  ? "Monitoreo del asistente IA - Ventas" 
-                  : "Monitoreo del asistente IA - Contact Center"}
+                Ventas - Ticktes
               </h1>
             </div>
           </div>
@@ -840,42 +849,40 @@ export default function AdminDashboard({
                                     <FileText className="h-4 w-4" />
                                   </button>
                                 )}
-                                {c.url && (
-                                  <>
-                                    <a href={c.url} target="_blank" rel="noreferrer" className="text-blue-600 hover:text-blue-800" title="Oír grabación">
-                                      <Play className="h-4 w-4" />
-                                    </a>
-                                    <div className="flex items-center gap-1">
-                                      <button 
-                                        onClick={() => {
-                                          const role = c.agent || "Ventas";
-                                          setAssigningCall({ key: c.key!, role });
-                                          setAgentsLoading(true);
-                                          fetch("https://vmi3345591.contaboserver.net/webhook/human-agent", { method: "POST" })
-                                            .then(res => res.json())
-                                            .then((data: HumanAgent[]) => {
-                                               setAvailableAgents(data.filter(a => a.roles.includes(role)));
-                                            })
-                                            .finally(() => setAgentsLoading(false));
-                                        }} 
-                                        className="text-orange-500 hover:text-orange-700" title="Asignar a"
-                                      >
-                                        <UserPlus className="h-4 w-4" />
-                                      </button>
-                                      {(() => {
-                                        const currentAgent = assignedAgents[c.key!] || (c.assignedTo && allAgents[c.assignedTo] ? {
-                                          initials: allAgents[c.assignedTo].initials,
-                                          name: allAgents[c.assignedTo].name
-                                        } : null);
-                                        return currentAgent ? (
-                                          <span className="ml-1 text-[10px] font-bold text-orange-700 bg-orange-100 rounded px-1.5 py-0.5" title={currentAgent.name}>
-                                            {currentAgent.initials}
-                                          </span>
-                                        ) : null;
-                                      })()}
-                                    </div>
-                                  </>
+                                {(c.recording_url || c.url) && (
+                                  <a href={c.recording_url || c.url} target="_blank" rel="noreferrer" className="text-blue-600 hover:text-blue-800" title="Oír grabación">
+                                    <Play className="h-4 w-4" />
+                                  </a>
                                 )}
+                                <div className="flex items-center gap-1">
+                                  <button 
+                                    onClick={() => {
+                                      const role = c.agent || "Ventas";
+                                      setAssigningCall({ key: c.key!, role });
+                                      setAgentsLoading(true);
+                                      fetch("https://vmi3345591.contaboserver.net/webhook/get-human-agent", { method: "POST" })
+                                        .then(res => res.json())
+                                        .then((data: HumanAgent[]) => {
+                                           setAvailableAgents(data.filter(a => a.roles.includes(role)));
+                                        })
+                                        .finally(() => setAgentsLoading(false));
+                                    }} 
+                                    className="text-orange-500 hover:text-orange-700" title="Asignar a"
+                                  >
+                                    <UserPlus className="h-4 w-4" />
+                                  </button>
+                                  {(() => {
+                                    const currentAgent = assignedAgents[c.key!] || (c.assignedTo && allAgents[c.assignedTo] ? {
+                                      initials: allAgents[c.assignedTo].initials,
+                                      name: allAgents[c.assignedTo].name
+                                    } : null);
+                                    return currentAgent ? (
+                                      <span className="ml-1 text-[10px] font-bold text-orange-700 bg-orange-100 rounded px-1.5 py-0.5" title={currentAgent.name}>
+                                        {currentAgent.initials}
+                                      </span>
+                                    ) : null;
+                                  })()}
+                                </div>
                               </div>
                             </td>
                             <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">
@@ -889,10 +896,13 @@ export default function AdminDashboard({
                                       method: 'POST',
                                       headers: { 'Content-Type': 'application/json' },
                                       body: JSON.stringify({ call_id: c.key, status: newStatus })
-                                    }).then(res => {
+                                    }).then(async res => {
                                       if (res.ok) window.location.reload();
-                                      else alert('Error al cambiar el estado.');
-                                    }).catch(() => alert('Error de conexión.'));
+                                      else {
+                                        const errorText = await res.text();
+                                        alert(`Error al cambiar el estado: ${errorText}`);
+                                      }
+                                    }).catch((err) => alert(`Error de conexión: ${err.message}`));
                                   } else {
                                     e.target.value = c.status || "Nuevo";
                                   }
@@ -948,10 +958,13 @@ export default function AdminDashboard({
                                                   method: 'POST',
                                                   headers: { 'Content-Type': 'application/json' },
                                                   body: JSON.stringify({ call_id: c.key, notes: newNotes })
-                                              }).then(r => {
+                                              }).then(async r => {
                                                   if(r.ok) alert("Notas guardadas correctamente");
-                                                  else alert("Error al guardar notas");
-                                              }).catch(()=>alert("Error al guardar notas"));
+                                                  else {
+                                                      const errorText = await r.text();
+                                                      alert(`Error al guardar notas: ${errorText}`);
+                                                  }
+                                              }).catch(err => alert(`Error al guardar notas: ${err.message}`));
                                             }
                                           }}
                                         >
@@ -995,7 +1008,22 @@ export default function AdminDashboard({
                 </div>
               </div>
               <button 
-                onClick={() => setIsCreatingTicket(true)}
+                onClick={() => {
+                  setNewTicketAgent("");
+                  setNewTicketSpecialist("");
+                  setNewTicketPhone("");
+                  setNewTicketName("");
+                  setNewTicketDoc("");
+                  setNewTicketAddress("");
+                  setNewTicketRequest("");
+                  setNewTicketNotes("");
+                  setAssignedAgents(prev => {
+                    const next = { ...prev };
+                    delete next["new_ticket"];
+                    return next;
+                  });
+                  setIsCreatingTicket(true);
+                }}
                 className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
               >
                 Crear Ticket
@@ -1049,42 +1077,273 @@ export default function AdminDashboard({
                                     <FileText className="h-4 w-4" />
                                   </button>
                                 )}
-                                {c.url && (
-                                  <>
-                                    <a href={c.url} target="_blank" rel="noreferrer" className="text-blue-600 hover:text-blue-800" title="Oír grabación">
-                                      <Play className="h-4 w-4" />
-                                    </a>
-                                    <div className="flex items-center gap-1">
-                                      <button 
-                                        onClick={() => {
-                                          const role = c.agent || "Ventas";
-                                          setAssigningCall({ key: c.key!, role });
-                                          setAgentsLoading(true);
-                                          fetch("https://vmi3345591.contaboserver.net/webhook/human-agent", { method: "POST" })
-                                            .then(res => res.json())
-                                            .then((data: HumanAgent[]) => {
-                                               setAvailableAgents(data.filter(a => a.roles.includes(role)));
-                                            })
-                                            .finally(() => setAgentsLoading(false));
-                                        }} 
-                                        className="text-orange-500 hover:text-orange-700" title="Asignar a"
-                                      >
-                                        <UserPlus className="h-4 w-4" />
-                                      </button>
-                                      {(() => {
-                                        const currentAgent = assignedAgents[c.key!] || (c.assignedTo && allAgents[c.assignedTo] ? {
-                                          initials: allAgents[c.assignedTo].initials,
-                                          name: allAgents[c.assignedTo].name
-                                        } : null);
-                                        return currentAgent ? (
-                                          <span className="ml-1 text-[10px] font-bold text-orange-700 bg-orange-100 rounded px-1.5 py-0.5" title={currentAgent.name}>
-                                            {currentAgent.initials}
-                                          </span>
-                                        ) : null;
-                                      })()}
-                                    </div>
-                                  </>
+                                {(c.recording_url || c.url) && (
+                                  <a href={c.recording_url || c.url} target="_blank" rel="noreferrer" className="text-blue-600 hover:text-blue-800" title="Oír grabación">
+                                    <Play className="h-4 w-4" />
+                                  </a>
                                 )}
+                                <div className="flex items-center gap-1">
+                                  <button 
+                                    onClick={() => {
+                                      const role = c.agent || "Ventas";
+                                      setAssigningCall({ key: c.key!, role });
+                                      setAgentsLoading(true);
+                                      fetch("https://vmi3345591.contaboserver.net/webhook/get-human-agent", { method: "POST" })
+                                        .then(res => res.json())
+                                        .then((data: HumanAgent[]) => {
+                                           setAvailableAgents(data.filter(a => a.roles.includes(role)));
+                                        })
+                                        .finally(() => setAgentsLoading(false));
+                                    }} 
+                                    className="text-orange-500 hover:text-orange-700" title="Asignar a"
+                                  >
+                                    <UserPlus className="h-4 w-4" />
+                                  </button>
+                                  {(() => {
+                                    const currentAgent = assignedAgents[c.key!] || (c.assignedTo && allAgents[c.assignedTo] ? {
+                                      initials: allAgents[c.assignedTo].initials,
+                                      name: allAgents[c.assignedTo].name
+                                    } : null);
+                                    return currentAgent ? (
+                                      <span className="ml-1 text-[10px] font-bold text-orange-700 bg-orange-100 rounded px-1.5 py-0.5" title={currentAgent.name}>
+                                        {currentAgent.initials}
+                                      </span>
+                                    ) : null;
+                                  })()}
+                                </div>
+                                </div>
+                            </td>
+                            <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">
+                              <button
+                                className="bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 rounded px-3 py-1 text-xs font-medium transition-colors"
+                                onClick={() => {
+                                  if (confirm('¿Estás seguro de que deseas cancelar este ticket?')) {
+                                    fetch('https://vmi3345591.contaboserver.net/webhook/set-status', {
+                                      method: 'POST',
+                                      headers: { 'Content-Type': 'application/json' },
+                                      body: JSON.stringify({ call_id: c.key, status: "Cancelado" })
+                                    }).then(async res => {
+                                      if (res.ok) window.location.reload();
+                                      else {
+                                        const errorText = await res.text();
+                                        alert(`Error al cancelar: ${errorText}`);
+                                      }
+                                    }).catch((err) => alert(`Error de conexión: ${err.message}`));
+                                  }
+                                }}
+                              >
+                                Cancelar
+                              </button>
+                            </td>
+                            <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">{c.start_timestamp || "—"}</td>
+                            <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">{c.channel || "—"}</td>
+                            <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">
+                              <p className="font-medium">{c.agent || "—"}</p>
+                              {c.specialist && <p className="text-muted-foreground">{c.specialist}</p>}
+                            </td>
+                            <td className="px-4 py-3 text-xs text-foreground">
+                               <p className="font-medium">{c.phone || "—"}</p>
+                               {c.caller_name && <p className="text-muted-foreground">{c.caller_name}</p>}
+                            </td>
+                            <td className="px-4 py-3 font-mono text-xs text-foreground">{c.external_id || "—"}</td>
+                            <td className="px-4 py-3 text-xs text-foreground">
+                              {c.pbx === "Fallo" ? (
+                                <span className="inline-flex items-center rounded-full bg-red-500/10 px-2 py-0.5 text-xs font-medium text-red-700">
+                                  {c.call_transfer === "Si" ? "Sí (Fallo PBX)" : "Fallo PBX"}
+                                </span>
+                              ) : c.call_transfer === "Si" ? (
+                                <span className="inline-flex items-center rounded-full bg-green-500/10 px-2 py-0.5 text-xs font-medium text-green-700">
+                                  Sí {c.pbx && c.pbx !== "Fallo" ? `(${c.pbx})` : ""}
+                                </span>
+                              ) : c.call_transfer === "No" ? (
+                                <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">No</span>
+                              ) : "—"}
+                            </td>
+                            <td className="px-4 py-3 text-xs text-muted-foreground">{c.disconnection_reason || "—"}</td>
+                          </tr>
+                          {isExpanded && hasDetail && (
+                            <tr className="border-t border-blue-500/20 bg-blue-500/5">
+                              <td colSpan={9} className="px-6 py-4">
+                                <div className="grid gap-3 sm:grid-cols-2">
+                                  {c.call_summary && (
+                                    <div>
+                                      <p className="mb-1 text-xs font-semibold uppercase text-blue-600">Resumen de Llamada</p>
+                                      <p className="text-xs text-foreground whitespace-pre-wrap">{decodeURIComponent(c.call_summary)}</p>
+                                    </div>
+                                  )}
+                                  {c.notes !== undefined && (
+                                    <div className="flex flex-col h-full">
+                                      <div className="flex justify-between items-center mb-1">
+                                          <p className="text-xs font-semibold uppercase text-blue-600">Notas</p>
+                                      </div>
+                                      <textarea 
+                                        id={`notes-${c.key}`}
+                                        className="w-full flex-grow text-xs text-foreground bg-background border border-border p-2 rounded resize-y min-h-[60px]" 
+                                        defaultValue={decodeURIComponent(c.notes)}
+                                      ></textarea>
+                                      <div className="mt-2 flex justify-center">
+                                        <button 
+                                          className="bg-blue-600 text-white text-xs px-4 py-1.5 rounded hover:bg-blue-700 transition-colors font-medium"
+                                          onClick={() => {
+                                            const newNotes = (document.getElementById(`notes-${c.key}`) as HTMLTextAreaElement).value;
+                                            if(confirm("¿Deseas guardar las notas?")) {
+                                              fetch('https://vmi3345591.contaboserver.net/webhook/call-set-notes', {
+                                                  method: 'POST',
+                                                  headers: { 'Content-Type': 'application/json' },
+                                                  body: JSON.stringify({ call_id: c.key, notes: newNotes })
+                                              }).then(async r => {
+                                                  if(r.ok) alert("Notas guardadas correctamente");
+                                                  else {
+                                                      const errorText = await r.text();
+                                                      alert(`Error al guardar notas: ${errorText}`);
+                                                  }
+                                              }).catch((err) => alert(`Error al guardar notas: ${err.message}`));
+                                            }
+                                          }}
+                                        >
+                                          Guardar
+                                        </button>
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              </td>
+                            </tr>
+                          )}
+                        </React.Fragment>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
+
+        {/* ═══════════════ SERVICIO AL CLIENTE ═══════════════ */}
+        {activeTab === "en_progreso" && (
+          <section className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border px-6 py-4">
+              <div className="flex items-center justify-between w-full">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-500/10">
+                  <HeadphonesIcon className="h-4 w-4 text-blue-500" />
+                </div>
+                <div>
+                  <h2 className="text-sm font-semibold text-foreground">Tickets en Progreso</h2>
+                  <p className="text-xs text-muted-foreground">
+                    {serviceLoading
+                      ? "Cargando desde el webhook..."
+                      : serviceError
+                        ? `Error: ${serviceError}`
+                        : `${serviceCalls.length} registros`}
+                  </p>
+                </div>
+              </div>
+              <button 
+                onClick={() => {
+                  setNewTicketAgent("");
+                  setNewTicketSpecialist("");
+                  setNewTicketPhone("");
+                  setNewTicketName("");
+                  setNewTicketDoc("");
+                  setNewTicketAddress("");
+                  setNewTicketRequest("");
+                  setNewTicketNotes("");
+                  setAssignedAgents(prev => {
+                    const next = { ...prev };
+                    delete next["new_ticket"];
+                    return next;
+                  });
+                  setIsCreatingTicket(true);
+                }}
+                className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
+              >
+                Crear Ticket
+              </button>
+            </div>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-muted/50 text-xs uppercase text-muted-foreground">
+                  <tr>
+                    <th className="px-4 py-3 text-left font-medium">Key</th>
+                    <th className="px-4 py-3 text-left font-medium">Status</th>
+                    <th className="px-4 py-3 text-left font-medium">Inicio</th>
+                    <th className="px-4 py-3 text-left font-medium">Canal</th>
+                    <th className="px-4 py-3 text-left font-medium">Agente</th>
+                    <th className="px-4 py-3 text-left font-medium">Teléfono</th>
+                    <th className="px-4 py-3 text-left font-medium">ID Externo</th>
+                    <th className="px-4 py-3 text-left font-medium">Transferencia</th>
+                    
+                    <th className="px-4 py-3 text-left font-medium">Desconexión</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {serviceLoading ? (
+                    <tr>
+                      <td colSpan={9} className="px-6 py-8 text-center text-muted-foreground">
+                        <div className="flex items-center justify-center gap-2">
+                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" />
+                          Consultando llamadas de servicio...
+                        </div>
+                      </td>
+                    </tr>
+                  ) : serviceCalls.length === 0 ? (
+                    <tr>
+                      <td colSpan={9} className="px-6 py-8 text-center text-muted-foreground">
+                        {serviceError ? `Error al cargar: ${serviceError}` : "Sin registros encontrados."}
+                      </td>
+                    </tr>
+                  ) : (
+                    serviceCalls.map((c, i) => {
+                      const isExpanded = expandedKey === (c.key || String(i) + "svc");
+                      const hasDetail = !!(c.call_summary || c.notes);
+                      return (
+                        <React.Fragment key={c.key || i}>
+                          <tr className={`border-t border-border transition-colors ${isExpanded ? "bg-blue-500/5" : "hover:bg-muted/30"}`}>
+                            <td className="px-4 py-3">
+                              <p className="font-medium text-foreground max-w-[200px] truncate" title={c.key}>{c.key}</p>
+                              <div className="flex items-center justify-center gap-3 mt-2">
+                                {hasDetail && (
+                                  <button onClick={() => setExpandedKey(isExpanded ? null : (c.key || String(i) + "svc"))} className="text-blue-600 hover:text-blue-800" title="Ver resumen y notas">
+                                    <FileText className="h-4 w-4" />
+                                  </button>
+                                )}
+                                {(c.recording_url || c.url) && (
+                                  <a href={c.recording_url || c.url} target="_blank" rel="noreferrer" className="text-blue-600 hover:text-blue-800" title="Oír grabación">
+                                    <Play className="h-4 w-4" />
+                                  </a>
+                                )}
+                                <div className="flex items-center gap-1">
+                                  <button 
+                                    onClick={() => {
+                                      const role = c.agent || "Ventas";
+                                      setAssigningCall({ key: c.key!, role });
+                                      setAgentsLoading(true);
+                                      fetch("https://vmi3345591.contaboserver.net/webhook/get-human-agent", { method: "POST" })
+                                        .then(res => res.json())
+                                        .then((data: HumanAgent[]) => {
+                                           setAvailableAgents(data.filter(a => a.roles.includes(role)));
+                                        })
+                                        .finally(() => setAgentsLoading(false));
+                                    }} 
+                                    className="text-orange-500 hover:text-orange-700" title="Asignar a"
+                                  >
+                                    <UserPlus className="h-4 w-4" />
+                                  </button>
+                                  {(() => {
+                                    const currentAgent = assignedAgents[c.key!] || (c.assignedTo && allAgents[c.assignedTo] ? {
+                                      initials: allAgents[c.assignedTo].initials,
+                                      name: allAgents[c.assignedTo].name
+                                    } : null);
+                                    return currentAgent ? (
+                                      <span className="ml-1 text-[10px] font-bold text-orange-700 bg-orange-100 rounded px-1.5 py-0.5" title={currentAgent.name}>
+                                        {currentAgent.initials}
+                                      </span>
+                                    ) : null;
+                                  })()}
+                                </div>
                                 </div>
                             </td>
                             <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">
@@ -1098,16 +1357,18 @@ export default function AdminDashboard({
                                       method: 'POST',
                                       headers: { 'Content-Type': 'application/json' },
                                       body: JSON.stringify({ call_id: c.key, status: newStatus })
-                                    }).then(res => {
+                                    }).then(async res => {
                                       if (res.ok) window.location.reload();
-                                      else alert('Error al cambiar el estado.');
-                                    }).catch(() => alert('Error de conexión.'));
+                                      else {
+                                        const errorText = await res.text();
+                                        alert(`Error al cambiar el estado: ${errorText}`);
+                                      }
+                                    }).catch((err) => alert(`Error de conexión: ${err.message}`));
                                   } else {
                                     e.target.value = c.status || "Nuevo";
                                   }
                                 }}
                               >
-                                <option value="Nuevo">Nuevo</option>
                                 <option value="En Progreso">En Progreso</option>
                                 <option value="Solucionado">Solucionado</option>
                                 <option value="Cancelado">Cancelado</option>
@@ -1169,10 +1430,252 @@ export default function AdminDashboard({
                                                   method: 'POST',
                                                   headers: { 'Content-Type': 'application/json' },
                                                   body: JSON.stringify({ call_id: c.key, notes: newNotes })
-                                              }).then(r => {
+                                              }).then(async r => {
                                                   if(r.ok) alert("Notas guardadas correctamente");
-                                                  else alert("Error al guardar notas");
-                                              }).catch(()=>alert("Error al guardar notas"));
+                                                  else {
+                                                      const errorText = await r.text();
+                                                      alert(`Error al guardar notas: ${errorText}`);
+                                                  }
+                                              }).catch((err) => alert(`Error al guardar notas: ${err.message}`));
+                                            }
+                                          }}
+                                        >
+                                          Guardar
+                                        </button>
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              </td>
+                            </tr>
+                          )}
+                        </React.Fragment>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
+
+        {/* ═══════════════ SERVICIO AL CLIENTE ═══════════════ */}
+        {activeTab === "historico" && (
+          <section className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border px-6 py-4">
+              <div className="flex items-center justify-between w-full">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-500/10">
+                  <HeadphonesIcon className="h-4 w-4 text-blue-500" />
+                </div>
+                <div>
+                  <h2 className="text-sm font-semibold text-foreground">Historial de Tickets</h2>
+                  <p className="text-xs text-muted-foreground">
+                    {serviceLoading
+                      ? "Cargando desde el webhook..."
+                      : serviceError
+                        ? `Error: ${serviceError}`
+                        : `${serviceCalls.length} registros`}
+                  </p>
+                </div>
+              </div>
+              <button 
+                onClick={() => {
+                  setNewTicketAgent("");
+                  setNewTicketSpecialist("");
+                  setNewTicketPhone("");
+                  setNewTicketName("");
+                  setNewTicketDoc("");
+                  setNewTicketAddress("");
+                  setNewTicketRequest("");
+                  setNewTicketNotes("");
+                  setAssignedAgents(prev => {
+                    const next = { ...prev };
+                    delete next["new_ticket"];
+                    return next;
+                  });
+                  setIsCreatingTicket(true);
+                }}
+                className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
+              >
+                Crear Ticket
+              </button>
+            </div>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-muted/50 text-xs uppercase text-muted-foreground">
+                  <tr>
+                    <th className="px-4 py-3 text-left font-medium">Key</th>
+                    <th className="px-4 py-3 text-left font-medium">Status</th>
+                    <th className="px-4 py-3 text-left font-medium">Inicio</th>
+                    <th className="px-4 py-3 text-left font-medium">Canal</th>
+                    <th className="px-4 py-3 text-left font-medium">Agente</th>
+                    <th className="px-4 py-3 text-left font-medium">Teléfono</th>
+                    <th className="px-4 py-3 text-left font-medium">ID Externo</th>
+                    <th className="px-4 py-3 text-left font-medium">Transferencia</th>
+                    
+                    <th className="px-4 py-3 text-left font-medium">Desconexión</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {serviceLoading ? (
+                    <tr>
+                      <td colSpan={9} className="px-6 py-8 text-center text-muted-foreground">
+                        <div className="flex items-center justify-center gap-2">
+                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" />
+                          Consultando llamadas de servicio...
+                        </div>
+                      </td>
+                    </tr>
+                  ) : serviceCalls.length === 0 ? (
+                    <tr>
+                      <td colSpan={9} className="px-6 py-8 text-center text-muted-foreground">
+                        {serviceError ? `Error al cargar: ${serviceError}` : "Sin registros encontrados."}
+                      </td>
+                    </tr>
+                  ) : (
+                    serviceCalls.map((c, i) => {
+                      const isExpanded = expandedKey === (c.key || String(i) + "svc");
+                      const hasDetail = !!(c.call_summary || c.notes);
+                      return (
+                        <React.Fragment key={c.key || i}>
+                          <tr className={`border-t border-border transition-colors ${isExpanded ? "bg-blue-500/5" : "hover:bg-muted/30"}`}>
+                            <td className="px-4 py-3">
+                              <p className="font-medium text-foreground max-w-[200px] truncate" title={c.key}>{c.key}</p>
+                              <div className="flex items-center justify-center gap-3 mt-2">
+                                {hasDetail && (
+                                  <button onClick={() => setExpandedKey(isExpanded ? null : (c.key || String(i) + "svc"))} className="text-blue-600 hover:text-blue-800" title="Ver resumen y notas">
+                                    <FileText className="h-4 w-4" />
+                                  </button>
+                                )}
+                                {(c.recording_url || c.url) && (
+                                  <a href={c.recording_url || c.url} target="_blank" rel="noreferrer" className="text-blue-600 hover:text-blue-800" title="Oír grabación">
+                                    <Play className="h-4 w-4" />
+                                  </a>
+                                )}
+                                <div className="flex items-center gap-1">
+                                  <button 
+                                    onClick={() => {
+                                      const role = c.agent || "Ventas";
+                                      setAssigningCall({ key: c.key!, role });
+                                      setAgentsLoading(true);
+                                      fetch("https://vmi3345591.contaboserver.net/webhook/get-human-agent", { method: "POST" })
+                                        .then(res => res.json())
+                                        .then((data: HumanAgent[]) => {
+                                           setAvailableAgents(data.filter(a => a.roles.includes(role)));
+                                        })
+                                        .finally(() => setAgentsLoading(false));
+                                    }} 
+                                    className="text-orange-500 hover:text-orange-700" title="Asignar a"
+                                  >
+                                    <UserPlus className="h-4 w-4" />
+                                  </button>
+                                  {(() => {
+                                    const currentAgent = assignedAgents[c.key!] || (c.assignedTo && allAgents[c.assignedTo] ? {
+                                      initials: allAgents[c.assignedTo].initials,
+                                      name: allAgents[c.assignedTo].name
+                                    } : null);
+                                    return currentAgent ? (
+                                      <span className="ml-1 text-[10px] font-bold text-orange-700 bg-orange-100 rounded px-1.5 py-0.5" title={currentAgent.name}>
+                                        {currentAgent.initials}
+                                      </span>
+                                    ) : null;
+                                  })()}
+                                </div>
+                                </div>
+                            </td>
+                            <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">
+                              <select
+                                className="bg-background border border-border rounded px-2 py-1 text-xs"
+                                defaultValue={c.status || "Nuevo"}
+                                onChange={(e) => {
+                                  const newStatus = e.target.value;
+                                  if (confirm(`¿Estás seguro de que deseas cambiar el estado a ${newStatus}?`)) {
+                                    fetch('https://vmi3345591.contaboserver.net/webhook/set-status', {
+                                      method: 'POST',
+                                      headers: { 'Content-Type': 'application/json' },
+                                      body: JSON.stringify({ call_id: c.key, status: newStatus })
+                                    }).then(async res => {
+                                      if (res.ok) window.location.reload();
+                                      else {
+                                        const errorText = await res.text();
+                                        alert(`Error al cambiar el estado: ${errorText}`);
+                                      }
+                                    }).catch((err) => alert(`Error de conexión: ${err.message}`));
+                                  } else {
+                                    e.target.value = c.status || "Nuevo";
+                                  }
+                                }}
+                              >
+                                <option value="En Progreso">En Progreso</option>
+                                <option value="Solucionado">Solucionado</option>
+                                <option value="Cancelado">Cancelado</option>
+                              </select>
+                            </td>
+                            <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">{c.start_timestamp || "—"}</td>
+                            <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">{c.channel || "—"}</td>
+                            <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">
+                              <p className="font-medium">{c.agent || "—"}</p>
+                              {c.specialist && <p className="text-muted-foreground">{c.specialist}</p>}
+                            </td>
+                            <td className="px-4 py-3 text-xs text-foreground">
+                               <p className="font-medium">{c.phone || "—"}</p>
+                               {c.caller_name && <p className="text-muted-foreground">{c.caller_name}</p>}
+                            </td>
+                            <td className="px-4 py-3 font-mono text-xs text-foreground">{c.external_id || "—"}</td>
+                            <td className="px-4 py-3 text-xs text-foreground">
+                              {c.pbx === "Fallo" ? (
+                                <span className="inline-flex items-center rounded-full bg-red-500/10 px-2 py-0.5 text-xs font-medium text-red-700">
+                                  {c.call_transfer === "Si" ? "Sí (Fallo PBX)" : "Fallo PBX"}
+                                </span>
+                              ) : c.call_transfer === "Si" ? (
+                                <span className="inline-flex items-center rounded-full bg-green-500/10 px-2 py-0.5 text-xs font-medium text-green-700">
+                                  Sí {c.pbx && c.pbx !== "Fallo" ? `(${c.pbx})` : ""}
+                                </span>
+                              ) : c.call_transfer === "No" ? (
+                                <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">No</span>
+                              ) : "—"}
+                            </td>
+                            <td className="px-4 py-3 text-xs text-muted-foreground">{c.disconnection_reason || "—"}</td>
+                          </tr>
+                          {isExpanded && hasDetail && (
+                            <tr className="border-t border-blue-500/20 bg-blue-500/5">
+                              <td colSpan={9} className="px-6 py-4">
+                                <div className="grid gap-3 sm:grid-cols-2">
+                                  {c.call_summary && (
+                                    <div>
+                                      <p className="mb-1 text-xs font-semibold uppercase text-blue-600">Resumen de Llamada</p>
+                                      <p className="text-xs text-foreground whitespace-pre-wrap">{decodeURIComponent(c.call_summary)}</p>
+                                    </div>
+                                  )}
+                                  {c.notes !== undefined && (
+                                    <div className="flex flex-col h-full">
+                                      <div className="flex justify-between items-center mb-1">
+                                          <p className="text-xs font-semibold uppercase text-blue-600">Notas</p>
+                                      </div>
+                                      <textarea 
+                                        id={`notes-${c.key}`}
+                                        className="w-full flex-grow text-xs text-foreground bg-background border border-border p-2 rounded resize-y min-h-[60px]" 
+                                        defaultValue={decodeURIComponent(c.notes)}
+                                      ></textarea>
+                                      <div className="mt-2 flex justify-center">
+                                        <button 
+                                          className="bg-blue-600 text-white text-xs px-4 py-1.5 rounded hover:bg-blue-700 transition-colors font-medium"
+                                          onClick={() => {
+                                            const newNotes = (document.getElementById(`notes-${c.key}`) as HTMLTextAreaElement).value;
+                                            if(confirm("¿Deseas guardar las notas?")) {
+                                              fetch('https://vmi3345591.contaboserver.net/webhook/call-set-notes', {
+                                                  method: 'POST',
+                                                  headers: { 'Content-Type': 'application/json' },
+                                                  body: JSON.stringify({ call_id: c.key, notes: newNotes })
+                                              }).then(async r => {
+                                                  if(r.ok) alert("Notas guardadas correctamente");
+                                                  else {
+                                                      const errorText = await r.text();
+                                                      alert(`Error al guardar notas: ${errorText}`);
+                                                  }
+                                              }).catch((err) => alert(`Error al guardar notas: ${err.message}`));
                                             }
                                           }}
                                         >
@@ -1199,7 +1702,7 @@ export default function AdminDashboard({
 
 
       {assigningCall && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4">
+        <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/50 p-4">
           <div className="w-full max-w-md rounded-xl bg-background p-6 shadow-lg">
             <h3 className="mb-4 text-lg font-semibold text-foreground">
               Asignar agente ({assigningCall.role})
@@ -1214,19 +1717,26 @@ export default function AdminDashboard({
                   <button
                     key={a.agentKey}
                     onClick={() => {
+                      if (assigningCall.key === "new_ticket") {
+                        setAssignedAgents(prev => ({ ...prev, [assigningCall.key]: { initials: a.initials, name: a.name, agentKey: a.agentKey } }));
+                        setAssigningCall(null);
+                        return;
+                      }
                       fetch("https://vmi3345591.contaboserver.net/webhook/call-set-assignedTo", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ call_id: assigningCall.key, assignedTo: a.agentKey })
-                      }).then(res => {
+                      }).then(async res => {
                         if (res.ok) {
                           setAssignedAgents(prev => ({ ...prev, [assigningCall.key]: { initials: a.initials, name: a.name } }));
                           setAssigningCall(null);
                           alert("Agente asignado exitosamente");
+                          window.location.reload();
                         } else {
-                          alert("Error al asignar agente");
+                          const errorText = await res.text();
+                          alert(`Error al asignar agente: ${errorText}`);
                         }
-                      }).catch(() => alert("Error de red al asignar"));
+                      }).catch((err) => alert(`Error de red al asignar: ${err.message}`));
                     }}
                     className="flex items-center justify-between rounded-lg border border-border p-3 hover:bg-muted text-left transition-colors"
                   >
@@ -1255,9 +1765,40 @@ export default function AdminDashboard({
       {isCreatingTicket && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4">
           <div className="w-full max-w-lg rounded-xl bg-background p-6 shadow-lg">
-            <h3 className="mb-4 text-lg font-semibold text-foreground">
-              Crear Nuevo Ticket
-            </h3>
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-foreground">
+                {newTicketId || "Crear Nuevo Ticket"}
+              </h3>
+              <div className="flex items-center gap-2">
+                <button
+                  disabled={!newTicketAgent}
+                  onClick={() => {
+                    if (!newTicketAgent) return;
+                    setAgentsLoading(true);
+                    setAssigningCall({ key: "new_ticket", role: newTicketAgent });
+                    fetch("https://vmi3345591.contaboserver.net/webhook/get-human-agent", { method: "POST" })
+                      .then(res => res.json())
+                      .then((data: HumanAgent[]) => {
+                        const filtered = data.filter(a => a.roles && a.roles.some(r => r.toLowerCase() === newTicketAgent.toLowerCase()));
+                        setAvailableAgents(filtered);
+                      })
+                      .catch(err => console.error(err))
+                      .finally(() => setAgentsLoading(false));
+                  }}
+                  className={`text-orange-500 transition-colors ${
+                    newTicketAgent ? "hover:text-orange-700" : "opacity-50 cursor-not-allowed"
+                  }`}
+                  title="Asignar a"
+                >
+                  <UserPlus className="h-4 w-4" />
+                </button>
+                {assignedAgents["new_ticket"] && (
+                  <span className="text-sm font-medium text-foreground">
+                    {assignedAgents["new_ticket"].name}
+                  </span>
+                )}
+              </div>
+            </div>
             <div className="flex flex-col gap-4 py-4 max-h-[70vh] overflow-y-auto px-1">
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -1295,7 +1836,7 @@ export default function AdminDashboard({
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-foreground mb-1">Teléfono *</label>
+                  <label className="block text-sm font-medium text-foreground mb-1">Teléfono</label>
                   <input
                     type="text"
                     placeholder="###-###-####"
@@ -1305,7 +1846,7 @@ export default function AdminDashboard({
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-foreground mb-1">Documento de Identidad *</label>
+                  <label className="block text-sm font-medium text-foreground mb-1">Documento de Identidad</label>
                   <input
                     type="text"
                     className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground"
@@ -1316,7 +1857,7 @@ export default function AdminDashboard({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-foreground mb-1">Nombre Completo *</label>
+                <label className="block text-sm font-medium text-foreground mb-1">Nombre Completo</label>
                 <input
                   type="text"
                   className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground"
@@ -1363,7 +1904,42 @@ export default function AdminDashboard({
               <button
                 disabled={!isTicketFormValid}
                 onClick={() => {
-                  alert("Formulario validado correctamente. En espera del webhook final.");
+                  setAgentsLoading(true);
+                  const payload = {
+                    id_ticket: newTicketId,
+                    asignar_a: assignedAgents["new_ticket"]?.agentKey || "",
+                    agente: newTicketAgent || "",
+                    especialista: newTicketSpecialist || "",
+                    telefono: newTicketPhone.replace(/\D/g, ""),
+                    documento: newTicketDoc || "",
+                    nombre: newTicketName || "",
+                    direccion: newTicketAddress || "",
+                    requerimiento: newTicketRequest || "",
+                    notas: newTicketNotes || ""
+                  };
+
+                  fetch("https://vmi3345591.contaboserver.net/webhook/set-call-manually", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                  })
+                    .then(async res => {
+                      if (res.ok) {
+                        alert("Ticket creado exitosamente.");
+                        setIsCreatingTicket(false);
+                        if (!payload.asignar_a) {
+                          window.location.reload();
+                        }
+                      } else {
+                        const errorText = await res.text();
+                        alert(`Error al crear ticket: ${errorText}`);
+                      }
+                    })
+                    .catch(err => {
+                      console.error(err);
+                      alert(`Error de red al crear ticket: ${err.message}`);
+                    })
+                    .finally(() => setAgentsLoading(false));
                 }}
                 className={`rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors ${
                   isTicketFormValid ? "bg-blue-600 hover:bg-blue-700" : "bg-blue-300 cursor-not-allowed"

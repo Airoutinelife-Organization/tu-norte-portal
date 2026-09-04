@@ -103,6 +103,7 @@ export type PurchasingCall = {
   call_summary?: string;
   notes?: string;
   url?: string;
+  recording_url?: string;
   disconnection_reason?: string;
   assignedTo?: string;
 };
@@ -138,10 +139,12 @@ export type ServiceCall = {
   call_summary?: string;
   notes?: string;
   url?: string;
+  recording_url?: string;
   call_transfer?: string;
   pbx?: string;
   disconnection_reason?: string;
   assignedTo?: string;
+  status_timestamp?: string;
 };
 
 export const getServiceCalls = createServerFn().handler(
@@ -161,3 +164,39 @@ export const getServiceCalls = createServerFn().handler(
     }
   }
 );
+
+export const getHistoricoCalls = createServerFn()
+  .validator((d: { begin: string; end: string }) => d)
+  .handler(async ({ data }): Promise<{ calls: ServiceCall[]; error?: string }> => {
+    try {
+      const res = await fetch("https://vmi3345591.contaboserver.net/webhook/get-contact-center-historico", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) return { calls: [], error: await res.text() };
+      const raw = await res.json();
+      const callsData = Array.isArray(raw) ? raw : (raw ? [raw] : []);
+      return { calls: callsData };
+    } catch (err) {
+      return { calls: [], error: String(err) };
+    }
+  });
+
+export const getEnProgresoCalls = createServerFn()
+  .validator((d: { begin: string; end: string }) => d)
+  .handler(async ({ data }): Promise<{ calls: ServiceCall[]; error?: string }> => {
+    try {
+      const res = await fetch("https://vmi3345591.contaboserver.net/webhook/get-contact-center-en-progreso", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) return { calls: [], error: await res.text() };
+      const raw = await res.json();
+      const callsData = Array.isArray(raw) ? raw : (raw ? [raw] : []);
+      return { calls: callsData };
+    } catch (err) {
+      return { calls: [], error: String(err) };
+    }
+  });

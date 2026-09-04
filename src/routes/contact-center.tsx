@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import React, { useEffect, useState } from "react";
-import AdminDashboard from "@/components/AdminDashboard";
+import ContactCenterDashboard from "@/components/ContactCenterDashboard";
 
 export const Route = createFileRoute("/contact-center")({
   component: ContactCenterPage,
@@ -20,7 +20,7 @@ function ContactCenterPage() {
   if (!ready) return <div className="min-h-screen bg-background" />;
 
   return (
-    <AdminDashboard
+    <ContactCenterDashboard
       onLogout={() => {
         localStorage.removeItem("tunorte_admin_session");
         window.location.href = "/admin";
