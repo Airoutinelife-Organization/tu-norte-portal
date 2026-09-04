@@ -116,7 +116,7 @@ type HumanAgent = {
   roles: string[];
 };
 
-export default function AdminDashboard({
+export default function ContactCenterDashboard({
 
   onLogout,
   mode = "contact-center",

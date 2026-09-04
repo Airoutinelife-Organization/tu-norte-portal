@@ -7,12 +7,15 @@ import {
   getRedisCallsVentas,
   getPurchasingCalls,
   getServiceCalls,
+  getVentasHistoricoCalls,
+  getVentasEnProgresoCalls,
   type RedisCall,
   type PurchasingCall,
   type ServiceCall,
 } from "@/lib/redis.functions";
 
 import React, { useEffect, useMemo, useState } from "react";
+import { DateTime } from 'luxon';
 
 import {
   Area,
@@ -56,6 +59,13 @@ import {
   Archive,
 } from "lucide-react";
 
+const formatDateLocal = (date: Date) => {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+};
+
 /* ---------------------------------------------------------------------- */
 /* Dashboard                                                                */
 /* ---------------------------------------------------------------------- */
@@ -85,7 +95,7 @@ type Tab = "general" | "ventas" | "servicio" | "en_progreso" | "historico";
 
 const TABS: { id: Tab; label: string; icon: React.ElementType }[] = [
   { id: "general", label: "Dashboard", icon: LayoutDashboard },
-  { id: "ventas", label: "Ventas", icon: ShoppingBag },
+  { id: "ventas", label: "Por Asignar", icon: ShoppingBag },
   { id: "servicio", label: "Por Asignar", icon: UserPlus },
   { id: "en_progreso", label: "En Progreso", icon: Clock },
   { id: "historico", label: "Historico", icon: Archive },
@@ -106,10 +116,10 @@ type HumanAgent = {
   roles: string[];
 };
 
-export default function AdminDashboard({
+export default function VentasDashboard({
 
   onLogout,
-  mode = "contact-center",
+  mode = "ventas",
 }: {
   onLogout: () => void;
   mode?: "contact-center" | "ventas";
@@ -183,10 +193,10 @@ export default function AdminDashboard({
   }, []);
   
   const currentTabs = useMemo(() => {
-    return TABS.filter((t) => t.id !== "servicio" && t.id !== "en_progreso" && t.id !== "historico");
+    return TABS.filter((t) => t.id !== "servicio");
   }, []);
 
-  const [days, setDays] = useState(7);
+  const [days, setDays] = useState(1);
   const [filterMode, setFilterMode] = useState<FilterMode>("preset");
   const [rangeStart, setRangeStart] = useState(""); // "YYYY-MM-DD"
   const [rangeEnd, setRangeEnd] = useState("");   // "YYYY-MM-DD"
@@ -203,7 +213,7 @@ export default function AdminDashboard({
 
   useEffect(() => {
     let cancelled = false;
-    if (true) {
+    if (mode === "ventas" || activeTab === "ventas") {
         setPurchasingLoading(true);
         fetchPurchasing()
           .then((res) => {
@@ -226,9 +236,35 @@ export default function AdminDashboard({
   const [serviceError, setServiceError] = useState<string | null>(null);
   const fetchService = useServerFn(getServiceCalls);
 
+  const filteredServiceCalls = useMemo(() => {
+    if (activeTab === "servicio") return serviceCalls;
+    
+    const now = new Date();
+    return serviceCalls.filter((c) => {
+      if (!c.start_timestamp) return true;
+      
+      // Parse DD/MM/YYYY HH:mm:ss or similar. Assuming standard parsable format or ISO.
+      // If the webhook returns DD/MM/YYYY, this might be tricky. Let's assume standard ISO or YYYY-MM-DD for now.
+      const callDate = new Date(c.start_timestamp);
+      if (isNaN(callDate.getTime())) return true;
+
+      if (filterMode === "preset") {
+        const diffTime = now.getTime() - callDate.getTime();
+        const diffDays = diffTime / (1000 * 60 * 60 * 24);
+        return diffDays <= days;
+      } else {
+        if (!rangeStart || !rangeEnd) return true;
+        const start = new Date(rangeStart + "T00:00:00");
+        const end = new Date(rangeEnd + "T23:59:59");
+        return callDate >= start && callDate <= end;
+      }
+    });
+  }, [serviceCalls, activeTab, filterMode, days, rangeStart, rangeEnd]);
+
+
   useEffect(() => {
     let cancelled = false;
-    if (mode === "contact-center" || activeTab === "servicio" || activeTab === "en_progreso" || activeTab === "historico") {
+    if (true) {
         setServiceLoading(true);
         fetchService()
           .then((res) => {
@@ -243,6 +279,150 @@ export default function AdminDashboard({
     return () => { cancelled = true; };
   }, [fetchService, mode, activeTab]);
   // ─────────────────────────────────────────────────────────────────────────────
+
+
+
+  // ── En Progreso Calls ──────────────────────────────────────────────────────
+  const [enProgresoCalls, setEnProgresoCalls] = useState<ServiceCall[]>([]);
+  const [enProgresoLoading, setEnProgresoLoading] = useState(false);
+  const [enProgresoError, setEnProgresoError] = useState<string | null>(null);
+  const [refreshProgreso, setRefreshProgreso] = useState(0);
+
+  const [enProgresoPage, setEnProgresoPage] = useState(1);
+  const [enProgresoPageSize, setEnProgresoPageSize] = useState(10);
+  const [enProgresoSortField, setEnProgresoSortField] = useState<keyof ServiceCall | "">("start_timestamp");
+  const [enProgresoSortDirection, setEnProgresoSortDirection] = useState<"asc" | "desc">("asc");
+
+  const paginatedEnProgresoCalls = useMemo(() => {
+    let calls = [...enProgresoCalls];
+    if (enProgresoSortField) {
+      calls.sort((a, b) => {
+        let valA: any = a[enProgresoSortField] || "";
+        let valB: any = b[enProgresoSortField] || "";
+        
+        // Manejar correctamente las fechas
+        if (enProgresoSortField === "start_timestamp" || enProgresoSortField === "status_timestamp") {
+          valA = valA ? new Date(valA.replace(' ', 'T')).getTime() : 0;
+          valB = valB ? new Date(valB.replace(' ', 'T')).getTime() : 0;
+          if (isNaN(valA)) valA = 0;
+          if (isNaN(valB)) valB = 0;
+        } else {
+          if (typeof valA === "string") valA = valA.toLowerCase();
+          if (typeof valB === "string") valB = valB.toLowerCase();
+        }
+
+        if (valA < valB) return enProgresoSortDirection === "asc" ? -1 : 1;
+        if (valA > valB) return enProgresoSortDirection === "asc" ? 1 : -1;
+        return 0;
+      });
+    }
+    const startIdx = (enProgresoPage - 1) * enProgresoPageSize;
+    return calls.slice(startIdx, startIdx + enProgresoPageSize);
+  }, [enProgresoCalls, enProgresoPage, enProgresoPageSize, enProgresoSortField, enProgresoSortDirection]);
+  
+  const enProgresoTotalPages = Math.ceil(enProgresoCalls.length / enProgresoPageSize);
+
+  const fetchEnProgreso = useServerFn(getVentasEnProgresoCalls);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (activeTab === "en_progreso") {
+        setEnProgresoLoading(true);
+        let beginDate = new Date();
+        let endDate = new Date();
+        if (filterMode === "preset") {
+            beginDate.setDate(beginDate.getDate() - (days - 1));
+        } else {
+            if (rangeStart) beginDate = new Date(rangeStart + "T00:00:00");
+            if (rangeEnd) endDate = new Date(rangeEnd + "T23:59:59");
+        }
+        
+        const begin = formatDateLocal(beginDate);
+        const end = formatDateLocal(endDate);
+
+        fetchEnProgreso({ data: { begin, end } })
+          .then((res) => {
+            if (!cancelled) {
+              setEnProgresoCalls(res.calls || []);
+              setEnProgresoError(res.error ?? null);
+            }
+          })
+          .catch((e) => { if (!cancelled) setEnProgresoError(String(e)); })
+          .finally(() => { if (!cancelled) setEnProgresoLoading(false); });
+    }
+    return () => { cancelled = true; };
+  }, [fetchEnProgreso, activeTab, days, filterMode, rangeStart, rangeEnd, refreshProgreso]);
+
+  // ── Historico Calls ────────────────────────────────────────────────────────
+  const [historicoCalls, setHistoricoCalls] = useState<ServiceCall[]>([]);
+  const [historicoLoading, setHistoricoLoading] = useState(false);
+  const [historicoError, setHistoricoError] = useState<string | null>(null);
+  
+  const [historicoPage, setHistoricoPage] = useState(1);
+  const [historicoPageSize, setHistoricoPageSize] = useState(10);
+  const [historicoSortField, setHistoricoSortField] = useState<keyof ServiceCall | "">("start_timestamp");
+  const [historicoSortDirection, setHistoricoSortDirection] = useState<"asc" | "desc">("desc");
+
+  const paginatedHistoricoCalls = useMemo(() => {
+    let calls = [...historicoCalls];
+    if (historicoSortField) {
+      calls.sort((a, b) => {
+        let valA: any = a[historicoSortField] || "";
+        let valB: any = b[historicoSortField] || "";
+        
+        // Manejar correctamente las fechas
+        if (historicoSortField === "start_timestamp" || historicoSortField === "status_timestamp") {
+          valA = valA ? new Date(valA.replace(' ', 'T')).getTime() : 0;
+          valB = valB ? new Date(valB.replace(' ', 'T')).getTime() : 0;
+          if (isNaN(valA)) valA = 0;
+          if (isNaN(valB)) valB = 0;
+        } else {
+          if (typeof valA === "string") valA = valA.toLowerCase();
+          if (typeof valB === "string") valB = valB.toLowerCase();
+        }
+
+        if (valA < valB) return historicoSortDirection === "asc" ? -1 : 1;
+        if (valA > valB) return historicoSortDirection === "asc" ? 1 : -1;
+        return 0;
+      });
+    }
+    const startIdx = (historicoPage - 1) * historicoPageSize;
+    return calls.slice(startIdx, startIdx + historicoPageSize);
+  }, [historicoCalls, historicoPage, historicoPageSize, historicoSortField, historicoSortDirection]);
+  
+  const historicoTotalPages = Math.ceil(historicoCalls.length / historicoPageSize);
+
+  const fetchHistorico = useServerFn(getVentasHistoricoCalls);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (activeTab === "historico") {
+        setHistoricoLoading(true);
+        let beginDate = new Date();
+        let endDate = new Date();
+        if (filterMode === "preset") {
+            beginDate.setDate(beginDate.getDate() - (days - 1)); // - days or -(days-1)? Let's use exactly days as difference. Or for 1 day, it's today. For 7 days it's today - 7
+            // actually if "hoy", begin and end are the same
+        } else {
+            if (rangeStart) beginDate = new Date(rangeStart + "T00:00:00");
+            if (rangeEnd) endDate = new Date(rangeEnd + "T23:59:59");
+        }
+        
+        const begin = formatDateLocal(beginDate);
+        const end = formatDateLocal(endDate);
+
+        fetchHistorico({ data: { begin, end } })
+          .then((res) => {
+            if (!cancelled) {
+              setHistoricoCalls(res.calls || []);
+              setHistoricoError(res.error ?? null);
+            }
+          })
+          .catch((e) => { if (!cancelled) setHistoricoError(String(e)); })
+          .finally(() => { if (!cancelled) setHistoricoLoading(false); });
+    }
+    return () => { cancelled = true; };
+  }, [fetchHistorico, activeTab, days, filterMode, rangeStart, rangeEnd]);
 
   // ── Redis ────────────────────────────────────────────────────────────
   const [redisCalls, setRedisCalls] = useState<RedisCall[]>([]);
@@ -335,7 +515,7 @@ export default function AdminDashboard({
       if (isNaN(d.getTime())) continue;
 
       // 1. Agrupar por día
-      const diaStr = d.toISOString().split("T")[0];
+      const diaStr = formatDateLocal(d);
       if (!dayMap.has(diaStr)) {
         dayMap.set(diaStr, {
           dia: diaStr,
@@ -435,6 +615,27 @@ export default function AdminDashboard({
     fontSize: 12,
   };
 
+  const todayLocalStr = useMemo(() => formatDateLocal(new Date()), []);
+
+  const dateDisplay = useMemo(() => {
+    if (filterMode === "preset") {
+      const today = new Date();
+      const past = new Date();
+      past.setDate(today.getDate() - (days - 1));
+      const rangeLabel = RANGES.find(r => r.days === days)?.label || "Rango";
+      if (days === 1) {
+        return `${rangeLabel}: ${formatDateLocal(today)}`;
+      } else {
+        return `${rangeLabel}: ${formatDateLocal(past)} a ${formatDateLocal(today)}`;
+      }
+    } else {
+      if (rangeStart && rangeEnd) {
+        return `Rango: ${rangeStart} a ${rangeEnd}`;
+      }
+      return "Rango: Personalizado";
+    }
+  }, [filterMode, days, rangeStart, rangeEnd]);
+
   return (
     <main className="min-h-screen bg-muted/30">
       {/* ── Header ── */}
@@ -446,12 +647,12 @@ export default function AdminDashboard({
             </div>
             <div>
               <h1 className="text-lg font-bold text-foreground">
-                Ventas - Ticktes
+                Ventas - Tickets
               </h1>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {activeTab === "general" && (
+            {(activeTab === "general" || activeTab === "en_progreso" || activeTab === "historico") && (
               <div className="flex flex-wrap items-center gap-2">
                 {/* Preset buttons */}
                 <div className="flex rounded-lg border border-border bg-background p-1">
@@ -480,6 +681,10 @@ export default function AdminDashboard({
                     Rango
                   </button>
                 </div>
+                
+                <div className="flex rounded-lg border border-transparent bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700">
+                  {dateDisplay}
+                </div>
 
                 {/* Date range inputs — visible only in range mode */}
                 {filterMode === "range" && (
@@ -487,7 +692,7 @@ export default function AdminDashboard({
                     <input
                       type="date"
                       value={rangeStart}
-                      max={rangeEnd || undefined}
+                      max={rangeEnd || todayLocalStr}
                       onChange={(e) => setRangeStart(e.target.value)}
                       className="rounded-lg border border-border bg-background px-2 py-1.5 text-xs text-foreground outline-none focus:border-primary"
                     />
@@ -496,6 +701,7 @@ export default function AdminDashboard({
                       type="date"
                       value={rangeEnd}
                       min={rangeStart || undefined}
+                      max={todayLocalStr}
                       onChange={(e) => setRangeEnd(e.target.value)}
                       className="rounded-lg border border-border bg-background px-2 py-1.5 text-xs text-foreground outline-none focus:border-primary"
                     />
@@ -792,7 +998,7 @@ export default function AdminDashboard({
                   <ShoppingBag className="h-4 w-4 text-blue-500" />
                 </div>
                 <div>
-                  <h2 className="text-sm font-semibold text-foreground">Tickets de Venta</h2>
+                  <h2 className="text-sm font-semibold text-foreground">Por Asignar</h2>
                   <p className="text-xs text-muted-foreground">
                     {purchasingLoading
                       ? "Cargando desde el webhook..."
@@ -994,16 +1200,16 @@ export default function AdminDashboard({
               <div className="flex items-center justify-between w-full">
               <div className="flex items-center gap-3">
                 <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-500/10">
-                  <HeadphonesIcon className="h-4 w-4 text-blue-500" />
+                  <UserPlus className="h-4 w-4 text-blue-500" />
                 </div>
                 <div>
-                  <h2 className="text-sm font-semibold text-foreground">Tickets de Servicio al Cliente</h2>
+                  <h2 className="text-sm font-semibold text-foreground">Por Asignar</h2>
                   <p className="text-xs text-muted-foreground">
                     {serviceLoading
                       ? "Cargando desde el webhook..."
                       : serviceError
                         ? `Error: ${serviceError}`
-                        : `${serviceCalls.length} registros`}
+                        : `${filteredServiceCalls.length} Tickets`}
                   </p>
                 </div>
               </div>
@@ -1056,14 +1262,14 @@ export default function AdminDashboard({
                         </div>
                       </td>
                     </tr>
-                  ) : serviceCalls.length === 0 ? (
+                  ) : filteredServiceCalls.length === 0 ? (
                     <tr>
                       <td colSpan={9} className="px-6 py-8 text-center text-muted-foreground">
                         {serviceError ? `Error al cargar: ${serviceError}` : "Sin registros encontrados."}
                       </td>
                     </tr>
                   ) : (
-                    serviceCalls.map((c, i) => {
+                    filteredServiceCalls.map((c, i) => {
                       const isExpanded = expandedKey === (c.key || String(i) + "svc");
                       const hasDetail = !!(c.call_summary || c.notes);
                       return (
@@ -1114,26 +1320,53 @@ export default function AdminDashboard({
                                 </div>
                             </td>
                             <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">
-                              <button
-                                className="bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 rounded px-3 py-1 text-xs font-medium transition-colors"
-                                onClick={() => {
-                                  if (confirm('¿Estás seguro de que deseas cancelar este ticket?')) {
-                                    fetch('https://vmi3345591.contaboserver.net/webhook/set-status', {
-                                      method: 'POST',
-                                      headers: { 'Content-Type': 'application/json' },
-                                      body: JSON.stringify({ call_id: c.key, status: "Cancelado" })
-                                    }).then(async res => {
-                                      if (res.ok) window.location.reload();
-                                      else {
-                                        const errorText = await res.text();
-                                        alert(`Error al cancelar: ${errorText}`);
-                                      }
-                                    }).catch((err) => alert(`Error de conexión: ${err.message}`));
-                                  }
-                                }}
-                              >
-                                Cancelar
-                              </button>
+                              <div className="flex flex-col items-center">
+                                <button
+                                  className="bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 rounded px-3 py-1 text-xs font-medium transition-colors"
+                                  onClick={() => {
+                                    if (confirm('¿Estás seguro de que deseas cancelar este ticket?')) {
+                                      fetch('https://vmi3345591.contaboserver.net/webhook/set-status', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ call_id: c.key, status: "Cancelado" })
+                                      }).then(async res => {
+                                        if (res.ok) window.location.reload();
+                                        else {
+                                          const errorText = await res.text();
+                                          alert(`Error al cancelar: ${errorText}`);
+                                        }
+                                      }).catch((err) => alert(`Error de conexión: ${err.message}`));
+                                    }
+                                  }}
+                                >
+                                  Cancelar
+                                </button>
+                                {(() => {
+                                  if (!c.start_timestamp) return null;
+                                  
+                                  const startStr = c.start_timestamp.replace(' ', 'T');
+                                  const start = new Date(startStr);
+                                  if (isNaN(start.getTime())) return null;
+
+                                  const nowBogotaStr = DateTime.now().setZone('America/Bogota').toFormat('yyyy-MM-dd HH:mm:ss');
+                                  const now = new Date(nowBogotaStr.replace(' ', 'T'));
+                                  
+                                  const diffMs = now.getTime() - start.getTime();
+                                  if (diffMs < 0) return null;
+                                  const diffHoursTotal = Math.floor(diffMs / (1000 * 60 * 60));
+                                  const diffDays = Math.floor(diffHoursTotal / 24);
+                                  const diffHours = diffHoursTotal % 24;
+                                  let timeStr = "";
+                                  if (diffDays > 0) timeStr += `${diffDays} día(s) `;
+                                  timeStr += `${diffHours} hora(s)`;
+                                  return (
+                                    <div className="flex items-center justify-center gap-1 mt-1 text-[10px] text-muted-foreground font-medium">
+                                      <Clock className="h-3 w-3" />
+                                      <span>{timeStr}</span>
+                                    </div>
+                                  );
+                                })()}
+                              </div>
                             </td>
                             <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">{c.start_timestamp || "—"}</td>
                             <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">{c.channel || "—"}</td>
@@ -1227,60 +1460,85 @@ export default function AdminDashboard({
               <div className="flex items-center justify-between w-full">
               <div className="flex items-center gap-3">
                 <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-500/10">
-                  <HeadphonesIcon className="h-4 w-4 text-blue-500" />
+                  <Clock className="h-4 w-4 text-blue-500" />
                 </div>
                 <div>
-                  <h2 className="text-sm font-semibold text-foreground">Tickets en Progreso</h2>
+                  <h2 className="text-sm font-semibold text-foreground">En Progreso</h2>
                   <p className="text-xs text-muted-foreground">
-                    {serviceLoading
+                    {enProgresoLoading
                       ? "Cargando desde el webhook..."
-                      : serviceError
-                        ? `Error: ${serviceError}`
-                        : `${serviceCalls.length} registros`}
+                      : enProgresoError
+                        ? `Error: ${enProgresoError}`
+                        : `${enProgresoCalls.length} Ticket(s)`}
                   </p>
                 </div>
               </div>
-              <button 
-                onClick={() => {
-                  setNewTicketAgent("");
-                  setNewTicketSpecialist("");
-                  setNewTicketPhone("");
-                  setNewTicketName("");
-                  setNewTicketDoc("");
-                  setNewTicketAddress("");
-                  setNewTicketRequest("");
-                  setNewTicketNotes("");
-                  setAssignedAgents(prev => {
-                    const next = { ...prev };
-                    delete next["new_ticket"];
-                    return next;
-                  });
-                  setIsCreatingTicket(true);
-                }}
-                className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
-              >
-                Crear Ticket
-              </button>
-            </div>
+              {!enProgresoLoading && !enProgresoError && (
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-muted-foreground">Mostrar:</span>
+                  <select
+                    className="border border-border rounded px-2 py-1 text-xs"
+                    value={enProgresoPageSize}
+                    onChange={(e) => {
+                      setEnProgresoPageSize(Number(e.target.value));
+                      setEnProgresoPage(1);
+                    }}
+                  >
+                    <option value={5}>5</option>
+                    <option value={10}>10</option>
+                    <option value={15}>15</option>
+                    <option value={20}>20</option>
+                    <option value={50}>50</option>
+                  </select>
+                </div>
+              )}
+              </div>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead className="bg-muted/50 text-xs uppercase text-muted-foreground">
                   <tr>
-                    <th className="px-4 py-3 text-left font-medium">Key</th>
-                    <th className="px-4 py-3 text-left font-medium">Status</th>
-                    <th className="px-4 py-3 text-left font-medium">Inicio</th>
-                    <th className="px-4 py-3 text-left font-medium">Canal</th>
-                    <th className="px-4 py-3 text-left font-medium">Agente</th>
-                    <th className="px-4 py-3 text-left font-medium">Teléfono</th>
-                    <th className="px-4 py-3 text-left font-medium">ID Externo</th>
-                    <th className="px-4 py-3 text-left font-medium">Transferencia</th>
-                    
-                    <th className="px-4 py-3 text-left font-medium">Desconexión</th>
+                    {[
+                      { label: "Key", field: "key" },
+                      { label: "", field: "status" },
+                      { label: "Inicio", field: "start_timestamp" },
+                      { label: "Canal", field: "channel" },
+                      { label: "Agente", field: "agent" },
+                      { label: "Teléfono", field: "phone" },
+                      { label: "ID Externo", field: "external_id" },
+                      { label: "Transferencia", field: "call_transfer" },
+                      { label: "Desconexión", field: "disconnection_reason" }
+                    ].map((col) => {
+                      const isSortable = col.field !== "key" && col.field !== "status";
+                      return (
+                        <th
+                          key={col.field}
+                          className={`px-4 py-3 text-left font-medium ${isSortable ? "cursor-pointer hover:bg-muted/80 select-none" : ""}`}
+                          onClick={() => {
+                            if (!isSortable) return;
+                            if (enProgresoSortField === col.field) {
+                              setEnProgresoSortDirection(enProgresoSortDirection === "asc" ? "desc" : "asc");
+                            } else {
+                              setEnProgresoSortField(col.field as any);
+                              setEnProgresoSortDirection("asc");
+                            }
+                          }}
+                        >
+                          <div className="flex items-center gap-1">
+                            {col.label}
+                            {isSortable && enProgresoSortField === col.field && (
+                              <span className="text-[10px]">
+                                {enProgresoSortDirection === "asc" ? "▲" : "▼"}
+                              </span>
+                            )}
+                          </div>
+                        </th>
+                      );
+                    })}
                   </tr>
                 </thead>
                 <tbody>
-                  {serviceLoading ? (
+                  {enProgresoLoading ? (
                     <tr>
                       <td colSpan={9} className="px-6 py-8 text-center text-muted-foreground">
                         <div className="flex items-center justify-center gap-2">
@@ -1289,14 +1547,14 @@ export default function AdminDashboard({
                         </div>
                       </td>
                     </tr>
-                  ) : serviceCalls.length === 0 ? (
+                  ) : enProgresoCalls.length === 0 ? (
                     <tr>
                       <td colSpan={9} className="px-6 py-8 text-center text-muted-foreground">
-                        {serviceError ? `Error al cargar: ${serviceError}` : "Sin registros encontrados."}
+                        {enProgresoError ? `Error al cargar: ${enProgresoError}` : "Sin registros encontrados."}
                       </td>
                     </tr>
                   ) : (
-                    serviceCalls.map((c, i) => {
+                    paginatedEnProgresoCalls.map((c, i) => {
                       const isExpanded = expandedKey === (c.key || String(i) + "svc");
                       const hasDetail = !!(c.call_summary || c.notes);
                       return (
@@ -1347,32 +1605,79 @@ export default function AdminDashboard({
                                 </div>
                             </td>
                             <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">
-                              <select
-                                className="bg-background border border-border rounded px-2 py-1 text-xs"
-                                defaultValue={c.status || "Nuevo"}
-                                onChange={(e) => {
-                                  const newStatus = e.target.value;
-                                  if (confirm(`¿Estás seguro de que deseas cambiar el estado a ${newStatus}?`)) {
-                                    fetch('https://vmi3345591.contaboserver.net/webhook/set-status', {
-                                      method: 'POST',
-                                      headers: { 'Content-Type': 'application/json' },
-                                      body: JSON.stringify({ call_id: c.key, status: newStatus })
-                                    }).then(async res => {
-                                      if (res.ok) window.location.reload();
-                                      else {
-                                        const errorText = await res.text();
-                                        alert(`Error al cambiar el estado: ${errorText}`);
+                              <div className="flex flex-col items-center gap-2">
+                                <div className="flex gap-2">
+                                  <button
+                                    className="rounded px-2 py-1 text-[10px] font-medium bg-green-100 text-green-800 hover:bg-green-200 transition-colors"
+                                    onClick={() => {
+                                      const newStatus = "Solucionado";
+                                      if (confirm(`¿Estás seguro de que deseas cambiar el estado a ${newStatus}?`)) {
+                                        fetch('https://vmi3345591.contaboserver.net/webhook/set-status', {
+                                          method: 'POST',
+                                          headers: { 'Content-Type': 'application/json' },
+                                          body: JSON.stringify({ call_id: c.key, status: newStatus })
+                                        }).then(async res => {
+                                          if (res.ok) {
+                                            setRefreshProgreso(p => p + 1);
+                                          } else {
+                                            const errorText = await res.text();
+                                            alert(`Error al cambiar el estado: ${errorText}`);
+                                          }
+                                        }).catch((err) => alert(`Error de conexión: ${err.message}`));
                                       }
-                                    }).catch((err) => alert(`Error de conexión: ${err.message}`));
-                                  } else {
-                                    e.target.value = c.status || "Nuevo";
-                                  }
-                                }}
-                              >
-                                <option value="En Progreso">En Progreso</option>
-                                <option value="Solucionado">Solucionado</option>
-                                <option value="Cancelado">Cancelado</option>
-                              </select>
+                                    }}
+                                  >
+                                    Solucionado
+                                  </button>
+                                  <button
+                                    className="rounded px-2 py-1 text-[10px] font-medium bg-red-100 text-red-800 hover:bg-red-200 transition-colors"
+                                    onClick={() => {
+                                      const newStatus = "Cancelado";
+                                      if (confirm(`¿Estás seguro de que deseas cambiar el estado a ${newStatus}?`)) {
+                                        fetch('https://vmi3345591.contaboserver.net/webhook/set-status', {
+                                          method: 'POST',
+                                          headers: { 'Content-Type': 'application/json' },
+                                          body: JSON.stringify({ call_id: c.key, status: newStatus })
+                                        }).then(async res => {
+                                          if (res.ok) {
+                                            setRefreshProgreso(p => p + 1);
+                                          } else {
+                                            const errorText = await res.text();
+                                            alert(`Error al cambiar el estado: ${errorText}`);
+                                          }
+                                        }).catch((err) => alert(`Error de conexión: ${err.message}`));
+                                      }
+                                    }}
+                                  >
+                                    Cancelar
+                                  </button>
+                                </div>
+                                {(() => {
+                                  if (!c.start_timestamp) return null;
+                                  
+                                  const startStr = c.start_timestamp.replace(' ', 'T');
+                                  const start = new Date(startStr);
+                                  if (isNaN(start.getTime())) return null;
+
+                                  const nowBogotaStr = DateTime.now().setZone('America/Bogota').toFormat('yyyy-MM-dd HH:mm:ss');
+                                  const now = new Date(nowBogotaStr.replace(' ', 'T'));
+                                  
+                                  const diffMs = now.getTime() - start.getTime();
+                                  if (diffMs < 0) return null;
+                                  const diffHoursTotal = Math.floor(diffMs / (1000 * 60 * 60));
+                                  const diffDays = Math.floor(diffHoursTotal / 24);
+                                  const diffHours = diffHoursTotal % 24;
+                                  let timeStr = "";
+                                  if (diffDays > 0) timeStr += `${diffDays} día(s) `;
+                                  timeStr += `${diffHours} hora(s)`;
+                                  return (
+                                    <div className="flex items-center justify-center gap-1 text-[10px] text-muted-foreground font-medium">
+                                      <Clock className="h-3 w-3" />
+                                      <span>{timeStr}</span>
+                                    </div>
+                                  );
+                                })()}
+                              </div>
                             </td>
                             <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">{c.start_timestamp || "—"}</td>
                             <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">{c.channel || "—"}</td>
@@ -1456,70 +1761,118 @@ export default function AdminDashboard({
                 </tbody>
               </table>
             </div>
+            {!enProgresoLoading && enProgresoCalls.length > 0 && (
+              <div className="flex items-center justify-between border-t border-border px-6 py-4">
+                <p className="text-sm text-muted-foreground">
+                  Página {enProgresoPage} de {enProgresoTotalPages}
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    className="rounded-lg border border-border px-4 py-2 text-sm font-medium hover:bg-muted/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={enProgresoPage === 1}
+                    onClick={() => setEnProgresoPage(p => Math.max(1, p - 1))}
+                  >
+                    Anterior
+                  </button>
+                  <button
+                    className="rounded-lg border border-border px-4 py-2 text-sm font-medium hover:bg-muted/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={enProgresoPage === enProgresoTotalPages}
+                    onClick={() => setEnProgresoPage(p => Math.min(enProgresoTotalPages, p + 1))}
+                  >
+                    Siguiente
+                  </button>
+                </div>
+              </div>
+            )}
           </section>
         )}
 
         {/* ═══════════════ SERVICIO AL CLIENTE ═══════════════ */}
-        {activeTab === "historico" && (
+        {activeTab === "historico" && (/* Historico Block */
           <section className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
             <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border px-6 py-4">
               <div className="flex items-center justify-between w-full">
               <div className="flex items-center gap-3">
                 <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-500/10">
-                  <HeadphonesIcon className="h-4 w-4 text-blue-500" />
+                  <Archive className="h-4 w-4 text-blue-500" />
                 </div>
                 <div>
-                  <h2 className="text-sm font-semibold text-foreground">Historial de Tickets</h2>
+                  <h2 className="text-sm font-semibold text-foreground">Historial</h2>
                   <p className="text-xs text-muted-foreground">
-                    {serviceLoading
+                    {historicoLoading
                       ? "Cargando desde el webhook..."
-                      : serviceError
-                        ? `Error: ${serviceError}`
-                        : `${serviceCalls.length} registros`}
+                      : historicoError
+                        ? `Error: ${historicoError}`
+                        : `${historicoCalls.length} Tickets`}
                   </p>
                 </div>
               </div>
-              <button 
-                onClick={() => {
-                  setNewTicketAgent("");
-                  setNewTicketSpecialist("");
-                  setNewTicketPhone("");
-                  setNewTicketName("");
-                  setNewTicketDoc("");
-                  setNewTicketAddress("");
-                  setNewTicketRequest("");
-                  setNewTicketNotes("");
-                  setAssignedAgents(prev => {
-                    const next = { ...prev };
-                    delete next["new_ticket"];
-                    return next;
-                  });
-                  setIsCreatingTicket(true);
-                }}
-                className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
-              >
-                Crear Ticket
-              </button>
-            </div>
+              {!historicoLoading && !historicoError && (
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-muted-foreground">Mostrar:</span>
+                  <select
+                    className="border border-border rounded px-2 py-1 text-xs"
+                    value={historicoPageSize}
+                    onChange={(e) => {
+                      setHistoricoPageSize(Number(e.target.value));
+                      setHistoricoPage(1);
+                    }}
+                  >
+                    <option value={5}>5</option>
+                    <option value={10}>10</option>
+                    <option value={15}>15</option>
+                    <option value={20}>20</option>
+                    <option value={50}>50</option>
+                  </select>
+                </div>
+              )}
+              </div>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead className="bg-muted/50 text-xs uppercase text-muted-foreground">
                   <tr>
-                    <th className="px-4 py-3 text-left font-medium">Key</th>
-                    <th className="px-4 py-3 text-left font-medium">Status</th>
-                    <th className="px-4 py-3 text-left font-medium">Inicio</th>
-                    <th className="px-4 py-3 text-left font-medium">Canal</th>
-                    <th className="px-4 py-3 text-left font-medium">Agente</th>
-                    <th className="px-4 py-3 text-left font-medium">Teléfono</th>
-                    <th className="px-4 py-3 text-left font-medium">ID Externo</th>
-                    <th className="px-4 py-3 text-left font-medium">Transferencia</th>
-                    
-                    <th className="px-4 py-3 text-left font-medium">Desconexión</th>
+                    {[
+                      { label: "Key", field: "key" },
+                      { label: "Status", field: "status" },
+                      { label: "Inicio", field: "start_timestamp" },
+                      { label: "Canal", field: "channel" },
+                      { label: "Agente", field: "agent" },
+                      { label: "Teléfono", field: "phone" },
+                      { label: "ID Externo", field: "external_id" },
+                      { label: "Transferencia", field: "call_transfer" },
+                      { label: "Desconexión", field: "disconnection_reason" }
+                    ].map((col) => {
+                      const isSortable = col.field !== "key";
+                      return (
+                        <th
+                          key={col.field}
+                          className={`px-4 py-3 text-left font-medium ${isSortable ? "cursor-pointer hover:bg-muted/80 select-none" : ""}`}
+                          onClick={() => {
+                            if (!isSortable) return;
+                            if (historicoSortField === col.field) {
+                              setHistoricoSortDirection(historicoSortDirection === "asc" ? "desc" : "asc");
+                            } else {
+                              setHistoricoSortField(col.field as any);
+                              setHistoricoSortDirection("asc");
+                            }
+                          }}
+                        >
+                          <div className="flex items-center gap-1">
+                            {col.label}
+                            {isSortable && historicoSortField === col.field && (
+                              <span className="text-[10px]">
+                                {historicoSortDirection === "asc" ? "▲" : "▼"}
+                              </span>
+                            )}
+                          </div>
+                        </th>
+                      );
+                    })}
                   </tr>
                 </thead>
                 <tbody>
-                  {serviceLoading ? (
+                  {historicoLoading ? (
                     <tr>
                       <td colSpan={9} className="px-6 py-8 text-center text-muted-foreground">
                         <div className="flex items-center justify-center gap-2">
@@ -1528,14 +1881,14 @@ export default function AdminDashboard({
                         </div>
                       </td>
                     </tr>
-                  ) : serviceCalls.length === 0 ? (
+                  ) : historicoCalls.length === 0 ? (
                     <tr>
                       <td colSpan={9} className="px-6 py-8 text-center text-muted-foreground">
-                        {serviceError ? `Error al cargar: ${serviceError}` : "Sin registros encontrados."}
+                        {historicoError ? `Error al cargar: ${historicoError}` : "Sin registros encontrados."}
                       </td>
                     </tr>
                   ) : (
-                    serviceCalls.map((c, i) => {
+                    paginatedHistoricoCalls.map((c, i) => {
                       const isExpanded = expandedKey === (c.key || String(i) + "svc");
                       const hasDetail = !!(c.call_summary || c.notes);
                       return (
@@ -1555,22 +1908,9 @@ export default function AdminDashboard({
                                   </a>
                                 )}
                                 <div className="flex items-center gap-1">
-                                  <button 
-                                    onClick={() => {
-                                      const role = c.agent || "Ventas";
-                                      setAssigningCall({ key: c.key!, role });
-                                      setAgentsLoading(true);
-                                      fetch("https://vmi3345591.contaboserver.net/webhook/get-human-agent", { method: "POST" })
-                                        .then(res => res.json())
-                                        .then((data: HumanAgent[]) => {
-                                           setAvailableAgents(data.filter(a => a.roles.includes(role)));
-                                        })
-                                        .finally(() => setAgentsLoading(false));
-                                    }} 
-                                    className="text-orange-500 hover:text-orange-700" title="Asignar a"
-                                  >
+                                  <div className="text-orange-500" title="Asignar a">
                                     <UserPlus className="h-4 w-4" />
-                                  </button>
+                                  </div>
                                   {(() => {
                                     const currentAgent = assignedAgents[c.key!] || (c.assignedTo && allAgents[c.assignedTo] ? {
                                       initials: allAgents[c.assignedTo].initials,
@@ -1585,33 +1925,69 @@ export default function AdminDashboard({
                                 </div>
                                 </div>
                             </td>
-                            <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">
-                              <select
-                                className="bg-background border border-border rounded px-2 py-1 text-xs"
-                                defaultValue={c.status || "Nuevo"}
-                                onChange={(e) => {
-                                  const newStatus = e.target.value;
-                                  if (confirm(`¿Estás seguro de que deseas cambiar el estado a ${newStatus}?`)) {
-                                    fetch('https://vmi3345591.contaboserver.net/webhook/set-status', {
-                                      method: 'POST',
-                                      headers: { 'Content-Type': 'application/json' },
-                                      body: JSON.stringify({ call_id: c.key, status: newStatus })
-                                    }).then(async res => {
-                                      if (res.ok) window.location.reload();
-                                      else {
-                                        const errorText = await res.text();
-                                        alert(`Error al cambiar el estado: ${errorText}`);
+                            <td className="whitespace-nowrap px-4 py-3 text-xs">
+                              {(() => {
+                                const status = c.status || "Nuevo";
+                                let bg = "bg-muted";
+                                let text = "text-muted-foreground";
+                                if (status === "Solucionado") {
+                                  bg = "bg-green-100";
+                                  text = "text-green-800";
+                                } else if (status === "En Progreso") {
+                                  bg = "bg-yellow-100";
+                                  text = "text-yellow-800";
+                                } else if (status === "Nuevo") {
+                                  bg = "bg-blue-100";
+                                  text = "text-blue-800";
+                                } else if (status === "Cancelado") {
+                                  bg = "bg-red-100";
+                                  text = "text-red-800";
+                                }
+
+                                let timeElement = null;
+                                if (c.start_timestamp) {
+                                  const startStr = c.start_timestamp.replace(' ', 'T');
+                                  const start = new Date(startStr);
+                                  if (!isNaN(start.getTime())) {
+                                    let end: Date | null = null;
+                                    if (status === "Cancelado" || status === "Solucionado") {
+                                      if (c.status_timestamp) {
+                                        end = new Date(c.status_timestamp.replace(' ', 'T'));
                                       }
-                                    }).catch((err) => alert(`Error de conexión: ${err.message}`));
-                                  } else {
-                                    e.target.value = c.status || "Nuevo";
+                                    } else {
+                                      const nowBogotaStr = DateTime.now().setZone('America/Bogota').toFormat('yyyy-MM-dd HH:mm:ss');
+                                      end = new Date(nowBogotaStr.replace(' ', 'T'));
+                                    }
+                                    
+                                    if (end && !isNaN(end.getTime())) {
+                                      const diffMs = end.getTime() - start.getTime();
+                                      if (diffMs >= 0) {
+                                        const diffHoursTotal = Math.floor(diffMs / (1000 * 60 * 60));
+                                        const diffDays = Math.floor(diffHoursTotal / 24);
+                                        const diffHours = diffHoursTotal % 24;
+                                        let timeStr = "";
+                                        if (diffDays > 0) timeStr += `${diffDays} día(s) `;
+                                        timeStr += `${diffHours} hora(s)`;
+                                        timeElement = (
+                                          <div className="flex items-center justify-center gap-1 mt-1 text-[10px] text-muted-foreground font-medium">
+                                            <Clock className="h-3 w-3" />
+                                            <span>{timeStr}</span>
+                                          </div>
+                                        );
+                                      }
+                                    }
                                   }
-                                }}
-                              >
-                                <option value="En Progreso">En Progreso</option>
-                                <option value="Solucionado">Solucionado</option>
-                                <option value="Cancelado">Cancelado</option>
-                              </select>
+                                }
+
+                                return (
+                                  <div className="flex flex-col items-center">
+                                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 font-medium ${bg} ${text}`}>
+                                      {status}
+                                    </span>
+                                    {timeElement}
+                                  </div>
+                                );
+                              })()}
                             </td>
                             <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">{c.start_timestamp || "—"}</td>
                             <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">{c.channel || "—"}</td>
@@ -1695,6 +2071,32 @@ export default function AdminDashboard({
                 </tbody>
               </table>
             </div>
+            {!historicoLoading && historicoCalls.length > 0 && (
+              <div className="flex items-center justify-between border-t border-border px-6 py-3">
+                <div className="text-xs text-muted-foreground">
+                  Mostrando {((historicoPage - 1) * historicoPageSize) + 1} a {Math.min(historicoPage * historicoPageSize, historicoCalls.length)} de {historicoCalls.length}
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    disabled={historicoPage === 1}
+                    onClick={() => setHistoricoPage(p => Math.max(1, p - 1))}
+                    className="px-3 py-1 rounded border border-border text-xs font-medium disabled:opacity-50"
+                  >
+                    Anterior
+                  </button>
+                  <span className="text-xs font-medium px-2">
+                    {historicoPage} / {historicoTotalPages}
+                  </span>
+                  <button
+                    disabled={historicoPage === historicoTotalPages}
+                    onClick={() => setHistoricoPage(p => Math.min(historicoTotalPages, p + 1))}
+                    className="px-3 py-1 rounded border border-border text-xs font-medium disabled:opacity-50"
+                  >
+                    Siguiente
+                  </button>
+                </div>
+              </div>
+            )}
           </section>
         )}
 

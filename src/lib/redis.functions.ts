@@ -111,7 +111,7 @@ export type PurchasingCall = {
 export const getPurchasingCalls = createServerFn().handler(
   async (): Promise<{ calls: PurchasingCall[]; error?: string }> => {
     try {
-      const res = await fetch("https://vmi3345591.contaboserver.net/webhook/get-purchasing", {
+      const res = await fetch("https://vmi3345591.contaboserver.net/webhook/call-get-purchasing", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({}),
@@ -188,6 +188,42 @@ export const getEnProgresoCalls = createServerFn()
   .handler(async ({ data }): Promise<{ calls: ServiceCall[]; error?: string }> => {
     try {
       const res = await fetch("https://vmi3345591.contaboserver.net/webhook/get-contact-center-en-progreso", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) return { calls: [], error: await res.text() };
+      const raw = await res.json();
+      const callsData = Array.isArray(raw) ? raw : (raw ? [raw] : []);
+      return { calls: callsData };
+    } catch (err) {
+      return { calls: [], error: String(err) };
+    }
+  });
+
+export const getVentasHistoricoCalls = createServerFn()
+  .validator((d: { begin: string; end: string }) => d)
+  .handler(async ({ data }): Promise<{ calls: ServiceCall[]; error?: string }> => {
+    try {
+      const res = await fetch("https://vmi3345591.contaboserver.net/webhook/get-ventas-historico", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) return { calls: [], error: await res.text() };
+      const raw = await res.json();
+      const callsData = Array.isArray(raw) ? raw : (raw ? [raw] : []);
+      return { calls: callsData };
+    } catch (err) {
+      return { calls: [], error: String(err) };
+    }
+  });
+
+export const getVentasEnProgresoCalls = createServerFn()
+  .validator((d: { begin: string; end: string }) => d)
+  .handler(async ({ data }): Promise<{ calls: ServiceCall[]; error?: string }> => {
+    try {
+      const res = await fetch("https://vmi3345591.contaboserver.net/webhook/get-ventas-en-progreso", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
