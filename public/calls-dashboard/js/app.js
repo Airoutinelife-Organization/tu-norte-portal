@@ -620,7 +620,7 @@ function initEventListeners() {
 /**
  * Punto de entrada al cargar el DOM.
  */
-document.addEventListener('DOMContentLoaded', () => {
+function initApp() {
   initEventListeners();
   updateRangeDisplay();
   
@@ -633,4 +633,10 @@ document.addEventListener('DOMContentLoaded', () => {
   } else {
     loadStatistics();
   }
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initApp);
+} else {
+  initApp();
+}

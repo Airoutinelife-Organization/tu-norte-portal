@@ -1,4 +1,35 @@
 import { createServerFn } from "@tanstack/react-start";
+import * as fs from 'fs';
+import * as path from 'path';
+
+let envCache: Record<string, string> | null = null;
+function getEnv(key: string): string {
+  if (typeof process !== 'undefined' && process.env[key]) {
+    return process.env[key] as string;
+  }
+  // Fallback for Nitro/dev if process.env is missing the variable
+  if (!envCache && typeof process !== 'undefined') {
+    try {
+      const envPath = path.resolve(process.cwd(), '.env');
+      if (fs.existsSync(envPath)) {
+        const envContent = fs.readFileSync(envPath, 'utf-8');
+        envCache = {};
+        for (const line of envContent.split('\n')) {
+          const match = line.match(/^([^=]+)=(.*)$/);
+          if (match) {
+            let val = match[2].trim();
+            if (val.startsWith('"') && val.endsWith('"')) val = val.slice(1, -1);
+            envCache[match[1].trim()] = val;
+          }
+        }
+      }
+    } catch (e) {
+      envCache = {};
+    }
+  }
+  return envCache?.[key] || '';
+}
+
 
 /* ---------------------------------------------------------------------- */
 /* Tipos de datos Redis                                                     */
@@ -32,8 +63,7 @@ export type RedisCallsResult = {
 /* Server function                                                          */
 /* ---------------------------------------------------------------------- */
 
-const WEBHOOK_URL =
-  "https://vmi3345591.contaboserver.net/webhook/redis-call-get-range";
+const WEBHOOK_URL = getEnv("VITE_WEBHOOK_REDIS_CALL_GET_RANGE");
 
 export const getRedisCallsVentas = createServerFn().handler(
   async (): Promise<RedisCallsResult> => {
@@ -111,7 +141,7 @@ export type PurchasingCall = {
 export const getPurchasingCalls = createServerFn().handler(
   async (): Promise<{ calls: PurchasingCall[]; error?: string }> => {
     try {
-      const res = await fetch("https://vmi3345591.contaboserver.net/webhook/call-get-purchasing", {
+      const res = await fetch(getEnv("VITE_WEBHOOK_CALL_GET_PURCHASING"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({}),
@@ -150,7 +180,7 @@ export type ServiceCall = {
 export const getServiceCalls = createServerFn().handler(
   async (): Promise<{ calls: ServiceCall[]; error?: string }> => {
     try {
-      const res = await fetch("https://vmi3345591.contaboserver.net/webhook/get-service", {
+      const res = await fetch(getEnv("VITE_WEBHOOK_GET_SERVICE"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({}),
@@ -169,7 +199,7 @@ export const getHistoricoCalls = createServerFn()
   .validator((d: { begin: string; end: string }) => d)
   .handler(async ({ data }): Promise<{ calls: ServiceCall[]; error?: string }> => {
     try {
-      const res = await fetch("https://vmi3345591.contaboserver.net/webhook/get-contact-center-historico", {
+      const res = await fetch(getEnv("VITE_WEBHOOK_GET_CONTACT_CENTER_HISTORICO"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -187,7 +217,7 @@ export const getEnProgresoCalls = createServerFn()
   .validator((d: { begin: string; end: string }) => d)
   .handler(async ({ data }): Promise<{ calls: ServiceCall[]; error?: string }> => {
     try {
-      const res = await fetch("https://vmi3345591.contaboserver.net/webhook/get-contact-center-en-progreso", {
+      const res = await fetch(getEnv("VITE_WEBHOOK_GET_CONTACT_CENTER_EN_PROGRESO"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -205,7 +235,7 @@ export const getVentasHistoricoCalls = createServerFn()
   .validator((d: { begin: string; end: string }) => d)
   .handler(async ({ data }): Promise<{ calls: ServiceCall[]; error?: string }> => {
     try {
-      const res = await fetch("https://vmi3345591.contaboserver.net/webhook/get-ventas-historico", {
+      const res = await fetch(getEnv("VITE_WEBHOOK_GET_VENTAS_HISTORICO"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -223,7 +253,7 @@ export const getVentasEnProgresoCalls = createServerFn()
   .validator((d: { begin: string; end: string }) => d)
   .handler(async ({ data }): Promise<{ calls: ServiceCall[]; error?: string }> => {
     try {
-      const res = await fetch("https://vmi3345591.contaboserver.net/webhook/get-ventas-en-progreso", {
+      const res = await fetch(getEnv("VITE_WEBHOOK_GET_VENTAS_EN_PROGRESO"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),

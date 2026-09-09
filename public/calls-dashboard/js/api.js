@@ -25,31 +25,36 @@ export async function fetchKPIStats({ begin, end }) {
     const payload = { begin, end };
     console.info('[API] Enviando solicitud a webhooks:', { WEBHOOK_URL: CONFIG.WEBHOOK_URL, SOLVED_WEBHOOK_URL: CONFIG.SOLVED_WEBHOOK_URL, ABANDONADAS_WEBHOOK_URL: CONFIG.ABANDONADAS_WEBHOOK_URL, PBX_FALLIDA_WEBHOOK_URL: CONFIG.PBX_FALLIDA_WEBHOOK_URL }, payload);
 
-    const fetchLlamadas = fetch(CONFIG.WEBHOOK_URL, {
+    const safeFetch = (url, options) => fetch(url, options).catch(e => {
+      console.warn(`[API] Fallo de red en ${url}:`, e);
+      return { ok: false, status: 0, json: async () => ({}) };
+    });
+
+    const fetchLlamadas = safeFetch(CONFIG.WEBHOOK_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
 
-    const fetchResueltas = fetch(CONFIG.SOLVED_WEBHOOK_URL, {
+    const fetchResueltas = safeFetch(CONFIG.SOLVED_WEBHOOK_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
 
-    const fetchAbandonadas = fetch(CONFIG.ABANDONADAS_WEBHOOK_URL, {
+    const fetchAbandonadas = safeFetch(CONFIG.ABANDONADAS_WEBHOOK_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
 
-    const fetchEscaladasProceso = fetch(CONFIG.ESCALADAS_PROCESO_WEBHOOK_URL, {
+    const fetchEscaladasProceso = safeFetch(CONFIG.ESCALADAS_PROCESO_WEBHOOK_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
 
-    const fetchPbxFallida = fetch(CONFIG.PBX_FALLIDA_WEBHOOK_URL, {
+    const fetchPbxFallida = safeFetch(CONFIG.PBX_FALLIDA_WEBHOOK_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),

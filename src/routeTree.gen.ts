@@ -27,6 +27,7 @@ import { Route as SoporteRouteImport } from './routes/soporte'
 import { Route as TestVelocidadRouteImport } from './routes/test-velocidad'
 import { Route as VentasRouteImport } from './routes/ventas'
 import { Route as ApiPublicChatbotRouteImport } from './routes/api/public/chatbot'
+import { Route as ApiPublicDashboardConfigRouteImport } from './routes/api/public/dashboard-config'
 import { Route as ApiPublicSaeRouteImport } from './routes/api/public/sae'
 
 const IndexRoute = IndexRouteImport.update({
@@ -119,6 +120,12 @@ const ApiPublicChatbotRoute = ApiPublicChatbotRouteImport.update({
   path: '/api/public/chatbot',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicDashboardConfigRoute =
+  ApiPublicDashboardConfigRouteImport.update({
+    id: '/api/public/dashboard-config',
+    path: '/api/public/dashboard-config',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicSaeRoute = ApiPublicSaeRouteImport.update({
   id: '/api/public/sae',
   path: '/api/public/sae',
@@ -144,6 +151,7 @@ export interface FileRoutesByFullPath {
   '/test-velocidad': typeof TestVelocidadRoute
   '/ventas': typeof VentasRoute
   '/api/public/chatbot': typeof ApiPublicChatbotRoute
+  '/api/public/dashboard-config': typeof ApiPublicDashboardConfigRoute
   '/api/public/sae': typeof ApiPublicSaeRoute
 }
 export interface FileRoutesByTo {
@@ -165,6 +173,7 @@ export interface FileRoutesByTo {
   '/test-velocidad': typeof TestVelocidadRoute
   '/ventas': typeof VentasRoute
   '/api/public/chatbot': typeof ApiPublicChatbotRoute
+  '/api/public/dashboard-config': typeof ApiPublicDashboardConfigRoute
   '/api/public/sae': typeof ApiPublicSaeRoute
 }
 export interface FileRoutesById {
@@ -187,6 +196,7 @@ export interface FileRoutesById {
   '/test-velocidad': typeof TestVelocidadRoute
   '/ventas': typeof VentasRoute
   '/api/public/chatbot': typeof ApiPublicChatbotRoute
+  '/api/public/dashboard-config': typeof ApiPublicDashboardConfigRoute
   '/api/public/sae': typeof ApiPublicSaeRoute
 }
 export interface FileRouteTypes {
@@ -210,6 +220,7 @@ export interface FileRouteTypes {
     | '/test-velocidad'
     | '/ventas'
     | '/api/public/chatbot'
+    | '/api/public/dashboard-config'
     | '/api/public/sae'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -231,6 +242,7 @@ export interface FileRouteTypes {
     | '/test-velocidad'
     | '/ventas'
     | '/api/public/chatbot'
+    | '/api/public/dashboard-config'
     | '/api/public/sae'
   id:
     | '__root__'
@@ -252,6 +264,7 @@ export interface FileRouteTypes {
     | '/test-velocidad'
     | '/ventas'
     | '/api/public/chatbot'
+    | '/api/public/dashboard-config'
     | '/api/public/sae'
   fileRoutesById: FileRoutesById
 }
@@ -274,6 +287,7 @@ export interface RootRouteChildren {
   TestVelocidadRoute: typeof TestVelocidadRoute
   VentasRoute: typeof VentasRoute
   ApiPublicChatbotRoute: typeof ApiPublicChatbotRoute
+  ApiPublicDashboardConfigRoute: typeof ApiPublicDashboardConfigRoute
   ApiPublicSaeRoute: typeof ApiPublicSaeRoute
 }
 
@@ -405,6 +419,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicChatbotRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/dashboard-config': {
+      id: '/api/public/dashboard-config'
+      path: '/api/public/dashboard-config'
+      fullPath: '/api/public/dashboard-config'
+      preLoaderRoute: typeof ApiPublicDashboardConfigRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/sae': {
       id: '/api/public/sae'
       path: '/api/public/sae'
@@ -434,6 +455,7 @@ const rootRouteChildren: RootRouteChildren = {
   TestVelocidadRoute: TestVelocidadRoute,
   VentasRoute: VentasRoute,
   ApiPublicChatbotRoute: ApiPublicChatbotRoute,
+  ApiPublicDashboardConfigRoute: ApiPublicDashboardConfigRoute,
   ApiPublicSaeRoute: ApiPublicSaeRoute,
 }
 export const routeTree = rootRouteImport

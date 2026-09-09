@@ -57,6 +57,7 @@ import {
   UserPlus,
   Clock,
   Archive,
+  Brain,
 } from "lucide-react";
 
 const formatDateLocal = (date: Date) => {
@@ -156,13 +157,13 @@ export default function ContactCenterDashboard({
 
   useEffect(() => {
     if (isCreatingTicket && voiceAgents.length === 0) {
-      fetch("https://vmi3345591.contaboserver.net/webhook/voice-agent", { method: "POST" })
+      fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/voice-agent`, { method: "POST" })
         .then(res => res.json())
         .then((data: VoiceAgent[]) => setVoiceAgents(data))
         .catch(err => console.error("Error loading voice agents:", err));
     }
     if (isCreatingTicket && !newTicketId) {
-      fetch("https://vmi3345591.contaboserver.net/webhook/get-call-id-manually", { method: "POST" })
+      fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/get-call-id-manually`, { method: "POST" })
         .then(res => res.json())
         .then(data => {
           const num = data["ticket-manual"] || Object.values(data)[0];
@@ -180,7 +181,7 @@ export default function ContactCenterDashboard({
 
   const [allAgents, setAllAgents] = useState<Record<string, HumanAgent>>({});
   useEffect(() => {
-    fetch("https://vmi3345591.contaboserver.net/webhook/get-human-agent", { method: "POST" })
+    fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/get-human-agent`, { method: "POST" })
       .then(res => res.json())
       .then((data: HumanAgent[]) => {
         const map: Record<string, HumanAgent> = {};
@@ -1068,7 +1069,7 @@ export default function ContactCenterDashboard({
                                       const role = c.agent || "Ventas";
                                       setAssigningCall({ key: c.key!, role });
                                       setAgentsLoading(true);
-                                      fetch("https://vmi3345591.contaboserver.net/webhook/get-human-agent", { method: "POST" })
+                                      fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/get-human-agent`, { method: "POST" })
                                         .then(res => res.json())
                                         .then((data: HumanAgent[]) => {
                                            setAvailableAgents(data.filter(a => a.roles.includes(role)));
@@ -1100,7 +1101,7 @@ export default function ContactCenterDashboard({
                                 onChange={(e) => {
                                   const newStatus = e.target.value;
                                   if (confirm(`¿Estás seguro de que deseas cambiar el estado a ${newStatus}?`)) {
-                                    fetch('https://vmi3345591.contaboserver.net/webhook/set-status', {
+                                    fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/set-status`, {
                                       method: 'POST',
                                       headers: { 'Content-Type': 'application/json' },
                                       body: JSON.stringify({ call_id: c.key, status: newStatus })
@@ -1162,7 +1163,7 @@ export default function ContactCenterDashboard({
                                           onClick={() => {
                                             const newNotes = (document.getElementById(`notes-${c.key}`) as HTMLTextAreaElement).value;
                                             if(confirm("¿Deseas guardar las notas?")) {
-                                              fetch('https://vmi3345591.contaboserver.net/webhook/call-set-notes', {
+                                              fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/call-set-notes`, {
                                                   method: 'POST',
                                                   headers: { 'Content-Type': 'application/json' },
                                                   body: JSON.stringify({ call_id: c.key, notes: newNotes })
@@ -1296,7 +1297,7 @@ export default function ContactCenterDashboard({
                                       const role = c.agent || "Ventas";
                                       setAssigningCall({ key: c.key!, role });
                                       setAgentsLoading(true);
-                                      fetch("https://vmi3345591.contaboserver.net/webhook/get-human-agent", { method: "POST" })
+                                      fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/get-human-agent`, { method: "POST" })
                                         .then(res => res.json())
                                         .then((data: HumanAgent[]) => {
                                            setAvailableAgents(data.filter(a => a.roles.includes(role)));
@@ -1327,7 +1328,7 @@ export default function ContactCenterDashboard({
                                   className="bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 rounded px-3 py-1 text-xs font-medium transition-colors"
                                   onClick={() => {
                                     if (confirm('¿Estás seguro de que deseas cancelar este ticket?')) {
-                                      fetch('https://vmi3345591.contaboserver.net/webhook/set-status', {
+                                      fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/set-status`, {
                                         method: 'POST',
                                         headers: { 'Content-Type': 'application/json' },
                                         body: JSON.stringify({ call_id: c.key, status: "Cancelado" })
@@ -1422,7 +1423,7 @@ export default function ContactCenterDashboard({
                                           onClick={() => {
                                             const newNotes = (document.getElementById(`notes-${c.key}`) as HTMLTextAreaElement).value;
                                             if(confirm("¿Deseas guardar las notas?")) {
-                                              fetch('https://vmi3345591.contaboserver.net/webhook/call-set-notes', {
+                                              fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/call-set-notes`, {
                                                   method: 'POST',
                                                   headers: { 'Content-Type': 'application/json' },
                                                   body: JSON.stringify({ call_id: c.key, notes: newNotes })
@@ -1581,7 +1582,7 @@ export default function ContactCenterDashboard({
                                       const role = c.agent || "Ventas";
                                       setAssigningCall({ key: c.key!, role });
                                       setAgentsLoading(true);
-                                      fetch("https://vmi3345591.contaboserver.net/webhook/get-human-agent", { method: "POST" })
+                                      fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/get-human-agent`, { method: "POST" })
                                         .then(res => res.json())
                                         .then((data: HumanAgent[]) => {
                                            setAvailableAgents(data.filter(a => a.roles.includes(role)));
@@ -1614,7 +1615,7 @@ export default function ContactCenterDashboard({
                                     onClick={() => {
                                       const newStatus = "Solucionado";
                                       if (confirm(`¿Estás seguro de que deseas cambiar el estado a ${newStatus}?`)) {
-                                        fetch('https://vmi3345591.contaboserver.net/webhook/set-status', {
+                                        fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/set-status`, {
                                           method: 'POST',
                                           headers: { 'Content-Type': 'application/json' },
                                           body: JSON.stringify({ call_id: c.key, status: newStatus })
@@ -1636,7 +1637,7 @@ export default function ContactCenterDashboard({
                                     onClick={() => {
                                       const newStatus = "Cancelado";
                                       if (confirm(`¿Estás seguro de que deseas cambiar el estado a ${newStatus}?`)) {
-                                        fetch('https://vmi3345591.contaboserver.net/webhook/set-status', {
+                                        fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/set-status`, {
                                           method: 'POST',
                                           headers: { 'Content-Type': 'application/json' },
                                           body: JSON.stringify({ call_id: c.key, status: newStatus })
@@ -1733,7 +1734,7 @@ export default function ContactCenterDashboard({
                                           onClick={() => {
                                             const newNotes = (document.getElementById(`notes-${c.key}`) as HTMLTextAreaElement).value;
                                             if(confirm("¿Deseas guardar las notas?")) {
-                                              fetch('https://vmi3345591.contaboserver.net/webhook/call-set-notes', {
+                                              fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/call-set-notes`, {
                                                   method: 'POST',
                                                   headers: { 'Content-Type': 'application/json' },
                                                   body: JSON.stringify({ call_id: c.key, notes: newNotes })
@@ -1893,9 +1894,16 @@ export default function ContactCenterDashboard({
                     paginatedHistoricoCalls.map((c, i) => {
                       const isExpanded = expandedKey === (c.key || String(i) + "svc");
                       const hasDetail = !!(c.call_summary || c.notes);
+                      
+                      const currentAgent = assignedAgents[c.key!] || (c.assignedTo && allAgents[c.assignedTo] ? {
+                        initials: allAgents[c.assignedTo].initials,
+                        name: allAgents[c.assignedTo].name
+                      } : (c.assignedTo === "IA" ? { initials: "IA", name: "Inteligencia Artificial" } : null));
+                      const isIA = currentAgent?.initials === "IA";
+
                       return (
                         <React.Fragment key={c.key || i}>
-                          <tr className={`border-t border-border transition-colors ${isExpanded ? "bg-blue-500/5" : "hover:bg-muted/30"}`}>
+                          <tr className={`border-t border-border transition-colors ${isExpanded ? "bg-blue-500/5" : isIA ? "bg-green-50/50 hover:bg-green-100/50" : "hover:bg-muted/30"}`}>
                             <td className="px-4 py-3">
                               <p className="font-medium text-foreground max-w-[200px] truncate" title={c.key}>{c.key}</p>
                               <div className="flex items-center justify-center gap-3 mt-2">
@@ -1910,20 +1918,22 @@ export default function ContactCenterDashboard({
                                   </a>
                                 )}
                                 <div className="flex items-center gap-1">
-                                  <div className="text-orange-500" title="Asignar a">
-                                    <UserPlus className="h-4 w-4" />
-                                  </div>
-                                  {(() => {
-                                    const currentAgent = assignedAgents[c.key!] || (c.assignedTo && allAgents[c.assignedTo] ? {
-                                      initials: allAgents[c.assignedTo].initials,
-                                      name: allAgents[c.assignedTo].name
-                                    } : null);
-                                    return currentAgent ? (
-                                      <span className="ml-1 text-[10px] font-bold text-orange-700 bg-orange-100 rounded px-1.5 py-0.5" title={currentAgent.name}>
-                                        {currentAgent.initials}
-                                      </span>
-                                    ) : null;
-                                  })()}
+                                  {isIA ? (
+                                    <div className="flex items-center justify-center bg-[#FFDF00] border border-black rounded px-1.5 py-0.5 shadow-[1px_1px_0px_black]" title="Asignado a Inteligencia Artificial">
+                                      <Brain className="h-3.5 w-3.5 text-black" strokeWidth={2.5} />
+                                    </div>
+                                  ) : (
+                                    <>
+                                      <div className="text-orange-500" title="Asignar a">
+                                        <UserPlus className="h-4 w-4" />
+                                      </div>
+                                      {currentAgent && (
+                                        <span className="ml-1 text-[10px] font-bold text-orange-700 bg-orange-100 rounded px-1.5 py-0.5" title={currentAgent.name}>
+                                          {currentAgent.initials}
+                                        </span>
+                                      )}
+                                    </>
+                                  )}
                                 </div>
                                 </div>
                             </td>
@@ -2043,7 +2053,7 @@ export default function ContactCenterDashboard({
                                           onClick={() => {
                                             const newNotes = (document.getElementById(`notes-${c.key}`) as HTMLTextAreaElement).value;
                                             if(confirm("¿Deseas guardar las notas?")) {
-                                              fetch('https://vmi3345591.contaboserver.net/webhook/call-set-notes', {
+                                              fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/call-set-notes`, {
                                                   method: 'POST',
                                                   headers: { 'Content-Type': 'application/json' },
                                                   body: JSON.stringify({ call_id: c.key, notes: newNotes })
@@ -2126,7 +2136,7 @@ export default function ContactCenterDashboard({
                         setAssigningCall(null);
                         return;
                       }
-                      fetch("https://vmi3345591.contaboserver.net/webhook/call-set-assignedTo", {
+                      fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/call-set-assignedTo`, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ call_id: assigningCall.key, assignedTo: a.agentKey })
@@ -2180,7 +2190,7 @@ export default function ContactCenterDashboard({
                     if (!newTicketAgent) return;
                     setAgentsLoading(true);
                     setAssigningCall({ key: "new_ticket", role: newTicketAgent });
-                    fetch("https://vmi3345591.contaboserver.net/webhook/get-human-agent", { method: "POST" })
+                    fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/get-human-agent`, { method: "POST" })
                       .then(res => res.json())
                       .then((data: HumanAgent[]) => {
                         const filtered = data.filter(a => a.roles && a.roles.some(r => r.toLowerCase() === newTicketAgent.toLowerCase()));
@@ -2322,7 +2332,7 @@ export default function ContactCenterDashboard({
                     notas: newTicketNotes || ""
                   };
 
-                  fetch("https://vmi3345591.contaboserver.net/webhook/set-call-manually", {
+                  fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/set-call-manually`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload)

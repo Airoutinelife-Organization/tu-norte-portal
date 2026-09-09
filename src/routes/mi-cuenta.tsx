@@ -121,7 +121,7 @@ function MiCuentaPage() {
       setLoading(true);
       setError("");
       try {
-        const res = await fetch("https://vmi3345591.contaboserver.net/webhook/lista-abonados", {
+        const res = await fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/lista-abonados`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ external_id: s.cedula })
@@ -211,7 +211,7 @@ function MiCuentaPage() {
     try {
       if (mode === "register") {
         try {
-          const res = await fetch("https://vmi3345591.contaboserver.net/webhook/set-user", {
+          const res = await fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/set-user`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -254,7 +254,7 @@ function MiCuentaPage() {
 
       if (mode === "login") {
         try {
-          const res = await fetch("https://vmi3345591.contaboserver.net/webhook/get-user", {
+          const res = await fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/get-user`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -542,7 +542,7 @@ function VerFacturaButton({ idContrato }: { idContrato: string }) {
   const handleVerFactura = async () => {
     setLoading(true);
     try {
-      const res = await fetch("https://vmi3345591.contaboserver.net/webhook/ultimaFacturaPDF", {
+      const res = await fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/ultimaFacturaPDF`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id_contrato: idContrato })
