@@ -156,13 +156,13 @@ export default function VentasDashboard({
 
   useEffect(() => {
     if (isCreatingTicket && voiceAgents.length === 0) {
-      fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/voice-agent`, { method: "POST" })
+      fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL || 'https://vmi3533489.contaboserver.net/webhook'}/voice-agent`, { method: "POST" })
         .then(res => res.json())
         .then((data: VoiceAgent[]) => setVoiceAgents(data))
         .catch(err => console.error("Error loading voice agents:", err));
     }
     if (isCreatingTicket && !newTicketId) {
-      fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/get-call-id-manually`, { method: "POST" })
+      fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL || 'https://vmi3533489.contaboserver.net/webhook'}/get-call-id-manually`, { method: "POST" })
         .then(res => res.json())
         .then(data => {
           const num = data["ticket-manual"] || Object.values(data)[0];
@@ -180,7 +180,7 @@ export default function VentasDashboard({
 
   const [allAgents, setAllAgents] = useState<Record<string, HumanAgent>>({});
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/get-human-agent`, { method: "POST" })
+    fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL || 'https://vmi3533489.contaboserver.net/webhook'}/get-human-agent`, { method: "POST" })
       .then(res => res.json())
       .then((data: HumanAgent[]) => {
         const map: Record<string, HumanAgent> = {};
@@ -1066,7 +1066,7 @@ export default function VentasDashboard({
                                       const role = c.agent || "Ventas";
                                       setAssigningCall({ key: c.key!, role });
                                       setAgentsLoading(true);
-                                      fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/get-human-agent`, { method: "POST" })
+                                      fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL || 'https://vmi3533489.contaboserver.net/webhook'}/get-human-agent`, { method: "POST" })
                                         .then(res => res.json())
                                         .then((data: HumanAgent[]) => {
                                            setAvailableAgents(data.filter(a => a.roles.includes(role)));
@@ -1098,7 +1098,7 @@ export default function VentasDashboard({
                                 onChange={(e) => {
                                   const newStatus = e.target.value;
                                   if (confirm(`¿Estás seguro de que deseas cambiar el estado a ${newStatus}?`)) {
-                                    fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/set-status`, {
+                                    fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL || 'https://vmi3533489.contaboserver.net/webhook'}/set-status`, {
                                       method: 'POST',
                                       headers: { 'Content-Type': 'application/json' },
                                       body: JSON.stringify({ call_id: c.key, status: newStatus })
@@ -1160,7 +1160,7 @@ export default function VentasDashboard({
                                           onClick={() => {
                                             const newNotes = (document.getElementById(`notes-${c.key}`) as HTMLTextAreaElement).value;
                                             if(confirm("¿Deseas guardar las notas?")) {
-                                              fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/call-set-notes`, {
+                                              fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL || 'https://vmi3533489.contaboserver.net/webhook'}/call-set-notes`, {
                                                   method: 'POST',
                                                   headers: { 'Content-Type': 'application/json' },
                                                   body: JSON.stringify({ call_id: c.key, notes: newNotes })
@@ -1294,7 +1294,7 @@ export default function VentasDashboard({
                                       const role = c.agent || "Ventas";
                                       setAssigningCall({ key: c.key!, role });
                                       setAgentsLoading(true);
-                                      fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/get-human-agent`, { method: "POST" })
+                                      fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL || 'https://vmi3533489.contaboserver.net/webhook'}/get-human-agent`, { method: "POST" })
                                         .then(res => res.json())
                                         .then((data: HumanAgent[]) => {
                                            setAvailableAgents(data.filter(a => a.roles.includes(role)));
@@ -1325,7 +1325,7 @@ export default function VentasDashboard({
                                   className="bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 rounded px-3 py-1 text-xs font-medium transition-colors"
                                   onClick={() => {
                                     if (confirm('¿Estás seguro de que deseas cancelar este ticket?')) {
-                                      fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/set-status`, {
+                                      fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL || 'https://vmi3533489.contaboserver.net/webhook'}/set-status`, {
                                         method: 'POST',
                                         headers: { 'Content-Type': 'application/json' },
                                         body: JSON.stringify({ call_id: c.key, status: "Cancelado" })
@@ -1420,7 +1420,7 @@ export default function VentasDashboard({
                                           onClick={() => {
                                             const newNotes = (document.getElementById(`notes-${c.key}`) as HTMLTextAreaElement).value;
                                             if(confirm("¿Deseas guardar las notas?")) {
-                                              fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/call-set-notes`, {
+                                              fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL || 'https://vmi3533489.contaboserver.net/webhook'}/call-set-notes`, {
                                                   method: 'POST',
                                                   headers: { 'Content-Type': 'application/json' },
                                                   body: JSON.stringify({ call_id: c.key, notes: newNotes })
@@ -1579,7 +1579,7 @@ export default function VentasDashboard({
                                       const role = c.agent || "Ventas";
                                       setAssigningCall({ key: c.key!, role });
                                       setAgentsLoading(true);
-                                      fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/get-human-agent`, { method: "POST" })
+                                      fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL || 'https://vmi3533489.contaboserver.net/webhook'}/get-human-agent`, { method: "POST" })
                                         .then(res => res.json())
                                         .then((data: HumanAgent[]) => {
                                            setAvailableAgents(data.filter(a => a.roles.includes(role)));
@@ -1612,7 +1612,7 @@ export default function VentasDashboard({
                                     onClick={() => {
                                       const newStatus = "Solucionado";
                                       if (confirm(`¿Estás seguro de que deseas cambiar el estado a ${newStatus}?`)) {
-                                        fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/set-status`, {
+                                        fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL || 'https://vmi3533489.contaboserver.net/webhook'}/set-status`, {
                                           method: 'POST',
                                           headers: { 'Content-Type': 'application/json' },
                                           body: JSON.stringify({ call_id: c.key, status: newStatus })
@@ -1634,7 +1634,7 @@ export default function VentasDashboard({
                                     onClick={() => {
                                       const newStatus = "Cancelado";
                                       if (confirm(`¿Estás seguro de que deseas cambiar el estado a ${newStatus}?`)) {
-                                        fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/set-status`, {
+                                        fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL || 'https://vmi3533489.contaboserver.net/webhook'}/set-status`, {
                                           method: 'POST',
                                           headers: { 'Content-Type': 'application/json' },
                                           body: JSON.stringify({ call_id: c.key, status: newStatus })
@@ -1731,7 +1731,7 @@ export default function VentasDashboard({
                                           onClick={() => {
                                             const newNotes = (document.getElementById(`notes-${c.key}`) as HTMLTextAreaElement).value;
                                             if(confirm("¿Deseas guardar las notas?")) {
-                                              fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/call-set-notes`, {
+                                              fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL || 'https://vmi3533489.contaboserver.net/webhook'}/call-set-notes`, {
                                                   method: 'POST',
                                                   headers: { 'Content-Type': 'application/json' },
                                                   body: JSON.stringify({ call_id: c.key, notes: newNotes })
@@ -2041,7 +2041,7 @@ export default function VentasDashboard({
                                           onClick={() => {
                                             const newNotes = (document.getElementById(`notes-${c.key}`) as HTMLTextAreaElement).value;
                                             if(confirm("¿Deseas guardar las notas?")) {
-                                              fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/call-set-notes`, {
+                                              fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL || 'https://vmi3533489.contaboserver.net/webhook'}/call-set-notes`, {
                                                   method: 'POST',
                                                   headers: { 'Content-Type': 'application/json' },
                                                   body: JSON.stringify({ call_id: c.key, notes: newNotes })
@@ -2124,7 +2124,7 @@ export default function VentasDashboard({
                         setAssigningCall(null);
                         return;
                       }
-                      fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/call-set-assignedTo`, {
+                      fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL || 'https://vmi3533489.contaboserver.net/webhook'}/call-set-assignedTo`, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ call_id: assigningCall.key, assignedTo: a.agentKey })
@@ -2178,7 +2178,7 @@ export default function VentasDashboard({
                     if (!newTicketAgent) return;
                     setAgentsLoading(true);
                     setAssigningCall({ key: "new_ticket", role: newTicketAgent });
-                    fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/get-human-agent`, { method: "POST" })
+                    fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL || 'https://vmi3533489.contaboserver.net/webhook'}/get-human-agent`, { method: "POST" })
                       .then(res => res.json())
                       .then((data: HumanAgent[]) => {
                         const filtered = data.filter(a => a.roles && a.roles.some(r => r.toLowerCase() === newTicketAgent.toLowerCase()));
@@ -2320,7 +2320,7 @@ export default function VentasDashboard({
                     notas: newTicketNotes || ""
                   };
 
-                  fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/set-call-manually`, {
+                  fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL || 'https://vmi3533489.contaboserver.net/webhook'}/set-call-manually`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload)
