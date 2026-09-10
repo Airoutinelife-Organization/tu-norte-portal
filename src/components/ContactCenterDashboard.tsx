@@ -32,7 +32,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import {
+import {X,
   BotMessageSquare,
   CheckCircle2,
   ChevronDown,
@@ -431,6 +431,7 @@ export default function ContactCenterDashboard({
   const [redisError, setRedisError] = useState<string | null>(null);
   const [redisSearch, setRedisSearch] = useState("");
   const [expandedKey, setExpandedKey] = useState<string | null>(null);
+  const [playingRecordingUrl, setPlayingRecordingUrl] = useState<string | null>(null);
   const fetchRedisCalls = useServerFn(getRedisCallsVentas);
 
   useEffect(() => {
@@ -825,9 +826,9 @@ export default function ContactCenterDashboard({
                                   </button>
                                 )}
                                 {(c.recording_url || c.url) && (
-                                  <a href={c.recording_url || c.url} target="_blank" rel="noreferrer" className="text-blue-600 hover:text-blue-800" title="Oír grabación">
+                                  <button onClick={(e) => { e.preventDefault(); setPlayingRecordingUrl(c.recording_url || c.url || null); }} className="text-blue-600 hover:text-blue-800" title="Oír grabación">
                                     <Play className="h-4 w-4" />
-                                  </a>
+                                  </button>
                                 )}
                                 <div className="flex items-center gap-1">
                                   <button 
@@ -1053,9 +1054,9 @@ export default function ContactCenterDashboard({
                                   </button>
                                 )}
                                 {(c.recording_url || c.url) && (
-                                  <a href={c.recording_url || c.url} target="_blank" rel="noreferrer" className="text-blue-600 hover:text-blue-800" title="Oír grabación">
+                                  <button onClick={(e) => { e.preventDefault(); setPlayingRecordingUrl(c.recording_url || c.url || null); }} className="text-blue-600 hover:text-blue-800" title="Oír grabación">
                                     <Play className="h-4 w-4" />
-                                  </a>
+                                  </button>
                                 )}
                                 <div className="flex items-center gap-1">
                                   <button 
@@ -1338,9 +1339,9 @@ export default function ContactCenterDashboard({
                                   </button>
                                 )}
                                 {(c.recording_url || c.url) && (
-                                  <a href={c.recording_url || c.url} target="_blank" rel="noreferrer" className="text-blue-600 hover:text-blue-800" title="Oír grabación">
+                                  <button onClick={(e) => { e.preventDefault(); setPlayingRecordingUrl(c.recording_url || c.url || null); }} className="text-blue-600 hover:text-blue-800" title="Oír grabación">
                                     <Play className="h-4 w-4" />
-                                  </a>
+                                  </button>
                                 )}
                                 <div className="flex items-center gap-1">
                                   <button 
@@ -1679,9 +1680,9 @@ export default function ContactCenterDashboard({
                                   </button>
                                 )}
                                 {(c.recording_url || c.url) && (
-                                  <a href={c.recording_url || c.url} target="_blank" rel="noreferrer" className="text-blue-600 hover:text-blue-800" title="Oír grabación">
+                                  <button onClick={(e) => { e.preventDefault(); setPlayingRecordingUrl(c.recording_url || c.url || null); }} className="text-blue-600 hover:text-blue-800" title="Oír grabación">
                                     <Play className="h-4 w-4" />
-                                  </a>
+                                  </button>
                                 )}
                                 <div className="flex items-center gap-1">
                                   {isIA ? (
@@ -2129,6 +2130,20 @@ export default function ContactCenterDashboard({
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {playingRecordingUrl && (
+        <div className="fixed bottom-4 right-4 bg-white p-4 shadow-xl rounded-xl border border-border z-50 flex flex-col gap-3 min-w-[320px]">
+          <div className="flex justify-between items-center">
+            <span className="font-semibold text-sm text-foreground">Reproduciendo grabación</span>
+            <button onClick={() => setPlayingRecordingUrl(null)} className="text-muted-foreground hover:text-foreground" title="Cerrar reproductor">
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+          <audio controls autoPlay src={playingRecordingUrl} className="w-full">
+            Tu navegador no soporta el elemento de audio.
+          </audio>
         </div>
       )}
     </main>
