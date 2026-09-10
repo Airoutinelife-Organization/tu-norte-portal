@@ -650,7 +650,7 @@ export default function ContactCenterDashboard({
               <h1 className="text-lg font-bold text-foreground">
                 {mode === "ventas" 
                   ? "Monitoreo del asistente IA - Ventas" 
-                  : "Contact Center - Tickets"}
+                  : "Contact Center - Tickets (v1)"}
               </h1>
             </div>
           </div>

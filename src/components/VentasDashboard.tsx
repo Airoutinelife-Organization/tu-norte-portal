@@ -647,7 +647,7 @@ export default function VentasDashboard({
             </div>
             <div>
               <h1 className="text-lg font-bold text-foreground">
-                Ventas - Tickets
+                Administraccion Tickets (v1)
               </h1>
             </div>
           </div>
