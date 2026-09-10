@@ -732,7 +732,7 @@ export default function AIRPDashboard({
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`relative flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
+                  className={`relative flex items-center gap-2 px-2 py-2 text-sm font-medium transition-colors ${
                     isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
@@ -785,15 +785,15 @@ export default function AIRPDashboard({
               <table className="w-full text-sm">
                 <thead className="bg-muted/50 text-xs uppercase text-muted-foreground">
                   <tr>
-                    <th className="px-4 py-3 text-left font-medium">Key</th>
-                    <th className="px-4 py-3 text-left font-medium">Status</th>
-                    <th className="px-4 py-3 text-left font-medium">Canal</th>
-                    <th className="px-4 py-3 text-left font-medium">Inicio</th>
-                    <th className="px-4 py-3 text-left font-medium">Especialista</th>
-                    <th className="px-4 py-3 text-left font-medium">Teléfono</th>
-                    <th className="px-4 py-3 text-left font-medium">ID Externo</th>
-                    <th className="px-4 py-3 text-left font-medium">Zona</th>
-                    <th className="px-4 py-3 text-left font-medium">Desconexión</th>
+                    <th className="px-2 py-2 text-left font-medium">Key</th>
+                    <th className="px-2 py-2 text-left font-medium">Status</th>
+                    <th className="px-2 py-2 text-left font-medium">Canal</th>
+                    <th className="px-2 py-2 text-left font-medium">Inicio</th>
+                    <th className="px-2 py-2 text-left font-medium">Especialista</th>
+                    <th className="px-2 py-2 text-left font-medium">Teléfono</th>
+                    <th className="px-2 py-2 text-left font-medium">ID Externo</th>
+                    <th className="px-2 py-2 text-left font-medium">Zona</th>
+                    <th className="px-2 py-2 text-left font-medium">Desconexión</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -819,7 +819,7 @@ export default function AIRPDashboard({
                       return (
                         <React.Fragment key={c.key || i}>
                           <tr className={`border-t border-border transition-colors ${isExpanded ? "bg-blue-500/5" : "hover:bg-muted/30"}`}>
-                            <td className="px-4 py-3">
+                            <td className="px-2 py-2">
                               <p className="font-medium text-foreground max-w-[200px] truncate" title={c.key}>{c.key}</p>
                               <div className="flex items-center justify-center gap-3 mt-2">
                                 {hasDetail && (
@@ -863,7 +863,7 @@ export default function AIRPDashboard({
                                 </div>
                               </div>
                             </td>
-                            <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">
+                            <td className="whitespace-nowrap px-2 py-2 text-xs text-foreground">
                               <select
                                 className="bg-background border border-border rounded px-2 py-1 text-xs"
                                 defaultValue={c.status || "Nuevo"}
@@ -892,19 +892,19 @@ export default function AIRPDashboard({
                                 <option value="Cancelado">Cancelado</option>
                               </select>
                             </td>
-                            <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">{c.channel || "—"}</td>
-                            <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">{c.start_timestamp || "—"}</td>
-                            <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">
+                            <td className="whitespace-nowrap px-2 py-2 text-xs text-foreground">{c.channel || "—"}</td>
+                            <td className="whitespace-nowrap px-2 py-2 text-xs text-foreground">{c.start_timestamp || "—"}</td>
+                            <td className="whitespace-nowrap px-2 py-2 text-xs text-foreground">
                               <p className="font-medium">{c.agent || "—"}</p>
                               {c.specialist && <p className="text-muted-foreground">{c.specialist}</p>}
                             </td>
-                            <td className="px-4 py-3 text-xs text-foreground">
+                            <td className="px-2 py-2 text-xs text-foreground">
                                <p className="font-medium">{c.phone || "—"}</p>
                                {c.caller_name && <p className="text-muted-foreground">{c.caller_name}</p>}
                             </td>
-                            <td className="px-4 py-3 font-mono text-xs text-foreground">{c.external_id || "—"}</td>
-                            <td className="px-4 py-3 text-xs text-foreground">{c.zone || "—"}</td>
-                            <td className="px-4 py-3 text-xs text-muted-foreground">{c.disconnection_reason || "—"}</td>
+                            <td className="px-2 py-2 font-mono text-xs text-foreground">{c.external_id || "—"}</td>
+                            <td className="px-2 py-2 text-xs text-foreground">{c.zone || "—"}</td>
+                            <td className="px-2 py-2 text-xs text-muted-foreground">{c.disconnection_reason || "—"}</td>
                           </tr>
                           {isExpanded && hasDetail && (
                             <tr className="border-t border-blue-500/20 bg-blue-500/5">
@@ -1002,7 +1002,7 @@ export default function AIRPDashboard({
                   });
                   setIsCreatingTicket(true);
                 }}
-                className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
+                className="rounded-lg bg-blue-600 px-2 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
               >
                 Crear Ticket
               </button>
@@ -1012,16 +1012,16 @@ export default function AIRPDashboard({
               <table className="w-full text-sm">
                 <thead className="bg-muted/50 text-xs uppercase text-muted-foreground">
                   <tr>
-                    <th className="px-4 py-3 text-left font-medium">Key</th>
-                    <th className="px-4 py-3 text-left font-medium">Status</th>
-                    <th className="px-4 py-3 text-left font-medium">Inicio</th>
-                    <th className="px-4 py-3 text-left font-medium">Canal</th>
-                    <th className="px-4 py-3 text-left font-medium">Agente</th>
-                    <th className="px-4 py-3 text-left font-medium">Teléfono</th>
-                    <th className="px-4 py-3 text-left font-medium">ID Externo</th>
-                    <th className="px-4 py-3 text-left font-medium">Transferencia</th>
+                    <th className="px-2 py-2 text-left font-medium">Key</th>
+                    <th className="px-2 py-2 text-left font-medium">Status</th>
+                    <th className="px-2 py-2 text-left font-medium">Inicio</th>
+                    <th className="px-2 py-2 text-left font-medium">Canal</th>
+                    <th className="px-2 py-2 text-left font-medium">Agente</th>
+                    <th className="px-2 py-2 text-left font-medium">Teléfono</th>
+                    <th className="px-2 py-2 text-left font-medium">ID Externo</th>
+                    <th className="px-2 py-2 text-left font-medium">Transferencia</th>
                     
-                    <th className="px-4 py-3 text-left font-medium">Desconexión</th>
+                    <th className="px-2 py-2 text-left font-medium">Desconexión</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1047,7 +1047,7 @@ export default function AIRPDashboard({
                       return (
                         <React.Fragment key={c.key || i}>
                           <tr className={`border-t border-border transition-colors ${isExpanded ? "bg-blue-500/5" : "hover:bg-muted/30"}`}>
-                            <td className="px-4 py-3">
+                            <td className="px-2 py-2">
                               <p className="font-medium text-foreground max-w-[200px] truncate" title={c.key}>{c.key}</p>
                               <div className="flex items-center justify-center gap-3 mt-2">
                                 {hasDetail && (
@@ -1091,7 +1091,7 @@ export default function AIRPDashboard({
                                 </div>
                                 </div>
                             </td>
-                            <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">
+                            <td className="whitespace-nowrap px-2 py-2 text-xs text-foreground">
                               <div className="flex flex-col items-center">
                                 <button
                                   className="bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 rounded px-3 py-1 text-xs font-medium transition-colors"
@@ -1140,18 +1140,18 @@ export default function AIRPDashboard({
                                 })()}
                               </div>
                             </td>
-                            <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">{c.start_timestamp || "—"}</td>
-                            <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">{c.channel || "—"}</td>
-                            <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">
+                            <td className="whitespace-nowrap px-2 py-2 text-xs text-foreground">{c.start_timestamp || "—"}</td>
+                            <td className="whitespace-nowrap px-2 py-2 text-xs text-foreground">{c.channel || "—"}</td>
+                            <td className="whitespace-nowrap px-2 py-2 text-xs text-foreground">
                               <p className="font-medium">{c.agent || "—"}</p>
                               {c.specialist && <p className="text-muted-foreground">{c.specialist}</p>}
                             </td>
-                            <td className="px-4 py-3 text-xs text-foreground">
+                            <td className="px-2 py-2 text-xs text-foreground">
                                <p className="font-medium">{c.phone || "—"}</p>
                                {c.caller_name && <p className="text-muted-foreground">{c.caller_name}</p>}
                             </td>
-                            <td className="px-4 py-3 font-mono text-xs text-foreground">{c.external_id || "—"}</td>
-                            <td className="px-4 py-3 text-xs text-foreground">
+                            <td className="px-2 py-2 font-mono text-xs text-foreground">{c.external_id || "—"}</td>
+                            <td className="px-2 py-2 text-xs text-foreground">
                               {c.pbx === "Fallo" ? (
                                 <span className="inline-flex items-center rounded-full bg-red-500/10 px-2 py-0.5 text-xs font-medium text-red-700">
                                   {c.call_transfer === "Si" ? "Sí (Fallo PBX)" : "Fallo PBX"}
@@ -1164,7 +1164,7 @@ export default function AIRPDashboard({
                                 <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">No</span>
                               ) : "—"}
                             </td>
-                            <td className="px-4 py-3 text-xs text-muted-foreground">{c.disconnection_reason || "—"}</td>
+                            <td className="px-2 py-2 text-xs text-muted-foreground">{c.disconnection_reason || "—"}</td>
                           </tr>
                           {isExpanded && hasDetail && (
                             <tr className="border-t border-blue-500/20 bg-blue-500/5">
@@ -1285,7 +1285,7 @@ export default function AIRPDashboard({
                       return (
                         <th
                           key={col.field}
-                          className={`px-4 py-3 text-left font-medium ${isSortable ? "cursor-pointer hover:bg-muted/80 select-none" : ""}`}
+                          className={`px-2 py-2 text-left font-medium ${isSortable ? "cursor-pointer hover:bg-muted/80 select-none" : ""}`}
                           onClick={() => {
                             if (!isSortable) return;
                             if (enProgresoSortField === col.field) {
@@ -1332,7 +1332,7 @@ export default function AIRPDashboard({
                       return (
                         <React.Fragment key={c.key || i}>
                           <tr className={`border-t border-border transition-colors ${isExpanded ? "bg-blue-500/5" : "hover:bg-muted/30"}`}>
-                            <td className="px-4 py-3">
+                            <td className="px-2 py-2">
                               <p className="font-medium text-foreground max-w-[200px] truncate" title={c.key}>{c.key}</p>
                               <div className="flex items-center justify-center gap-3 mt-2">
                                 {hasDetail && (
@@ -1376,7 +1376,7 @@ export default function AIRPDashboard({
                                 </div>
                                 </div>
                             </td>
-                            <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">
+                            <td className="whitespace-nowrap px-2 py-2 text-xs text-foreground">
                               <div className="flex flex-col items-center gap-2">
                                 <div className="flex gap-2">
                                   <button
@@ -1451,18 +1451,18 @@ export default function AIRPDashboard({
                                 })()}
                               </div>
                             </td>
-                            <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">{c.start_timestamp || "—"}</td>
-                            <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">{c.channel || "—"}</td>
-                            <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">
+                            <td className="whitespace-nowrap px-2 py-2 text-xs text-foreground">{c.start_timestamp || "—"}</td>
+                            <td className="whitespace-nowrap px-2 py-2 text-xs text-foreground">{c.channel || "—"}</td>
+                            <td className="whitespace-nowrap px-2 py-2 text-xs text-foreground">
                               <p className="font-medium">{c.agent || "—"}</p>
                               {c.specialist && <p className="text-muted-foreground">{c.specialist}</p>}
                             </td>
-                            <td className="px-4 py-3 text-xs text-foreground">
+                            <td className="px-2 py-2 text-xs text-foreground">
                                <p className="font-medium">{c.phone || "—"}</p>
                                {c.caller_name && <p className="text-muted-foreground">{c.caller_name}</p>}
                             </td>
-                            <td className="px-4 py-3 font-mono text-xs text-foreground">{c.external_id || "—"}</td>
-                            <td className="px-4 py-3 text-xs text-foreground">
+                            <td className="px-2 py-2 font-mono text-xs text-foreground">{c.external_id || "—"}</td>
+                            <td className="px-2 py-2 text-xs text-foreground">
                               {c.pbx === "Fallo" ? (
                                 <span className="inline-flex items-center rounded-full bg-red-500/10 px-2 py-0.5 text-xs font-medium text-red-700">
                                   {c.call_transfer === "Si" ? "Sí (Fallo PBX)" : "Fallo PBX"}
@@ -1475,7 +1475,7 @@ export default function AIRPDashboard({
                                 <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">No</span>
                               ) : "—"}
                             </td>
-                            <td className="px-4 py-3 text-xs text-muted-foreground">{c.disconnection_reason || "—"}</td>
+                            <td className="px-2 py-2 text-xs text-muted-foreground">{c.disconnection_reason || "—"}</td>
                           </tr>
                           {isExpanded && hasDetail && (
                             <tr className="border-t border-blue-500/20 bg-blue-500/5">
@@ -1540,14 +1540,14 @@ export default function AIRPDashboard({
                 </p>
                 <div className="flex gap-2">
                   <button
-                    className="rounded-lg border border-border px-4 py-2 text-sm font-medium hover:bg-muted/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="rounded-lg border border-border px-2 py-2 text-sm font-medium hover:bg-muted/50 disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={enProgresoPage === 1}
                     onClick={() => setEnProgresoPage(p => Math.max(1, p - 1))}
                   >
                     Anterior
                   </button>
                   <button
-                    className="rounded-lg border border-border px-4 py-2 text-sm font-medium hover:bg-muted/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="rounded-lg border border-border px-2 py-2 text-sm font-medium hover:bg-muted/50 disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={enProgresoPage === enProgresoTotalPages}
                     onClick={() => setEnProgresoPage(p => Math.min(enProgresoTotalPages, p + 1))}
                   >
@@ -1614,13 +1614,14 @@ export default function AIRPDashboard({
                       { label: "ID Externo", field: "external_id" },
                       { label: "Transferencia", field: "call_transfer" },
                       { label: "Desconexión", field: "disconnection_reason" },
-                      { label: "AIRP", field: "AIRP" }
+                      { label: "AIRP", field: "AIRP" },
+                      { label: "Ticket", field: "ticket" }
                     ].map((col) => {
                       const isSortable = col.field !== "key";
                       return (
                         <th
                           key={col.field}
-                          className={`px-4 py-3 text-left font-medium ${isSortable ? "cursor-pointer hover:bg-muted/80 select-none" : ""}`}
+                          className={`px-2 py-2 text-left font-medium ${isSortable ? "cursor-pointer hover:bg-muted/80 select-none" : ""}`}
                           onClick={() => {
                             if (!isSortable) return;
                             if (historicoSortField === col.field) {
@@ -1674,7 +1675,7 @@ export default function AIRPDashboard({
                       return (
                         <React.Fragment key={c.key || i}>
                           <tr className={`border-t border-border transition-colors ${isExpanded ? "bg-blue-500/5" : isIA ? "bg-green-50/50 hover:bg-green-100/50" : "hover:bg-muted/30"}`}>
-                            <td className="px-4 py-3">
+                            <td className="px-2 py-2">
                               <p className="font-medium text-foreground max-w-[200px] truncate" title={c.key}>{c.key}</p>
                               <div className="flex items-center justify-center gap-3 mt-2">
                                 {hasDetail && (
@@ -1707,7 +1708,7 @@ export default function AIRPDashboard({
                                 </div>
                                 </div>
                             </td>
-                            <td className="whitespace-nowrap px-4 py-3 text-xs">
+                            <td className="whitespace-nowrap px-2 py-2 text-xs">
                               {(() => {
                                 const status = c.status || "Nuevo";
                                 let bg = "bg-muted";
@@ -1842,10 +1843,23 @@ export default function AIRPDashboard({
                                 );
                               })()}
                             </td>
+                            <td className="px-2 py-3 text-center text-xs">
+                              {c.ticket === "Si" || c.ticket === "Sí" ? (
+                                <span className="inline-flex items-center rounded-full bg-green-500/10 px-2 py-0.5 text-xs font-medium text-green-700">
+                                  {c.ticket}
+                               </span>
+                              ) : c.ticket ? (
+                                <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
+                                  {c.ticket}
+                                </span>
+                              ) : (
+                                "—"
+                              )}
+                            </td>
                           </tr>
                           {isExpanded && hasDetail && (
                             <tr className="border-t border-blue-500/20 bg-blue-500/5">
-                              <td colSpan={10} className="px-6 py-4">
+                              <td colSpan={11} className="px-6 py-4">
                                 <div className="grid gap-3 sm:grid-cols-3">
                                   {c.call_summary && (
                                     <div>
@@ -2000,7 +2014,7 @@ export default function AIRPDashboard({
             <div className="mt-6 flex justify-end">
               <button
                 onClick={() => setAssigningCall(null)}
-                className="rounded-lg bg-muted px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-muted/80"
+                className="rounded-lg bg-muted px-2 py-2 text-sm font-medium text-muted-foreground hover:bg-muted/80"
               >
                 Cancelar
               </button>
@@ -2144,7 +2158,7 @@ export default function AIRPDashboard({
             <div className="mt-6 flex justify-end gap-3">
               <button
                 onClick={() => setIsCreatingTicket(false)}
-                className="rounded-lg bg-muted px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-muted/80"
+                className="rounded-lg bg-muted px-2 py-2 text-sm font-medium text-muted-foreground hover:bg-muted/80"
               >
                 Cancelar
               </button>
@@ -2188,7 +2202,7 @@ export default function AIRPDashboard({
                     })
                     .finally(() => setAgentsLoading(false));
                 }}
-                className={`rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors ${
+                className={`rounded-lg px-2 py-2 text-sm font-medium text-white transition-colors ${
                   isTicketFormValid ? "bg-blue-600 hover:bg-blue-700" : "bg-blue-300 cursor-not-allowed"
                 }`}
               >
