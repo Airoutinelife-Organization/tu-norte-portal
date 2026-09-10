@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import React, { useEffect, useState } from "react";
-import { ShieldCheck, HeadphonesIcon, ShoppingBag } from "lucide-react";
+import { ShieldCheck, HeadphonesIcon, ShoppingBag, Brain } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
   component: AdminPage,
@@ -49,12 +49,23 @@ function AdminPage() {
           }}
         />
         <LoginForm
-          title="Ventas"
-          description="Módulo de análisis comercial"
+          title="Administracion"
+          description="Ventas y otros"
           icon={ShoppingBag}
           onSuccess={() => {
             localStorage.setItem(STORAGE_KEY, "ok");
             window.location.href = "/ventas";
+          }}
+        />
+        <LoginForm
+          title="AIRP"
+          description="AI Routine Partner"
+          icon={Brain}
+          expectedUser="admin"
+          expectedPass="AIRP2026"
+          onSuccess={() => {
+            localStorage.setItem(STORAGE_KEY, "ok");
+            window.location.href = "/airp";
           }}
         />
       </div>
@@ -67,11 +78,15 @@ function LoginForm({
   description,
   icon: Icon,
   onSuccess,
+  expectedUser = ADMIN_USER,
+  expectedPass = ADMIN_PASS,
 }: {
   title: string;
   description: string;
   icon: React.ElementType;
   onSuccess: () => void;
+  expectedUser?: string;
+  expectedPass?: string;
 }) {
   const [user, setUser] = useState("");
   const [pass, setPass] = useState("");
@@ -81,7 +96,7 @@ function LoginForm({
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        if (user.trim() === ADMIN_USER && pass === ADMIN_PASS) onSuccess();
+        if (user.trim() === expectedUser && pass === expectedPass) onSuccess();
         else setError(true);
       }}
       className="w-full max-w-sm rounded-2xl border border-border bg-card p-8 shadow-xl"

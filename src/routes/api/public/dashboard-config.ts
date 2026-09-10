@@ -9,6 +9,7 @@ export const Route = createFileRoute("/api/public/dashboard-config")({
         return new Response(
           JSON.stringify({
             VITE_WEBHOOK_BASE_URL:
+              (typeof process !== "undefined" ? process.env.VITE_WEBHOOK_BASE_URL : undefined) ||
               import.meta.env.VITE_WEBHOOK_BASE_URL ||
               "https://vmi3533489.contaboserver.net/webhook",
           }),
