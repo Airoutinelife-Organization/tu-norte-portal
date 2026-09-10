@@ -1771,18 +1771,18 @@ export default function AIRPDashboard({
                                 );
                               })()}
                             </td>
-                            <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">{c.start_timestamp || "—"}</td>
-                            <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">{c.channel || "—"}</td>
-                            <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">
+                            <td className="whitespace-nowrap px-2 py-3 text-xs text-foreground">{c.start_timestamp || "—"}</td>
+                            <td className="whitespace-nowrap px-2 py-3 text-xs text-foreground">{c.channel || "—"}</td>
+                            <td className="whitespace-nowrap px-2 py-3 text-xs text-foreground">
                               <p className="font-medium">{c.agent || "—"}</p>
                               {c.specialist && <p className="text-muted-foreground">{c.specialist}</p>}
                             </td>
-                            <td className="px-4 py-3 text-xs text-foreground">
+                            <td className="px-2 py-3 text-xs text-foreground">
                                <p className="font-medium">{c.phone || "—"}</p>
                                {c.caller_name && <p className="text-muted-foreground">{c.caller_name}</p>}
                             </td>
-                            <td className="px-4 py-3 font-mono text-xs text-foreground">{c.external_id || "—"}</td>
-                            <td className="px-4 py-3 text-xs text-foreground">
+                            <td className="px-2 py-3 font-mono text-xs text-foreground">{c.external_id || "—"}</td>
+                            <td className="px-2 py-3 text-xs text-foreground">
                               {c.pbx === "Fallo" ? (
                                 <span className="inline-flex items-center rounded-full bg-red-500/10 px-2 py-0.5 text-xs font-medium text-red-700">
                                   {c.call_transfer === "Si" ? "Sí (Fallo PBX)" : "Fallo PBX"}
@@ -1795,24 +1795,50 @@ export default function AIRPDashboard({
                                 <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">No</span>
                               ) : "—"}
                             </td>
-                            <td className="px-4 py-3 text-xs text-muted-foreground">{c.disconnection_reason || "—"}</td>
-                            <td className="px-4 py-3 text-xs text-foreground">
+                            <td className="px-2 py-3 text-xs text-muted-foreground">{c.disconnection_reason || "—"}</td>
+                            <td className="px-2 py-3 text-xs text-foreground">
                               {(() => {
-                                const currentValue = airpValues[c.key] !== undefined ? airpValues[c.key] : (c.AIRP || "");
-                                const isCustom = currentValue !== "" && currentValue !== "Si" && currentValue !== "No";
+                                const currentValue = airpValues[c.key] !== undefined ? airpValues[c.key] : c.AIRP;
+                                const isSi = currentValue === "Si" || currentValue === "Sí";
+                                const isNo = currentValue === "No";
+                                const isUnset = !isSi && !isNo;
+
                                 return (
-                                  <select 
-                                    key={`airp-select-${c.key}-${isExpanded ? 'exp' : 'col'}`}
-                                    id={`airp-select-${c.key}`}
-                                    className="border border-border rounded px-1 py-0.5 bg-background text-xs w-full"
-                                    value={currentValue}
-                                    onChange={(e) => setAirpValues(prev => ({ ...prev, [c.key]: e.target.value }))}
-                                  >
-                                    <option value="">—</option>
-                                    <option value="Si">Si</option>
-                                    <option value="No">No</option>
-                                    {isCustom && <option value={currentValue}>{currentValue}</option>}
-                                  </select>
+                                  <div className="flex w-[70px] h-[24px] rounded border border-border shadow-sm overflow-hidden">
+                                    <button
+                                      title="Sí"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setAirpValues(prev => ({ ...prev, [c.key]: "Si" }));
+                                      }}
+                                      className={`flex-1 flex items-center justify-center text-[11px] font-bold transition-all ${
+                                        isSi 
+                                          ? "bg-green-500 text-white" 
+                                          : isUnset 
+                                            ? "bg-green-50 text-green-400 hover:bg-green-100" 
+                                            : "bg-muted/50 text-muted-foreground/50 hover:bg-green-100"
+                                      }`}
+                                    >
+                                      SÍ
+                                    </button>
+                                    <button
+                                      title="No"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setAirpValues(prev => ({ ...prev, [c.key]: "No" }));
+                                      }}
+                                      className={`flex-1 flex items-center justify-center text-[11px] font-bold transition-all ${
+                                        isNo 
+                                          ? "bg-red-500 text-white" 
+                                          : isUnset 
+                                            ? "bg-red-50 text-red-400 hover:bg-red-100" 
+                                            : "bg-muted/50 text-muted-foreground/50 hover:bg-red-100"
+                                      }`}
+                                    >
+                                      NO
+                                    </button>
+                                    <input type="hidden" id={`airp-select-${c.key}`} value={currentValue || ""} />
+                                  </div>
                                 );
                               })()}
                             </td>
