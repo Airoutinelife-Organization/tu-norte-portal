@@ -125,7 +125,7 @@ export default function ContactCenterDashboard({
   onLogout: () => void;
   mode?: "contact-center" | "ventas";
 }) {
-  const [activeTab, setActiveTab] = useState<Tab>("servicio");
+  const [activeTab, setActiveTab] = useState<Tab>("en_progreso");
 
   // ── Assignment State ──────────────────────────────────────────────────────────
   const [assigningCall, setAssigningCall] = useState<{ key: string; role: string } | null>(null);
@@ -194,7 +194,7 @@ export default function ContactCenterDashboard({
   }, []);
   
   const currentTabs = useMemo(() => {
-    return TABS.filter((t) => t.id !== "ventas");
+    return TABS.filter((t) => t.id !== "ventas" && t.id !== "servicio");
   }, []);
 
   const [days, setDays] = useState(1);
@@ -751,12 +751,10 @@ export default function ContactCenterDashboard({
 
         {/* ═══════════════ PANEL GENERAL ═══════════════ */}
         {activeTab === "general" && (
-          <div className="h-[calc(100vh-180px)] w-full overflow-hidden rounded-2xl border border-border shadow-sm">
-            <iframe 
-              src="/calls-dashboard/index.html" 
-              className="h-full w-full border-0" 
-              title="Dashboard IA"
-            />
+          <div className="flex h-[calc(100vh-180px)] w-full flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-muted/30 p-8 text-center">
+            <LayoutDashboard className="mx-auto mb-4 h-12 w-12 text-muted-foreground/50" />
+            <h2 className="text-xl font-semibold text-foreground">En Construcción</h2>
+            <p className="mt-2 text-sm text-muted-foreground">Esta sección será implementada más adelante.</p>
           </div>
         )}
 

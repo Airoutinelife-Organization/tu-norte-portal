@@ -194,7 +194,7 @@ export default function AIRPDashboard({
   }, []);
   
   const currentTabs = useMemo(() => {
-    return TABS.filter((t) => t.id !== "ventas");
+    return TABS.filter((t) => t.id !== "ventas" && t.id !== "servicio" && t.id !== "en_progreso");
   }, []);
 
   const [days, setDays] = useState(1);
