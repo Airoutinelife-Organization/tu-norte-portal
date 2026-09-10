@@ -7,7 +7,7 @@ import {
   getRedisCallsVentas,
   getPurchasingCalls,
   getServiceCalls,
-  getHistoricoCalls,
+  getAirpHistoricoCalls,
   getEnProgresoCalls,
   type RedisCall,
   type PurchasingCall,
@@ -125,7 +125,7 @@ export default function AIRPDashboard({
   onLogout: () => void;
   mode?: "contact-center" | "ventas";
 }) {
-  const [activeTab, setActiveTab] = useState<Tab>("servicio");
+  const [activeTab, setActiveTab] = useState<Tab>("historico");
 
   // ── Assignment State ──────────────────────────────────────────────────────────
   const [assigningCall, setAssigningCall] = useState<{ key: string; role: string } | null>(null);
@@ -363,6 +363,7 @@ export default function AIRPDashboard({
   const [historicoPageSize, setHistoricoPageSize] = useState(10);
   const [historicoSortField, setHistoricoSortField] = useState<keyof ServiceCall | "">("start_timestamp");
   const [historicoSortDirection, setHistoricoSortDirection] = useState<"asc" | "desc">("desc");
+  const [airpValues, setAirpValues] = useState<Record<string, string>>({});
 
   const paginatedHistoricoCalls = useMemo(() => {
     let calls = [...historicoCalls];
@@ -393,7 +394,7 @@ export default function AIRPDashboard({
   
   const historicoTotalPages = Math.ceil(historicoCalls.length / historicoPageSize);
 
-  const fetchHistorico = useServerFn(getHistoricoCalls);
+  const fetchHistorico = useServerFn(getAirpHistoricoCalls);
 
   useEffect(() => {
     let cancelled = false;
@@ -751,244 +752,12 @@ export default function AIRPDashboard({
 
         {/* ═══════════════ PANEL GENERAL ═══════════════ */}
         {activeTab === "general" && (
-          <div className="space-y-6">
-            {/* KPIs */}
-            <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-              {kpis.map((k) => (
-                <div key={k.label} className="rounded-2xl border border-border bg-card p-5 shadow-sm">
-                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10">
-                    <k.icon className="h-4.5 w-4.5 text-primary" />
-                  </div>
-                  <p className="text-2xl font-bold text-foreground">{k.value.toLocaleString("es-CO")}</p>
-                  <p className="mt-1 text-sm font-medium text-foreground">{k.label}</p>
-                  <p className="mt-0.5 text-xs text-muted-foreground">{k.hint}</p>
-                </div>
-              ))}
-            </section>
-
-            {/* Tendencia diaria */}
-            <section className="rounded-2xl border border-border bg-card p-6 shadow-sm">
-              <h2 className="mb-4 text-sm font-semibold text-foreground">Tendencia diaria de llamadas</h2>
-              <div className="h-72 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={data}>
-                    <defs>
-                      <linearGradient id="gA" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="var(--chart-1)" stopOpacity={0.35} />
-                        <stop offset="100%" stopColor="var(--chart-1)" stopOpacity={0} />
-                      </linearGradient>
-                      <linearGradient id="gR" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="var(--chart-2)" stopOpacity={0.35} />
-                        <stop offset="100%" stopColor="var(--chart-2)" stopOpacity={0} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                    <XAxis dataKey="dia" tick={{ fontSize: 12 }} stroke="var(--muted-foreground)" />
-                    <YAxis tick={{ fontSize: 12 }} stroke="var(--muted-foreground)" />
-                    <Tooltip contentStyle={tooltipStyle} />
-                    <Legend wrapperStyle={{ fontSize: 12 }} />
-                    <Area type="monotone" dataKey="atendidas" name="Atendidas" stroke="var(--chart-1)" fill="url(#gA)" strokeWidth={2} />
-                    <Area type="monotone" dataKey="resueltas" name="Resueltas por IA" stroke="var(--chart-2)" fill="url(#gR)" strokeWidth={2} />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-            </section>
-
-            {/* Desenlace + Motivos */}
-            <div className="grid gap-6 lg:grid-cols-3">
-              <section className="rounded-2xl border border-border bg-card p-6 shadow-sm lg:col-span-2">
-                <h2 className="mb-4 text-sm font-semibold text-foreground">Desenlace de las llamadas por día</h2>
-                <div className="h-72 w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={data}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                      <XAxis dataKey="dia" tick={{ fontSize: 12 }} stroke="var(--muted-foreground)" />
-                      <YAxis tick={{ fontSize: 12 }} stroke="var(--muted-foreground)" />
-                      <Tooltip contentStyle={tooltipStyle} />
-                      <Legend wrapperStyle={{ fontSize: 12 }} />
-                      <Bar dataKey="resueltas" name="Resueltas IA" stackId="a" fill="var(--chart-2)" radius={[0, 0, 0, 0]} />
-                      <Bar dataKey="transferidas" name="Escaladas" stackId="a" fill="var(--chart-3)" />
-                      <Bar dataKey="abandonadas" name="Abandonadas" stackId="a" fill="var(--chart-5)" />
-                      <Bar dataKey="noProcesadas" name="No procesadas (PBX/IVR)" stackId="a" fill="var(--chart-4)" radius={[6, 6, 0, 0]} />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </section>
-
-              <section className="rounded-2xl border border-border bg-card p-6 shadow-sm">
-                <h2 className="mb-4 text-sm font-semibold text-foreground">Motivos de contacto</h2>
-                <div className="h-72 w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie data={motivosData} dataKey="value" nameKey="name" innerRadius={55} outerRadius={90} paddingAngle={3}>
-                        {motivosData.map((m, i) => (
-                          <Cell key={m.name} fill={PIE_COLORS[i % PIE_COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip formatter={(v: number) => `${v}%`} contentStyle={tooltipStyle} />
-                      <Legend wrapperStyle={{ fontSize: 11 }} />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-              </section>
-            </div>
-
-            {/* Distribución horaria */}
-            <section className="rounded-2xl border border-border bg-card p-6 shadow-sm">
-              <h2 className="mb-4 text-sm font-semibold text-foreground">Distribución por hora del día</h2>
-              <div className="h-64 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={hourlyData}>
-                    <defs>
-                      <linearGradient id="gH" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="var(--chart-1)" stopOpacity={0.9} />
-                        <stop offset="100%" stopColor="var(--chart-5)" stopOpacity={0.7} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                    <XAxis dataKey="hora" tick={{ fontSize: 11 }} stroke="var(--muted-foreground)" />
-                    <YAxis tick={{ fontSize: 12 }} stroke="var(--muted-foreground)" />
-                    <Tooltip contentStyle={tooltipStyle} />
-                    <Bar dataKey="llamadas" name="Llamadas" fill="url(#gH)" radius={[6, 6, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </section>
-
-            {/* Detalle diario */}
-            <section className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
-              <h2 className="border-b border-border px-6 py-4 text-sm font-semibold text-foreground">Detalle diario</h2>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead className="bg-muted/50 text-xs uppercase text-muted-foreground">
-                    <tr>
-                      <th className="px-6 py-3 text-left font-medium">Día</th>
-                      <th className="px-4 py-3 text-right font-medium">Atendidas</th>
-                      <th className="px-4 py-3 text-right font-medium">Resueltas IA</th>
-                      <th className="px-4 py-3 text-right font-medium">Abandonadas</th>
-                      <th className="px-4 py-3 text-right font-medium">Escaladas</th>
-                      <th className="px-4 py-3 text-right font-medium">Transf. no resueltas</th>
-                      <th className="px-6 py-3 text-right font-medium">No procesadas</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {[...data].reverse().map((r) => (
-                      <tr key={r.dia} className="border-t border-border">
-                        <td className="px-6 py-3 font-medium text-foreground">{r.dia}</td>
-                        <td className="px-4 py-3 text-right text-foreground">{r.atendidas}</td>
-                        <td className="px-4 py-3 text-right text-foreground">{r.resueltas}</td>
-                        <td className="px-4 py-3 text-right text-foreground">{r.abandonadas}</td>
-                        <td className="px-4 py-3 text-right text-foreground">{r.transferidas}</td>
-                        <td className="px-4 py-3 text-right text-foreground">{r.noResueltas}</td>
-                        <td className="px-6 py-3 text-right text-foreground">{r.noProcesadas ?? 0}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </section>
-
-            {/* Detalle por llamada: datos de Redis */}
-            <section className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
-              <div className="border-b border-border px-6 py-4">
-                <h2 className="text-sm font-semibold text-foreground">
-                  Detalle por llamada · Redis
-                </h2>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  Desglose de llamadas con sus desenlaces y motivos, obtenidas desde Redis en el rango seleccionado.
-                </p>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead className="bg-muted/50 text-xs uppercase text-muted-foreground">
-                    <tr>
-                      <th className="px-6 py-3 text-left font-medium">Fecha</th>
-                      <th className="px-4 py-3 text-left font-medium">ID</th>
-                      <th className="px-4 py-3 text-left font-medium">Cliente</th>
-                      <th className="px-4 py-3 text-left font-medium">Teléfono</th>
-                      <th className="px-4 py-3 text-left font-medium">Agente</th>
-                      <th className="px-4 py-3 text-center font-medium">Score</th>
-                      <th className="px-4 py-3 text-center font-medium">Transferencia</th>
-                      <th className="px-4 py-3 text-center font-medium">Fallo PBX</th>
-                      <th className="px-6 py-3 text-left font-medium">Motivo Fin</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredRedisCalls.length === 0 ? (
-                      <tr>
-                        <td colSpan={9} className="px-6 py-6 text-center text-muted-foreground">
-                          {redisLoading ? "Cargando llamadas…" : "Sin llamadas en el periodo seleccionado."}
-                        </td>
-                      </tr>
-                    ) : (
-                      filteredRedisCalls.map((c) => (
-                        <tr key={c.callKey} className="border-t border-border hover:bg-muted/30 transition-colors">
-                          <td className="whitespace-nowrap px-6 py-3 text-xs text-muted-foreground">
-                            {c.date}
-                          </td>
-                          <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
-                            {c.callKey.replace("call:", "").slice(-8)}
-                          </td>
-                          <td className="px-4 py-3 font-medium text-foreground">
-                            {c.caller_name || "—"}
-                          </td>
-                          <td className="px-4 py-3 font-mono text-xs text-foreground">
-                            {c.user_number || "—"}
-                          </td>
-                          <td className="px-4 py-3 text-xs text-foreground">
-                            {c.specialist || "—"}
-                          </td>
-                          <td className="px-4 py-3 text-center">
-                            <span
-                              className={`inline-flex min-w-8 items-center justify-center rounded-full px-2 py-0.5 text-xs font-semibold ${
-                                Number(c.score) >= 4
-                                  ? "bg-emerald-500/10 text-emerald-600"
-                                  : Number(c.score) >= 3
-                                    ? "bg-amber-500/10 text-amber-600"
-                                    : "bg-destructive/10 text-destructive"
-                              }`}
-                            >
-                              {c.score}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3 text-center text-xs">
-                            <span className={`inline-flex rounded-full px-2 py-0.5 font-medium ${
-                                c.call_transfer && c.call_transfer !== "No"
-                                  ? "bg-amber-500/10 text-amber-600"
-                                  : "bg-muted text-muted-foreground"
-                              }`}
-                            >
-                              {c.call_transfer || "—"}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3 text-center text-xs">
-                             <span className={`inline-flex rounded-full px-2 py-0.5 font-medium ${
-                                c.pbx === "transfer failed"
-                                  ? "bg-destructive/10 text-destructive"
-                                  : "text-muted-foreground"
-                              }`}
-                            >
-                              {c.pbx || "—"}
-                            </span>
-                          </td>
-                          <td className="whitespace-nowrap px-6 py-3 text-xs text-muted-foreground">
-                            {c.end_reason || "—"}
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </section>
-
-            <p className="pb-6 text-center text-xs text-muted-foreground">
-              {loading
-                ? "Cargando datos de AIRP…"
-                : isLive
-                  ? `Datos en vivo desde AIRP · ${live!.totalCalls.toLocaleString("es-CO")} llamadas · duración promedio ${live!.avgDurationSec}s`
-                  : `Sin datos de AIRP${live?.error ? ` (${live.error})` : ""}. Verifica la API Key o el rango de fechas.`}
-            </p>
+          <div className="h-[calc(100vh-180px)] w-full overflow-hidden rounded-2xl border border-border shadow-sm">
+            <iframe 
+              src="/calls-dashboard/index.html" 
+              className="h-full w-full border-0" 
+              title="Dashboard IA"
+            />
           </div>
         )}
 
@@ -1844,7 +1613,8 @@ export default function AIRPDashboard({
                       { label: "Teléfono", field: "phone" },
                       { label: "ID Externo", field: "external_id" },
                       { label: "Transferencia", field: "call_transfer" },
-                      { label: "Desconexión", field: "disconnection_reason" }
+                      { label: "Desconexión", field: "disconnection_reason" },
+                      { label: "AIRP", field: "AIRP" }
                     ].map((col) => {
                       const isSortable = col.field !== "key";
                       return (
@@ -1877,7 +1647,7 @@ export default function AIRPDashboard({
                 <tbody>
                   {historicoLoading ? (
                     <tr>
-                      <td colSpan={9} className="px-6 py-8 text-center text-muted-foreground">
+                      <td colSpan={10} className="px-6 py-8 text-center text-muted-foreground">
                         <div className="flex items-center justify-center gap-2">
                           <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" />
                           Consultando llamadas de servicio...
@@ -1886,7 +1656,7 @@ export default function AIRPDashboard({
                     </tr>
                   ) : historicoCalls.length === 0 ? (
                     <tr>
-                      <td colSpan={9} className="px-6 py-8 text-center text-muted-foreground">
+                      <td colSpan={10} className="px-6 py-8 text-center text-muted-foreground">
                         {historicoError ? `Error al cargar: ${historicoError}` : "Sin registros encontrados."}
                       </td>
                     </tr>
@@ -2026,11 +1796,31 @@ export default function AIRPDashboard({
                               ) : "—"}
                             </td>
                             <td className="px-4 py-3 text-xs text-muted-foreground">{c.disconnection_reason || "—"}</td>
+                            <td className="px-4 py-3 text-xs text-foreground">
+                              {(() => {
+                                const currentValue = airpValues[c.key] !== undefined ? airpValues[c.key] : (c.AIRP || "");
+                                const isCustom = currentValue !== "" && currentValue !== "Si" && currentValue !== "No";
+                                return (
+                                  <select 
+                                    key={`airp-select-${c.key}-${isExpanded ? 'exp' : 'col'}`}
+                                    id={`airp-select-${c.key}`}
+                                    className="border border-border rounded px-1 py-0.5 bg-background text-xs w-full"
+                                    value={currentValue}
+                                    onChange={(e) => setAirpValues(prev => ({ ...prev, [c.key]: e.target.value }))}
+                                  >
+                                    <option value="">—</option>
+                                    <option value="Si">Si</option>
+                                    <option value="No">No</option>
+                                    {isCustom && <option value={currentValue}>{currentValue}</option>}
+                                  </select>
+                                );
+                              })()}
+                            </td>
                           </tr>
                           {isExpanded && hasDetail && (
                             <tr className="border-t border-blue-500/20 bg-blue-500/5">
-                              <td colSpan={9} className="px-6 py-4">
-                                <div className="grid gap-3 sm:grid-cols-2">
+                              <td colSpan={10} className="px-6 py-4">
+                                <div className="grid gap-3 sm:grid-cols-3">
                                   {c.call_summary && (
                                     <div>
                                       <p className="mb-1 text-xs font-semibold uppercase text-blue-600">Resumen de Llamada</p>
@@ -2046,24 +1836,41 @@ export default function AIRPDashboard({
                                         id={`notes-${c.key}`}
                                         className="w-full flex-grow text-xs text-foreground bg-background border border-border p-2 rounded resize-y min-h-[60px]" 
                                         defaultValue={decodeURIComponent(c.notes)}
+                                        readOnly
+                                      ></textarea>
+                                    </div>
+                                  )}
+                                  <div>
+                                    <div className="flex flex-col h-full">
+                                      <div className="flex justify-between items-center mb-1">
+                                          <p className="text-xs font-semibold uppercase text-blue-600">Notas AIRP</p>
+                                      </div>
+                                      <textarea 
+                                        id={`notes-airp-${c.key}`}
+                                        className="w-full flex-grow text-xs text-foreground bg-background border border-border p-2 rounded resize-y min-h-[60px]" 
+                                        defaultValue={c.notes_AIRP ? decodeURIComponent(c.notes_AIRP) : ""}
                                       ></textarea>
                                       <div className="mt-2 flex justify-center">
                                         <button 
                                           className="bg-blue-600 text-white text-xs px-4 py-1.5 rounded hover:bg-blue-700 transition-colors font-medium"
                                           onClick={() => {
-                                            const newNotes = (document.getElementById(`notes-${c.key}`) as HTMLTextAreaElement).value;
-                                            if(confirm("¿Deseas guardar las notas?")) {
-                                              fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL}/call-set-notes`, {
+                                            const newNotesAirp = (document.getElementById(`notes-airp-${c.key}`) as HTMLTextAreaElement).value;
+                                            const airpSelect = (document.getElementById(`airp-select-${c.key}`) as HTMLSelectElement).value;
+                                            if(confirm("¿Deseas guardar las notas AIRP?")) {
+                                              fetch(`https://vmi3533489.contaboserver.net/webhook/call-set-AIRP`, {
                                                   method: 'POST',
                                                   headers: { 'Content-Type': 'application/json' },
-                                                  body: JSON.stringify({ call_id: c.key, notes: newNotes })
+                                                  body: JSON.stringify({ "KEY": c.key, "AIRP": airpSelect, "Notas_AIRP": newNotesAirp })
                                               }).then(async r => {
-                                                  if(r.ok) alert("Notas guardadas correctamente");
+                                                  if(r.ok) {
+                                                      alert("Notas AIRP guardadas correctamente");
+                                                      window.location.reload();
+                                                  }
                                                   else {
                                                       const errorText = await r.text();
-                                                      alert(`Error al guardar notas: ${errorText}`);
+                                                      alert(`Error al guardar notas AIRP: ${errorText}`);
                                                   }
-                                              }).catch((err) => alert(`Error al guardar notas: ${err.message}`));
+                                              }).catch((err) => alert(`Error al guardar notas AIRP: ${err.message}`));
                                             }
                                           }}
                                         >
@@ -2071,7 +1878,7 @@ export default function AIRPDashboard({
                                         </button>
                                       </div>
                                     </div>
-                                  )}
+                                  </div>
                                 </div>
                               </td>
                             </tr>

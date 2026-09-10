@@ -149,6 +149,8 @@ export type ServiceCall = {
   disconnection_reason?: string;
   assignedTo?: string;
   status_timestamp?: string;
+  AIRP?: string;
+  notes_AIRP?: string;
 };
 
 export const getServiceCalls = createServerFn().handler(
@@ -232,6 +234,25 @@ export const getVentasEnProgresoCalls = createServerFn()
   .handler(async ({ data }): Promise<{ calls: ServiceCall[]; error?: string }> => {
     try {
       const url = (typeof process !== "undefined" ? process.env.VITE_WEBHOOK_GET_VENTAS_EN_PROGRESO : undefined) || import.meta.env.VITE_WEBHOOK_GET_VENTAS_EN_PROGRESO || `${BASE_WEBHOOK_URL}/get-ventas-en-progreso`;
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) return { calls: [], error: await res.text() };
+      const raw = await res.json();
+      const callsData = Array.isArray(raw) ? raw : (raw ? [raw] : []);
+      return { calls: callsData };
+    } catch (err) {
+      return { calls: [], error: String(err) };
+    }
+  });
+
+export const getAirpHistoricoCalls = createServerFn()
+  .validator((d: { begin: string; end: string }) => d)
+  .handler(async ({ data }): Promise<{ calls: ServiceCall[]; error?: string }> => {
+    try {
+      const url = `${BASE_WEBHOOK_URL}/get-all-calls`;
       const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
