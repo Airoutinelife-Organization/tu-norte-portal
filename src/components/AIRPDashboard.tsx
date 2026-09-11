@@ -1576,7 +1576,7 @@ export default function AIRPDashboard({
                       ? "Cargando desde el webhook..."
                       : historicoError
                         ? `Error: ${historicoError}`
-                        : `${historicoCalls.length} Tickets`}
+                        : `${historicoCalls.length} Llamadas (${historicoCalls.filter(c => c.ticket === "Si").length} Tickets)`}
                   </p>
                 </div>
               </div>
@@ -1849,6 +1849,32 @@ export default function AIRPDashboard({
                                 <span className="inline-flex items-center rounded-full bg-green-500/10 px-2 py-0.5 text-xs font-medium text-green-700">
                                   {c.ticket}
                                </span>
+                              ) : c.ticket === "No" ? (
+                                <button
+                                  className="inline-flex items-center rounded bg-blue-500 px-2 py-1 text-xs font-medium text-white hover:bg-blue-600"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (window.confirm("¿Estás seguro de que deseas crear el ticket?")) {
+                                      fetch("https://vmi3533489.contaboserver.net/webhook/call-set-ticket", {
+                                        method: "POST",
+                                        headers: { "Content-Type": "application/json" },
+                                        body: JSON.stringify({ "KEY": c.key })
+                                      })
+                                      .then(async r => {
+                                        if (r.ok) {
+                                          alert("Ticket creado correctamente");
+                                          window.location.reload();
+                                        } else {
+                                          const err = await r.text();
+                                          alert(`Error al crear ticket: ${err}`);
+                                        }
+                                      })
+                                      .catch(err => alert(`Error al crear ticket: ${err.message}`));
+                                    }
+                                  }}
+                                >
+                                  Crear
+                                </button>
                               ) : c.ticket ? (
                                 <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
                                   {c.ticket}
