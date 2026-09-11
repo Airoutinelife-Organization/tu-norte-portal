@@ -1573,7 +1573,7 @@ export default function ContactCenterDashboard({
                       ? "Cargando desde el webhook..."
                       : historicoError
                         ? `Error: ${historicoError}`
-                        : `${historicoCalls.length} Tickets`}
+                        : `${historicoCalls.length} Llamadas (${historicoCalls.filter(c => c.ticket === "Si").length} Tickets)`}
                   </p>
                 </div>
               </div>
@@ -1611,13 +1611,14 @@ export default function ContactCenterDashboard({
                       { label: "Teléfono", field: "phone" },
                       { label: "ID Externo", field: "external_id" },
                       { label: "Transferencia", field: "call_transfer" },
-                      { label: "Desconexión", field: "disconnection_reason" }
+                      { label: "Desconexión", field: "disconnection_reason" },
+                      { label: "Ticket", field: "ticket" }
                     ].map((col) => {
                       const isSortable = col.field !== "key";
                       return (
                         <th
                           key={col.field}
-                          className={`px-4 py-3 text-left font-medium ${isSortable ? "cursor-pointer hover:bg-muted/80 select-none" : ""}`}
+                          className={`px-2 py-2 text-left font-medium ${isSortable ? "cursor-pointer hover:bg-muted/80 select-none" : ""}`}
                           onClick={() => {
                             if (!isSortable) return;
                             if (historicoSortField === col.field) {
@@ -1644,7 +1645,7 @@ export default function ContactCenterDashboard({
                 <tbody>
                   {historicoLoading ? (
                     <tr>
-                      <td colSpan={9} className="px-6 py-8 text-center text-muted-foreground">
+                      <td colSpan={10} className="px-6 py-8 text-center text-muted-foreground">
                         <div className="flex items-center justify-center gap-2">
                           <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" />
                           Consultando llamadas de servicio...
@@ -1653,7 +1654,7 @@ export default function ContactCenterDashboard({
                     </tr>
                   ) : historicoCalls.length === 0 ? (
                     <tr>
-                      <td colSpan={9} className="px-6 py-8 text-center text-muted-foreground">
+                      <td colSpan={10} className="px-6 py-8 text-center text-muted-foreground">
                         {historicoError ? `Error al cargar: ${historicoError}` : "Sin registros encontrados."}
                       </td>
                     </tr>
@@ -1671,7 +1672,7 @@ export default function ContactCenterDashboard({
                       return (
                         <React.Fragment key={c.key || i}>
                           <tr className={`border-t border-border transition-colors ${isExpanded ? "bg-blue-500/5" : isIA ? "bg-green-50/50 hover:bg-green-100/50" : "hover:bg-muted/30"}`}>
-                            <td className="px-4 py-3">
+                            <td className="px-2 py-2">
                               <p className="font-medium text-foreground max-w-[200px] truncate" title={c.key}>{c.key}</p>
                               <div className="flex items-center justify-center gap-3 mt-2">
                                 {hasDetail && (
@@ -1704,7 +1705,7 @@ export default function ContactCenterDashboard({
                                 </div>
                                 </div>
                             </td>
-                            <td className="whitespace-nowrap px-4 py-3 text-xs">
+                            <td className="whitespace-nowrap px-2 py-2 text-xs">
                               {(() => {
                                 const status = c.status || "Nuevo";
                                 let bg = "bg-muted";
@@ -1768,18 +1769,18 @@ export default function ContactCenterDashboard({
                                 );
                               })()}
                             </td>
-                            <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">{c.start_timestamp || "—"}</td>
-                            <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">{c.channel || "—"}</td>
-                            <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">
+                            <td className="whitespace-nowrap px-2 py-2 text-xs text-foreground">{c.start_timestamp || "—"}</td>
+                            <td className="whitespace-nowrap px-2 py-2 text-xs text-foreground">{c.channel || "—"}</td>
+                            <td className="whitespace-nowrap px-2 py-2 text-xs text-foreground">
                               <p className="font-medium">{c.agent || "—"}</p>
                               {c.specialist && <p className="text-muted-foreground">{c.specialist}</p>}
                             </td>
-                            <td className="px-4 py-3 text-xs text-foreground">
+                            <td className="px-2 py-2 text-xs text-foreground">
                                <p className="font-medium">{c.phone || "—"}</p>
                                {c.caller_name && <p className="text-muted-foreground">{c.caller_name}</p>}
                             </td>
-                            <td className="px-4 py-3 font-mono text-xs text-foreground">{c.external_id || "—"}</td>
-                            <td className="px-4 py-3 text-xs text-foreground">
+                            <td className="px-2 py-2 font-mono text-xs text-foreground">{c.external_id || "—"}</td>
+                            <td className="px-2 py-2 text-xs text-foreground">
                               {c.pbx === "Fallo" ? (
                                 <span className="inline-flex items-center rounded-full bg-red-500/10 px-2 py-0.5 text-xs font-medium text-red-700">
                                   {c.call_transfer === "Si" ? "Sí (Fallo PBX)" : "Fallo PBX"}
@@ -1792,11 +1793,24 @@ export default function ContactCenterDashboard({
                                 <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">No</span>
                               ) : "—"}
                             </td>
-                            <td className="px-4 py-3 text-xs text-muted-foreground">{c.disconnection_reason || "—"}</td>
+                            <td className="px-2 py-2 text-xs text-muted-foreground">{c.disconnection_reason || "—"}</td>
+                            <td className="px-2 py-2 text-center text-xs">
+                              {c.ticket === "Si" || c.ticket === "Sí" ? (
+                                <span className="inline-flex items-center rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700 border border-green-200">
+                                  {c.ticket}
+                               </span>
+                              ) : c.ticket ? (
+                                <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
+                                  {c.ticket}
+                                </span>
+                              ) : (
+                                "—"
+                              )}
+                            </td>
                           </tr>
                           {isExpanded && hasDetail && (
                             <tr className="border-t border-blue-500/20 bg-blue-500/5">
-                              <td colSpan={9} className="px-6 py-4">
+                              <td colSpan={10} className="px-6 py-4">
                                 <div className="grid gap-3 sm:grid-cols-2">
                                   {c.call_summary && (
                                     <div>
