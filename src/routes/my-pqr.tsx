@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/mis-tickets")({
+export const Route = createFileRoute("/my-pqr")({
   head: () => ({
     meta: [
       { title: "Mis tickets — Seguimiento PQR | Tu Norte Portal" },

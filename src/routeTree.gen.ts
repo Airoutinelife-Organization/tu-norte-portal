@@ -19,7 +19,7 @@ import { Route as DiagnosticoRouteImport } from './routes/diagnostico'
 import { Route as EmpresaRouteImport } from './routes/empresa'
 import { Route as MediosDePagoRouteImport } from './routes/medios-de-pago'
 import { Route as MiCuentaRouteImport } from './routes/mi-cuenta'
-import { Route as MisTicketsRouteImport } from './routes/mis-tickets'
+import { Route as MyPqrRouteImport } from './routes/my-pqr'
 import { Route as PagarRouteImport } from './routes/pagar'
 import { Route as PlanesRouteImport } from './routes/planes'
 import { Route as PqrRouteImport } from './routes/pqr'
@@ -81,9 +81,9 @@ const MiCuentaRoute = MiCuentaRouteImport.update({
   path: '/mi-cuenta',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MisTicketsRoute = MisTicketsRouteImport.update({
-  id: '/mis-tickets',
-  path: '/mis-tickets',
+const MyPqrRoute = MyPqrRouteImport.update({
+  id: '/my-pqr',
+  path: '/my-pqr',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PagarRoute = PagarRouteImport.update({
@@ -149,7 +149,7 @@ export interface FileRoutesByFullPath {
   '/empresa': typeof EmpresaRoute
   '/medios-de-pago': typeof MediosDePagoRoute
   '/mi-cuenta': typeof MiCuentaRoute
-  '/mis-tickets': typeof MisTicketsRoute
+  '/my-pqr': typeof MyPqrRoute
   '/pagar': typeof PagarRoute
   '/planes': typeof PlanesRoute
   '/pqr': typeof PqrRoute
@@ -172,7 +172,7 @@ export interface FileRoutesByTo {
   '/empresa': typeof EmpresaRoute
   '/medios-de-pago': typeof MediosDePagoRoute
   '/mi-cuenta': typeof MiCuentaRoute
-  '/mis-tickets': typeof MisTicketsRoute
+  '/my-pqr': typeof MyPqrRoute
   '/pagar': typeof PagarRoute
   '/planes': typeof PlanesRoute
   '/pqr': typeof PqrRoute
@@ -196,7 +196,7 @@ export interface FileRoutesById {
   '/empresa': typeof EmpresaRoute
   '/medios-de-pago': typeof MediosDePagoRoute
   '/mi-cuenta': typeof MiCuentaRoute
-  '/mis-tickets': typeof MisTicketsRoute
+  '/my-pqr': typeof MyPqrRoute
   '/pagar': typeof PagarRoute
   '/planes': typeof PlanesRoute
   '/pqr': typeof PqrRoute
@@ -221,7 +221,7 @@ export interface FileRouteTypes {
     | '/empresa'
     | '/medios-de-pago'
     | '/mi-cuenta'
-    | '/mis-tickets'
+    | '/my-pqr'
     | '/pagar'
     | '/planes'
     | '/pqr'
@@ -244,7 +244,7 @@ export interface FileRouteTypes {
     | '/empresa'
     | '/medios-de-pago'
     | '/mi-cuenta'
-    | '/mis-tickets'
+    | '/my-pqr'
     | '/pagar'
     | '/planes'
     | '/pqr'
@@ -267,7 +267,7 @@ export interface FileRouteTypes {
     | '/empresa'
     | '/medios-de-pago'
     | '/mi-cuenta'
-    | '/mis-tickets'
+    | '/my-pqr'
     | '/pagar'
     | '/planes'
     | '/pqr'
@@ -291,7 +291,7 @@ export interface RootRouteChildren {
   EmpresaRoute: typeof EmpresaRoute
   MediosDePagoRoute: typeof MediosDePagoRoute
   MiCuentaRoute: typeof MiCuentaRoute
-  MisTicketsRoute: typeof MisTicketsRoute
+  MyPqrRoute: typeof MyPqrRoute
   PagarRoute: typeof PagarRoute
   PlanesRoute: typeof PlanesRoute
   PqrRoute: typeof PqrRoute
@@ -376,11 +376,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MiCuentaRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/mis-tickets': {
-      id: '/mis-tickets'
-      path: '/mis-tickets'
-      fullPath: '/mis-tickets'
-      preLoaderRoute: typeof MisTicketsRouteImport
+    '/my-pqr': {
+      id: '/my-pqr'
+      path: '/my-pqr'
+      fullPath: '/my-pqr'
+      preLoaderRoute: typeof MyPqrRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pagar': {
@@ -467,7 +467,7 @@ const rootRouteChildren: RootRouteChildren = {
   EmpresaRoute: EmpresaRoute,
   MediosDePagoRoute: MediosDePagoRoute,
   MiCuentaRoute: MiCuentaRoute,
-  MisTicketsRoute: MisTicketsRoute,
+  MyPqrRoute: MyPqrRoute,
   PagarRoute: PagarRoute,
   PlanesRoute: PlanesRoute,
   PqrRoute: PqrRoute,
