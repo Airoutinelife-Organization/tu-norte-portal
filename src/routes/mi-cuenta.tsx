@@ -7,6 +7,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import ConnectionDiagnostic from "@/components/ConnectionDiagnostic";
 
 export const Route = createFileRoute("/mi-cuenta")({
   head: () => ({
@@ -505,6 +506,15 @@ function MiCuentaPage() {
           <p>No tienes contratos activos asociados a tu cédula.</p>
         </div>
       ) : null}
+
+      <div className="mt-12">
+        <span className="text-xs font-semibold uppercase tracking-[0.2em] text-brand">Diagnóstico</span>
+        <h2 className="mt-1 font-display text-2xl font-bold md:text-3xl">Revisa tu zona y tus equipos</h2>
+        <p className="mb-6 mt-2 text-sm text-muted-foreground">
+          Verificamos el estado del servicio en tu zona y de tus equipos en casa, y te damos la solución paso a paso.
+        </p>
+        <ConnectionDiagnostic />
+      </div>
     </section>
   );
 }
