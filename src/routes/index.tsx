@@ -28,7 +28,7 @@ export const Route = createFileRoute("/")({
 const helpOptions = [
   { icon: MapPin, label: "Verificar cobertura", to: "/cobertura", color: "from-cyan-400 to-blue-500" },
   { icon: CreditCard, label: "Pagar factura", to: "/medios-de-pago", color: "from-emerald-400 to-cyan-500" },
-  { icon: AlertCircle, label: "Reportar problema", to: "/diagnostico", color: "from-orange-400 to-red-500" },
+  { icon: AlertCircle, label: "Reportar problema", to: "/mi-cuenta", color: "from-orange-400 to-red-500" },
   { icon: CalendarPlus, label: "Agendar instalación", to: "/agendar", color: "from-violet-400 to-blue-500" },
   { icon: Wifi, label: "Ver planes", to: "/planes", color: "from-blue-400 to-indigo-500" },
 ] as const;
@@ -113,7 +113,7 @@ function HomePage() {
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {[
-            { icon: AlertCircle, title: "Internet no funciona", desc: "Diagnóstico guiado paso a paso", to: "/diagnostico", accent: "bg-red-500/10 text-red-600", cta: "Solucionar ahora" },
+            { icon: AlertCircle, title: "Internet no funciona", desc: "Diagnóstico guiado desde Mi cuenta", to: "/mi-cuenta", accent: "bg-red-500/10 text-red-600", cta: "Solucionar ahora" },
             { icon: FileText, title: "Ver factura", desc: "Consulta y paga tu mes en línea", to: "/pagar", accent: "bg-emerald-500/10 text-emerald-600", cta: "Ir a facturas" },
             { icon: Headphones, title: "Hablar con soporte", desc: "Crea un ticket o chatea", to: "/soporte", accent: "bg-violet-500/10 text-violet-600", cta: "Contactar" },
             { icon: Wifi, title: "Contratar servicio", desc: "Encuentra tu plan ideal", to: "/recomendador", accent: "bg-brand/15 text-primary", cta: "Empezar" },
