@@ -1,4 +1,4 @@
-import { Outlet, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import { Outlet, createRootRoute, HeadContent, Scripts, useRouterState } from "@tanstack/react-router";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Chatbot } from "@/components/Chatbot";
@@ -64,7 +64,23 @@ function RootShell({ children }: { children: React.ReactNode }) {
   );
 }
 
+const ADMIN_PATHS = ["/admin", "/airp", "/contact-center", "/ventas"];
+
 function RootComponent() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isAdminArea = ADMIN_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+
+  if (isAdminArea) {
+    return (
+      <div className="flex min-h-screen flex-col">
+        <main className="flex-1">
+          <Outlet />
+        </main>
+        <Toaster />
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-h-screen flex-col">
       <Header />

@@ -1800,7 +1800,8 @@ export default function AIRPDashboard({
                             <td className="px-2 py-3 text-xs text-muted-foreground">{c.disconnection_reason || "—"}</td>
                             <td className="px-2 py-3 text-xs text-foreground">
                               {(() => {
-                                const currentValue = airpValues[c.key] !== undefined ? airpValues[c.key] : c.AIRP;
+                                const rowKey = String(c.key ?? "");
+                                const currentValue = airpValues[rowKey] !== undefined ? airpValues[rowKey] : c.AIRP;
                                 const isSi = currentValue === "Si" || currentValue === "Sí";
                                 const isNo = currentValue === "No";
                                 const isUnset = !isSi && !isNo;
@@ -1811,7 +1812,7 @@ export default function AIRPDashboard({
                                       title="Sí"
                                       onClick={(e) => {
                                         e.stopPropagation();
-                                        setAirpValues(prev => ({ ...prev, [c.key]: "Si" }));
+                                        setAirpValues(prev => ({ ...prev, [rowKey]: "Si" }));
                                       }}
                                       className={`flex-1 flex items-center justify-center text-[11px] font-bold transition-all ${
                                         isSi 
@@ -1827,7 +1828,7 @@ export default function AIRPDashboard({
                                       title="No"
                                       onClick={(e) => {
                                         e.stopPropagation();
-                                        setAirpValues(prev => ({ ...prev, [c.key]: "No" }));
+                                        setAirpValues(prev => ({ ...prev, [rowKey]: "No" }));
                                       }}
                                       className={`flex-1 flex items-center justify-center text-[11px] font-bold transition-all ${
                                         isNo 
