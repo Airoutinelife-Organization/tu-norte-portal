@@ -1812,7 +1812,7 @@ export default function AIRPDashboard({
                                       title="Sí"
                                       onClick={(e) => {
                                         e.stopPropagation();
-                                        setAirpValues(prev => ({ ...prev, [c.key]: "Si" }));
+                                        setAirpValues(prev => ({ ...prev, [rowKey]: "Si" }));
                                       }}
                                       className={`flex-1 flex items-center justify-center text-[11px] font-bold transition-all ${
                                         isSi 
@@ -1828,7 +1828,7 @@ export default function AIRPDashboard({
                                       title="No"
                                       onClick={(e) => {
                                         e.stopPropagation();
-                                        setAirpValues(prev => ({ ...prev, [c.key]: "No" }));
+                                        setAirpValues(prev => ({ ...prev, [rowKey]: "No" }));
                                       }}
                                       className={`flex-1 flex items-center justify-center text-[11px] font-bold transition-all ${
                                         isNo 
