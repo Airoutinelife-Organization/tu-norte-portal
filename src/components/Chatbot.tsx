@@ -37,9 +37,9 @@ function botReply(text: string): Msg {
   if (t.includes("internet") && (t.includes("no funciona") || t.includes("falla") || t.includes("lento"))) {
     return {
       role: "bot",
-      text: "Lamento la molestia 😔. Vamos a solucionarlo. Inicia el diagnóstico guiado y revisamos tu conexión paso a paso.",
+      text: "Lamento la molestia 😔. Vamos a solucionarlo. Ingresa a Mi cuenta y ejecuta el diagnóstico guiado de tu zona y tus equipos.",
       actions: [
-        { label: "Iniciar diagnóstico", to: "/diagnostico" },
+        { label: "Iniciar diagnóstico", to: "/mi-cuenta" },
         { label: "Hablar con un asesor", to: "/soporte" },
       ],
     };
@@ -80,7 +80,7 @@ function botReply(text: string): Msg {
     text: "Te puedo ayudar con cobertura, fallas, facturas, planes o tickets. ¿Qué necesitas?",
     actions: [
       { label: "🛒 Quiero contratar", reply: "Quiero contratar un plan", intent: "buy" },
-      { label: "Reportar falla", to: "/diagnostico" },
+      { label: "Reportar falla", to: "/mi-cuenta" },
       { label: "Pagar factura", to: "/pagar" },
       { label: "Hablar con asesor", href: "https://wa.me/573217560178" },
     ],

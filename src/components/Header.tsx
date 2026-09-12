@@ -10,7 +10,7 @@ const links = [
   { to: "/cobertura", label: "Cobertura" },
   { to: "/planes", label: "Planes" },
   { to: "/medios-de-pago", label: "Pagar" },
-  { to: "/diagnostico", label: "Diagnóstico" },
+  
   { to: "/my-pqr", label: "My PQR" },
   { to: "/soporte", label: "Soporte" },
 ] as const;
