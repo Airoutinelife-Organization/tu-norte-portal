@@ -193,14 +193,13 @@ export const getHistoricoCalls = createServerFn()
   });
 
 export const getEnProgresoCalls = createServerFn()
-  .validator((d: { begin: string; end: string }) => d)
-  .handler(async ({ data }): Promise<{ calls: ServiceCall[]; error?: string }> => {
+  .handler(async (): Promise<{ calls: ServiceCall[]; error?: string }> => {
     try {
       const url = (typeof process !== "undefined" ? process.env.VITE_WEBHOOK_GET_CONTACT_CENTER_EN_PROGRESO : undefined) || import.meta.env.VITE_WEBHOOK_GET_CONTACT_CENTER_EN_PROGRESO || `${BASE_WEBHOOK_URL}/get-contact-center-en-progreso`;
       const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({}),
       });
       if (!res.ok) return { calls: [], error: await res.text() };
       const raw = await res.json();
@@ -231,14 +230,13 @@ export const getVentasHistoricoCalls = createServerFn()
   });
 
 export const getVentasEnProgresoCalls = createServerFn()
-  .validator((d: { begin: string; end: string }) => d)
-  .handler(async ({ data }): Promise<{ calls: ServiceCall[]; error?: string }> => {
+  .handler(async (): Promise<{ calls: ServiceCall[]; error?: string }> => {
     try {
       const url = (typeof process !== "undefined" ? process.env.VITE_WEBHOOK_GET_VENTAS_EN_PROGRESO : undefined) || import.meta.env.VITE_WEBHOOK_GET_VENTAS_EN_PROGRESO || `${BASE_WEBHOOK_URL}/get-ventas-en-progreso`;
       const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({}),
       });
       if (!res.ok) return { calls: [], error: await res.text() };
       const raw = await res.json();

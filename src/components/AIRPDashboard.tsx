@@ -329,19 +329,8 @@ export default function AIRPDashboard({
     let cancelled = false;
     if (activeTab === "en_progreso") {
         setEnProgresoLoading(true);
-        let beginDate = new Date();
-        let endDate = new Date();
-        if (filterMode === "preset") {
-            beginDate.setDate(beginDate.getDate() - (days - 1));
-        } else {
-            if (rangeStart) beginDate = new Date(rangeStart + "T00:00:00");
-            if (rangeEnd) endDate = new Date(rangeEnd + "T23:59:59");
-        }
-        
-        const begin = formatDateLocal(beginDate);
-        const end = formatDateLocal(endDate);
 
-        fetchEnProgreso({ data: { begin, end } })
+        fetchEnProgreso()
           .then((res) => {
             if (!cancelled) {
               setEnProgresoCalls(res.calls || []);
@@ -657,7 +646,7 @@ export default function AIRPDashboard({
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {(activeTab === "general" || activeTab === "en_progreso" || activeTab === "historico") && (
+            {(activeTab === "general" || activeTab === "historico") && (
               <div className="flex flex-wrap items-center gap-2">
                 {/* Preset buttons */}
                 <div className="flex rounded-lg border border-border bg-background p-1">

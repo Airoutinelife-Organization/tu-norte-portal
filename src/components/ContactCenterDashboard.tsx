@@ -133,6 +133,7 @@ export default function ContactCenterDashboard({
   const [voiceAgents, setVoiceAgents] = useState<VoiceAgent[]>([]);
   const [newTicketAgent, setNewTicketAgent] = useState<string>("");
   const [newTicketSpecialist, setNewTicketSpecialist] = useState<string>("");
+  const [newTicketAssignedTo, setNewTicketAssignedTo] = useState<string>("");
   const [newTicketPhone, setNewTicketPhone] = useState("");
   const [newTicketName, setNewTicketName] = useState("");
   const [newTicketDoc, setNewTicketDoc] = useState("");
@@ -153,7 +154,7 @@ export default function ContactCenterDashboard({
     setNewTicketPhone(formatted);
   };
   
-  const isTicketFormValid = newTicketAgent && newTicketSpecialist && newTicketRequest.trim();
+  const isTicketFormValid = newTicketAgent && newTicketSpecialist && newTicketAssignedTo && newTicketRequest.trim();
 
   useEffect(() => {
     if (isCreatingTicket && voiceAgents.length === 0) {
@@ -329,19 +330,8 @@ export default function ContactCenterDashboard({
     let cancelled = false;
     if (activeTab === "en_progreso") {
         setEnProgresoLoading(true);
-        let beginDate = new Date();
-        let endDate = new Date();
-        if (filterMode === "preset") {
-            beginDate.setDate(beginDate.getDate() - (days - 1));
-        } else {
-            if (rangeStart) beginDate = new Date(rangeStart + "T00:00:00");
-            if (rangeEnd) endDate = new Date(rangeEnd + "T23:59:59");
-        }
-        
-        const begin = formatDateLocal(beginDate);
-        const end = formatDateLocal(endDate);
 
-        fetchEnProgreso({ data: { begin, end } })
+        fetchEnProgreso()
           .then((res) => {
             if (!cancelled) {
               setEnProgresoCalls(res.calls || []);
@@ -656,7 +646,7 @@ export default function ContactCenterDashboard({
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {(activeTab === "general" || activeTab === "en_progreso" || activeTab === "historico") && (
+            {(activeTab === "general" || activeTab === "historico") && (
               <div className="flex flex-wrap items-center gap-2">
                 {/* Preset buttons */}
                 <div className="flex rounded-lg border border-border bg-background p-1">
@@ -983,27 +973,6 @@ export default function ContactCenterDashboard({
                   </p>
                 </div>
               </div>
-              <button 
-                onClick={() => {
-                  setNewTicketAgent("");
-                  setNewTicketSpecialist("");
-                  setNewTicketPhone("");
-                  setNewTicketName("");
-                  setNewTicketDoc("");
-                  setNewTicketAddress("");
-                  setNewTicketRequest("");
-                  setNewTicketNotes("");
-                  setAssignedAgents(prev => {
-                    const next = { ...prev };
-                    delete next["new_ticket"];
-                    return next;
-                  });
-                  setIsCreatingTicket(true);
-                }}
-                className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
-              >
-                Crear Ticket
-              </button>
             </div>
             </div>
             <div className="overflow-x-auto">
@@ -1244,22 +1213,46 @@ export default function ContactCenterDashboard({
                 </div>
               </div>
               {!enProgresoLoading && !enProgresoError && (
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-muted-foreground">Mostrar:</span>
-                  <select
-                    className="border border-border rounded px-2 py-1 text-xs"
-                    value={enProgresoPageSize}
-                    onChange={(e) => {
-                      setEnProgresoPageSize(Number(e.target.value));
-                      setEnProgresoPage(1);
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-muted-foreground">Mostrar:</span>
+                    <select
+                      className="border border-border rounded px-2 py-1 text-xs"
+                      value={enProgresoPageSize}
+                      onChange={(e) => {
+                        setEnProgresoPageSize(Number(e.target.value));
+                        setEnProgresoPage(1);
+                      }}
+                    >
+                      <option value={5}>5</option>
+                      <option value={10}>10</option>
+                      <option value={15}>15</option>
+                      <option value={20}>20</option>
+                      <option value={50}>50</option>
+                    </select>
+                  </div>
+                  <button 
+                    onClick={() => {
+                      setNewTicketAgent("");
+                      setNewTicketSpecialist("");
+                      setNewTicketAssignedTo("");
+                      setNewTicketPhone("");
+                      setNewTicketName("");
+                      setNewTicketDoc("");
+                      setNewTicketAddress("");
+                      setNewTicketRequest("");
+                      setNewTicketNotes("");
+                      setAssignedAgents(prev => {
+                        const next = { ...prev };
+                        delete next["new_ticket"];
+                        return next;
+                      });
+                      setIsCreatingTicket(true);
                     }}
+                    className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
                   >
-                    <option value={5}>5</option>
-                    <option value={10}>10</option>
-                    <option value={15}>15</option>
-                    <option value={20}>20</option>
-                    <option value={50}>50</option>
-                  </select>
+                    Crear Ticket
+                  </button>
                 </div>
               )}
               </div>
@@ -1964,35 +1957,6 @@ export default function ContactCenterDashboard({
               <h3 className="text-lg font-semibold text-foreground">
                 {newTicketId || "Crear Nuevo Ticket"}
               </h3>
-              <div className="flex items-center gap-2">
-                <button
-                  disabled={!newTicketAgent}
-                  onClick={() => {
-                    if (!newTicketAgent) return;
-                    setAgentsLoading(true);
-                    setAssigningCall({ key: "new_ticket", role: newTicketAgent });
-                    fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL || 'https://vmi3533489.contaboserver.net/webhook'}/get-human-agent`, { method: "POST" })
-                      .then(res => res.json())
-                      .then((data: HumanAgent[]) => {
-                        const filtered = data.filter(a => a.roles && a.roles.some(r => r.toLowerCase() === newTicketAgent.toLowerCase()));
-                        setAvailableAgents(filtered);
-                      })
-                      .catch(err => console.error(err))
-                      .finally(() => setAgentsLoading(false));
-                  }}
-                  className={`text-orange-500 transition-colors ${
-                    newTicketAgent ? "hover:text-orange-700" : "opacity-50 cursor-not-allowed"
-                  }`}
-                  title="Asignar a"
-                >
-                  <UserPlus className="h-4 w-4" />
-                </button>
-                {assignedAgents["new_ticket"] && (
-                  <span className="text-sm font-medium text-foreground">
-                    {assignedAgents["new_ticket"].name}
-                  </span>
-                )}
-              </div>
             </div>
             <div className="flex flex-col gap-4 py-4 max-h-[70vh] overflow-y-auto px-1">
               <div className="grid grid-cols-2 gap-4">
@@ -2004,6 +1968,7 @@ export default function ContactCenterDashboard({
                     onChange={e => {
                       setNewTicketAgent(e.target.value);
                       setNewTicketSpecialist("");
+                      setNewTicketAssignedTo("");
                     }}
                   >
                     <option value="">Seleccione un agente...</option>
@@ -2029,6 +1994,32 @@ export default function ContactCenterDashboard({
                 </div>
               </div>
 
+              <div className="flex items-center gap-4">
+                <label className="text-sm font-medium text-foreground w-1/3 shrink-0">Asignar a *</label>
+                <select 
+                  className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground"
+                  value={newTicketAssignedTo}
+                  onChange={e => setNewTicketAssignedTo(e.target.value)}
+                  disabled={!newTicketAgent}
+                >
+                  <option value="">Seleccione un agente humano...</option>
+                  {Object.values(allAgents)
+                    .filter(a => a.roles && a.roles.some(r => r.toLowerCase() === newTicketAgent.toLowerCase()))
+                    .map(a => (
+                    <option key={a.agentKey} value={a.agentKey}>{a.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1">Requerimiento *</label>
+                <textarea
+                  className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground min-h-[80px] resize-y"
+                  value={newTicketRequest}
+                  onChange={e => setNewTicketRequest(e.target.value)}
+                ></textarea>
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-1">Teléfono</label>
@@ -2051,8 +2042,8 @@ export default function ContactCenterDashboard({
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-1">Nombre Completo</label>
+              <div className="flex items-center gap-4">
+                <label className="text-sm font-medium text-foreground w-1/3 shrink-0">Nombre Completo</label>
                 <input
                   type="text"
                   className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground"
@@ -2061,23 +2052,14 @@ export default function ContactCenterDashboard({
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-1">Dirección</label>
+              <div className="flex items-center gap-4">
+                <label className="text-sm font-medium text-foreground w-1/3 shrink-0">Dirección</label>
                 <input
                   type="text"
                   className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground"
                   value={newTicketAddress}
                   onChange={e => setNewTicketAddress(e.target.value)}
                 />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-1">Requerimiento *</label>
-                <textarea
-                  className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground min-h-[80px] resize-y"
-                  value={newTicketRequest}
-                  onChange={e => setNewTicketRequest(e.target.value)}
-                ></textarea>
               </div>
 
               <div>
@@ -2102,7 +2084,7 @@ export default function ContactCenterDashboard({
                   setAgentsLoading(true);
                   const payload = {
                     id_ticket: newTicketId,
-                    asignar_a: assignedAgents["new_ticket"]?.agentKey || "",
+                    asignar_a: newTicketAssignedTo || "",
                     agente: newTicketAgent || "",
                     especialista: newTicketSpecialist || "",
                     telefono: newTicketPhone.replace(/\D/g, ""),
