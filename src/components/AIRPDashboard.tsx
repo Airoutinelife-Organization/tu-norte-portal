@@ -1800,7 +1800,8 @@ export default function AIRPDashboard({
                             <td className="px-2 py-3 text-xs text-muted-foreground">{c.disconnection_reason || "—"}</td>
                             <td className="px-2 py-3 text-xs text-foreground">
                               {(() => {
-                                const currentValue = airpValues[c.key] !== undefined ? airpValues[c.key] : c.AIRP;
+                                const rowKey = String(c.key ?? "");
+                                const currentValue = airpValues[rowKey] !== undefined ? airpValues[rowKey] : c.AIRP;
                                 const isSi = currentValue === "Si" || currentValue === "Sí";
                                 const isNo = currentValue === "No";
                                 const isUnset = !isSi && !isNo;
