@@ -271,7 +271,7 @@ function HomePage() {
               </span>
               <Clock className="h-5 w-5 text-muted-foreground" />
             </div>
-            <h3 className="mt-4 font-display text-xl font-bold">Mis tickets y PQR</h3>
+            <h3 className="mt-4 font-display text-xl font-bold">My PQR</h3>
             <p className="mt-1 text-sm text-muted-foreground">Sigue el estado de tus solicitudes en tiempo real.</p>
             <div className="mt-5 rounded-xl border border-border bg-muted/30 p-3">
               <div className="flex items-center justify-between text-xs">
@@ -280,7 +280,7 @@ function HomePage() {
               </div>
               <p className="mt-1 text-sm font-medium">Falla intermitente de señal</p>
             </div>
-            <Link to="/mis-tickets" className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:gap-2 transition-all">
+            <Link to="/my-pqr" className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:gap-2 transition-all">
               Ver todos <ArrowRight className="h-4 w-4" />
             </Link>
           </Card>
