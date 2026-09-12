@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/my-pqr")({
   head: () => ({
     meta: [
-      { title: "Mis tickets — Seguimiento PQR | Tu Norte Portal" },
+      { title: "My PQR — Seguimiento | Tu Norte Portal" },
       { name: "description", content: "Sigue en tiempo real el estado de tus solicitudes, PQR y tickets técnicos." },
     ],
   }),
@@ -96,7 +96,7 @@ function MisTicketsPage() {
       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
           <Link to="/" className="text-xs font-semibold uppercase tracking-[0.2em] text-brand hover:underline">← Inicio</Link>
-          <h1 className="mt-3 font-display text-3xl font-bold md:text-4xl">Mis tickets y PQR</h1>
+          <h1 className="mt-3 font-display text-3xl font-bold md:text-4xl">My PQR</h1>
           <p className="mt-2 text-muted-foreground">Sigue en tiempo real el estado de tus solicitudes.</p>
         </div>
         <Button asChild className="bg-gradient-brand text-primary-foreground shadow-soft">

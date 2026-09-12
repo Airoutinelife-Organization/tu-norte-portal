@@ -70,7 +70,7 @@ function botReply(text: string): Msg {
       role: "bot",
       text: "Puedes radicar una nueva PQR o consultar el estado de las existentes en tu panel.",
       actions: [
-        { label: "Ver mis tickets", to: "/mis-tickets" },
+        { label: "Ver My PQR", to: "/my-pqr" },
         { label: "Radicar nueva PQR", to: "/pqr" },
       ],
     };
