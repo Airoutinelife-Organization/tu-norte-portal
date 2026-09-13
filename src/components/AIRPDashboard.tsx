@@ -1605,7 +1605,10 @@ export default function AIRPDashboard({
                       { label: "Transferencia", field: "call_transfer" },
                       { label: "Desconexión", field: "disconnection_reason" },
                       { label: "AIRP", field: "AIRP" },
-                      { label: "Ticket", field: "ticket" }
+                      { label: "Ticket", field: "ticket" },
+                      { label: "Transferido A", field: "transferredTo" },
+                      { label: "Duración", field: "duration_ms" },
+                      { label: "Contact Center", field: "contact_center" }
                     ].map((col) => {
                       const isSortable = col.field !== "key";
                       return (
@@ -1638,7 +1641,7 @@ export default function AIRPDashboard({
                 <tbody>
                   {historicoLoading ? (
                     <tr>
-                      <td colSpan={10} className="px-6 py-8 text-center text-muted-foreground">
+                      <td colSpan={14} className="px-6 py-8 text-center text-muted-foreground">
                         <div className="flex items-center justify-center gap-2">
                           <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" />
                           Consultando llamadas de servicio...
@@ -1647,7 +1650,7 @@ export default function AIRPDashboard({
                     </tr>
                   ) : historicoCalls.length === 0 ? (
                     <tr>
-                      <td colSpan={10} className="px-6 py-8 text-center text-muted-foreground">
+                      <td colSpan={14} className="px-6 py-8 text-center text-muted-foreground">
                         {historicoError ? `Error al cargar: ${historicoError}` : "Sin registros encontrados."}
                       </td>
                     </tr>
@@ -1847,10 +1850,25 @@ export default function AIRPDashboard({
                                 "—"
                               )}
                             </td>
+                            <td className="px-2 py-3 text-xs text-foreground text-center">
+                              {c.transferredTo || "—"}
+                            </td>
+                            <td className="px-2 py-3 text-xs text-foreground text-center">
+                              {(() => {
+                                if (c.duration_ms === undefined || c.duration_ms === null) return "—";
+                                const totalSeconds = Math.floor(Number(c.duration_ms) / 1000);
+                                const minutes = Math.floor(totalSeconds / 60);
+                                const seconds = totalSeconds % 60;
+                                return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                              })()}
+                            </td>
+                            <td className="px-2 py-3 text-xs text-foreground text-center">
+                              {c.contact_center || "—"}
+                            </td>
                           </tr>
                           {isExpanded && hasDetail && (
                             <tr className="border-t border-blue-500/20 bg-blue-500/5">
-                              <td colSpan={11} className="px-6 py-4">
+                              <td colSpan={14} className="px-6 py-4">
                                 <div className="grid gap-3 sm:grid-cols-3">
                                   {c.call_summary && (
                                     <div>

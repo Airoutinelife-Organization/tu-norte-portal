@@ -152,6 +152,9 @@ export type ServiceCall = {
   AIRP?: string;
   notes_AIRP?: string;
   ticket?: string;
+  duration_ms?: number;
+  transferredTo?: string;
+  contact_center?: string;
 };
 
 export const getServiceCalls = createServerFn().handler(
