@@ -66,10 +66,23 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 const ADMIN_PATHS = ["/admin", "/airp", "/contact-center", "/ventas"];
+const ADMIN_SESSION_KEY = "tunorte_admin_session";
 
 function RootComponent() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const isAdminArea = ADMIN_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+  const [hasAdminSession, setHasAdminSession] = useState(false);
+
+  useEffect(() => {
+    setHasAdminSession(localStorage.getItem(ADMIN_SESSION_KEY) === "ok");
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === ADMIN_SESSION_KEY) {
+        setHasAdminSession(e.newValue === "ok");
+      }
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
 
   if (isAdminArea) {
     return (
@@ -89,7 +102,7 @@ function RootComponent() {
         <Outlet />
       </main>
       <Footer />
-      <Chatbot />
+      {!hasAdminSession && <Chatbot />}
       <Toaster />
     </div>
   );
