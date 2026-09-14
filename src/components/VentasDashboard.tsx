@@ -57,6 +57,7 @@ import {X,
   UserPlus,
   Clock,
   Archive,
+  Star,
 } from "lucide-react";
 
 const formatDateLocal = (date: Date) => {
@@ -983,7 +984,7 @@ export default function VentasDashboard({
                     <th className="px-4 py-3 text-left font-medium">Agente</th>
                     <th className="px-4 py-3 text-left font-medium">Teléfono</th>
                     <th className="px-4 py-3 text-left font-medium">ID Externo</th>
-                    <th className="px-4 py-3 text-left font-medium">Transferencia</th>
+                    <th className="px-4 py-3 text-left font-medium">PBX</th>
                     
                     <th className="px-4 py-3 text-left font-medium">Desconexión</th>
                   </tr>
@@ -1266,7 +1267,7 @@ export default function VentasDashboard({
                       { label: "Agente", field: "agent" },
                       { label: "Teléfono", field: "phone" },
                       { label: "ID Externo", field: "external_id" },
-                      { label: "Transferencia", field: "call_transfer" },
+                      { label: "PBX", field: "call_transfer" },
                       { label: "Desconexión", field: "disconnection_reason" }
                     ].map((col) => {
                       const isSortable = col.field !== "key" && col.field !== "status";
@@ -1355,11 +1356,29 @@ export default function VentasDashboard({
                                       initials: allAgents[c.assignedTo].initials,
                                       name: allAgents[c.assignedTo].name
                                     } : null);
-                                    return currentAgent ? (
-                                      <span className="ml-1 text-[10px] font-bold text-orange-700 bg-orange-100 rounded px-1.5 py-0.5" title={currentAgent.name}>
-                                        {currentAgent.initials}
-                                      </span>
-                                    ) : null;
+                                    return (
+                                      <div className="flex items-center gap-1">
+                                        {currentAgent ? (
+                                          <span className="ml-1 text-[10px] font-bold text-orange-700 bg-orange-100 rounded px-1.5 py-0.5" title={currentAgent.name}>
+                                            {currentAgent.initials}
+                                          </span>
+                                        ) : null}
+                                        <div className="flex ml-1" title={c.priority ? `Prioridad: ${c.priority}` : "Sin prioridad"}>
+                                          {[1, 2, 3].map((starIdx) => {
+                                            const isActive = 
+                                              (c.priority === "Alta" && starIdx <= 3) ||
+                                              (c.priority === "Media" && starIdx <= 2) ||
+                                              (c.priority === "Baja" && starIdx <= 1);
+                                            return (
+                                              <Star 
+                                                key={starIdx} 
+                                                className={`h-3 w-3 ${isActive ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`} 
+                                              />
+                                            );
+                                          })}
+                                        </div>
+                                      </div>
+                                    );
                                   })()}
                                 </div>
                                 </div>
@@ -1600,7 +1619,7 @@ export default function VentasDashboard({
                       { label: "Agente", field: "agent" },
                       { label: "Teléfono", field: "phone" },
                       { label: "ID Externo", field: "external_id" },
-                      { label: "Transferencia", field: "call_transfer" },
+                      { label: "PBX", field: "call_transfer" },
                       { label: "Desconexión", field: "disconnection_reason" }
                     ].map((col) => {
                       const isSortable = col.field !== "key";
@@ -1676,11 +1695,29 @@ export default function VentasDashboard({
                                       initials: allAgents[c.assignedTo].initials,
                                       name: allAgents[c.assignedTo].name
                                     } : null);
-                                    return currentAgent ? (
-                                      <span className="ml-1 text-[10px] font-bold text-orange-700 bg-orange-100 rounded px-1.5 py-0.5" title={currentAgent.name}>
-                                        {currentAgent.initials}
-                                      </span>
-                                    ) : null;
+                                    return (
+                                      <div className="flex items-center gap-1">
+                                        {currentAgent ? (
+                                          <span className="ml-1 text-[10px] font-bold text-orange-700 bg-orange-100 rounded px-1.5 py-0.5" title={currentAgent.name}>
+                                            {currentAgent.initials}
+                                          </span>
+                                        ) : null}
+                                        <div className="flex ml-1" title={c.priority ? `Prioridad: ${c.priority}` : "Sin prioridad"}>
+                                          {[1, 2, 3].map((starIdx) => {
+                                            const isActive = 
+                                              (c.priority === "Alta" && starIdx <= 3) ||
+                                              (c.priority === "Media" && starIdx <= 2) ||
+                                              (c.priority === "Baja" && starIdx <= 1);
+                                            return (
+                                              <Star 
+                                                key={starIdx} 
+                                                className={`h-3 w-3 ${isActive ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`} 
+                                              />
+                                            );
+                                          })}
+                                        </div>
+                                      </div>
+                                    );
                                   })()}
                                 </div>
                                 </div>

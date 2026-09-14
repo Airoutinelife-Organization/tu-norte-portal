@@ -58,6 +58,7 @@ import {X,
   Clock,
   Archive,
   Brain,
+  Star,
 } from "lucide-react";
 
 const formatDateLocal = (date: Date) => {
@@ -141,6 +142,7 @@ export default function ContactCenterDashboard({
   const [newTicketRequest, setNewTicketRequest] = useState("");
   const [newTicketNotes, setNewTicketNotes] = useState("");
   const [newTicketId, setNewTicketId] = useState<string>("");
+  const [newTicketPriority, setNewTicketPriority] = useState<string>("Baja");
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let val = e.target.value.replace(/\D/g, "");
@@ -172,8 +174,18 @@ export default function ContactCenterDashboard({
         })
         .catch(err => console.error(err));
     }
-    if (!isCreatingTicket && newTicketId) {
-      setNewTicketId("");
+    if (!isCreatingTicket) {
+      if (newTicketId) setNewTicketId("");
+      setNewTicketAgent("");
+      setNewTicketSpecialist("");
+      setNewTicketAssignedTo("");
+      setNewTicketPhone("");
+      setNewTicketName("");
+      setNewTicketDoc("");
+      setNewTicketAddress("");
+      setNewTicketRequest("");
+      setNewTicketNotes("");
+      setNewTicketPriority("Baja");
     }
   }, [isCreatingTicket, voiceAgents.length, newTicketId]);
   const [availableAgents, setAvailableAgents] = useState<HumanAgent[]>([]);
@@ -986,7 +998,7 @@ export default function ContactCenterDashboard({
                     <th className="px-4 py-3 text-left font-medium">Agente</th>
                     <th className="px-4 py-3 text-left font-medium">Teléfono</th>
                     <th className="px-4 py-3 text-left font-medium">ID Externo</th>
-                    <th className="px-4 py-3 text-left font-medium">Transferencia</th>
+                    <th className="px-4 py-3 text-left font-medium">PBX</th>
                     
                     <th className="px-4 py-3 text-left font-medium">Desconexión</th>
                   </tr>
@@ -1269,7 +1281,7 @@ export default function ContactCenterDashboard({
                       { label: "Agente", field: "agent" },
                       { label: "Teléfono", field: "phone" },
                       { label: "ID Externo", field: "external_id" },
-                      { label: "Transferencia", field: "call_transfer" },
+                      { label: "PBX", field: "call_transfer" },
                       { label: "Desconexión", field: "disconnection_reason" }
                     ].map((col) => {
                       const isSortable = col.field !== "key" && col.field !== "status";
@@ -1353,18 +1365,36 @@ export default function ContactCenterDashboard({
                                   >
                                     <UserPlus className="h-4 w-4" />
                                   </button>
-                                  {(() => {
-                                    const currentAgent = assignedAgents[c.key!] || (c.assignedTo && allAgents[c.assignedTo] ? {
-                                      initials: allAgents[c.assignedTo].initials,
-                                      name: allAgents[c.assignedTo].name
-                                    } : null);
-                                    return currentAgent ? (
-                                      <span className="ml-1 text-[10px] font-bold text-orange-700 bg-orange-100 rounded px-1.5 py-0.5" title={currentAgent.name}>
-                                        {currentAgent.initials}
-                                      </span>
-                                    ) : null;
-                                  })()}
-                                </div>
+                                    {(() => {
+                                      const currentAgent = assignedAgents[c.key!] || (c.assignedTo && allAgents[c.assignedTo] ? {
+                                        initials: allAgents[c.assignedTo].initials,
+                                        name: allAgents[c.assignedTo].name
+                                      } : null);
+                                      return (
+                                        <div className="flex items-center gap-1">
+                                          {currentAgent ? (
+                                            <span className="ml-1 text-[10px] font-bold text-orange-700 bg-orange-100 rounded px-1.5 py-0.5" title={currentAgent.name}>
+                                              {currentAgent.initials}
+                                            </span>
+                                          ) : null}
+                                          <div className="flex ml-1" title={c.priority ? `Prioridad: ${c.priority}` : "Sin prioridad"}>
+                                            {[1, 2, 3].map((starIdx) => {
+                                              const isActive = 
+                                                (c.priority === "Alta" && starIdx <= 3) ||
+                                                (c.priority === "Media" && starIdx <= 2) ||
+                                                (c.priority === "Baja" && starIdx <= 1);
+                                              return (
+                                                <Star 
+                                                  key={starIdx} 
+                                                  className={`h-3 w-3 ${isActive ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`} 
+                                                />
+                                              );
+                                            })}
+                                          </div>
+                                        </div>
+                                      );
+                                    })()}
+                                  </div>
                                 </div>
                             </td>
                             <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">
@@ -1603,7 +1633,7 @@ export default function ContactCenterDashboard({
                       { label: "Agente", field: "agent" },
                       { label: "Teléfono", field: "phone" },
                       { label: "ID Externo", field: "external_id" },
-                      { label: "Transferencia", field: "call_transfer" },
+                      { label: "PBX", field: "call_transfer" },
                       { label: "Desconexión", field: "disconnection_reason" },
                       { label: "Ticket", field: "ticket" }
                     ].map((col) => {
@@ -1695,6 +1725,20 @@ export default function ContactCenterDashboard({
                                       )}
                                     </>
                                   )}
+                                  <div className="flex ml-1" title={c.priority ? `Prioridad: ${c.priority}` : "Sin prioridad"}>
+                                    {[1, 2, 3].map((starIdx) => {
+                                      const isActive = 
+                                        (c.priority === "Alta" && starIdx <= 3) ||
+                                        (c.priority === "Media" && starIdx <= 2) ||
+                                        (c.priority === "Baja" && starIdx <= 1);
+                                      return (
+                                        <Star 
+                                          key={starIdx} 
+                                          className={`h-3 w-3 ${isActive ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`} 
+                                        />
+                                      );
+                                    })}
+                                  </div>
                                 </div>
                                 </div>
                             </td>
@@ -2011,6 +2055,29 @@ export default function ContactCenterDashboard({
                 </select>
               </div>
 
+              <div className="flex items-center gap-4">
+                <label className="text-sm font-medium text-foreground w-1/3 shrink-0">Prioridad</label>
+                <div className="flex gap-1 cursor-pointer">
+                  {[1, 2, 3].map((starIdx) => {
+                    const isActive = 
+                      (newTicketPriority === "Alta" && starIdx <= 3) ||
+                      (newTicketPriority === "Media" && starIdx <= 2) ||
+                      (newTicketPriority === "Baja" && starIdx <= 1);
+                    return (
+                      <Star 
+                        key={starIdx} 
+                        className={`h-6 w-6 transition-colors ${isActive ? "text-yellow-400 fill-yellow-400" : "text-gray-300 hover:text-yellow-200"}`} 
+                        onClick={() => {
+                          if (starIdx === 1) setNewTicketPriority("Baja");
+                          else if (starIdx === 2) setNewTicketPriority("Media");
+                          else if (starIdx === 3) setNewTicketPriority("Alta");
+                        }}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">Requerimiento *</label>
                 <textarea
@@ -2092,7 +2159,8 @@ export default function ContactCenterDashboard({
                     nombre: newTicketName || "",
                     direccion: newTicketAddress || "",
                     requerimiento: newTicketRequest || "",
-                    notas: newTicketNotes || ""
+                    notas: newTicketNotes || "",
+                    priority: newTicketPriority || ""
                   };
 
                   fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL || 'https://vmi3533489.contaboserver.net/webhook'}/set-call-manually`, {
@@ -2104,9 +2172,7 @@ export default function ContactCenterDashboard({
                       if (res.ok) {
                         alert("Ticket creado exitosamente.");
                         setIsCreatingTicket(false);
-                        if (!payload.asignar_a) {
-                          window.location.reload();
-                        }
+                        window.location.reload();
                       } else {
                         const errorText = await res.text();
                         alert(`Error al crear ticket: ${errorText}`);
