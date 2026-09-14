@@ -43,6 +43,7 @@ function AdminPage() {
           title="Contact Center"
           description="Gestión y métricas de llamadas"
           icon={HeadphonesIcon}
+          expectedPass="Contact2026!"
           onSuccess={() => {
             localStorage.setItem(STORAGE_KEY, "ok");
             window.location.href = "/contact-center";
@@ -52,6 +53,7 @@ function AdminPage() {
           title="Administracion"
           description="Ventas y otros"
           icon={ShoppingBag}
+          expectedPass="Flor2026$"
           onSuccess={() => {
             localStorage.setItem(STORAGE_KEY, "ok");
             window.location.href = "/ventas";
