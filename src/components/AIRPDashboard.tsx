@@ -126,6 +126,7 @@ export default function AIRPDashboard({
   mode?: "contact-center" | "ventas";
 }) {
   const [activeTab, setActiveTab] = useState<Tab>("historico");
+  const [selectedRecordForModal, setSelectedRecordForModal] = useState<any | null>(null);
 
   // ── Assignment State ──────────────────────────────────────────────────────────
   const [assigningCall, setAssigningCall] = useState<{ key: string; role: string } | null>(null);
@@ -1602,13 +1603,14 @@ export default function AIRPDashboard({
                       { label: "Agente", field: "agent" },
                       { label: "Teléfono", field: "phone" },
                       { label: "ID Externo", field: "external_id" },
-                      { label: "Transferencia", field: "call_transfer" },
+                      { label: "PBX", field: "call_transfer" },
                       { label: "Desconexión", field: "disconnection_reason" },
                       { label: "AIRP", field: "AIRP" },
                       { label: "Ticket", field: "ticket" },
                       { label: "Transferido A", field: "transferredTo" },
                       { label: "Duración", field: "duration_ms" },
-                      { label: "Contact Center", field: "contact_center" }
+                      { label: "Contact Center", field: "contact_center" },
+                      { label: "Solved", field: "solved" }
                     ].map((col) => {
                       const isSortable = col.field !== "key";
                       return (
@@ -1641,7 +1643,7 @@ export default function AIRPDashboard({
                 <tbody>
                   {historicoLoading ? (
                     <tr>
-                      <td colSpan={14} className="px-6 py-8 text-center text-muted-foreground">
+                      <td colSpan={15} className="px-6 py-8 text-center text-muted-foreground">
                         <div className="flex items-center justify-center gap-2">
                           <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" />
                           Consultando llamadas de servicio...
@@ -1650,7 +1652,7 @@ export default function AIRPDashboard({
                     </tr>
                   ) : historicoCalls.length === 0 ? (
                     <tr>
-                      <td colSpan={14} className="px-6 py-8 text-center text-muted-foreground">
+                      <td colSpan={15} className="px-6 py-8 text-center text-muted-foreground">
                         {historicoError ? `Error al cargar: ${historicoError}` : "Sin registros encontrados."}
                       </td>
                     </tr>
@@ -1669,7 +1671,13 @@ export default function AIRPDashboard({
                         <React.Fragment key={c.key || i}>
                           <tr className={`border-t border-border transition-colors ${isExpanded ? "bg-blue-500/5" : isIA ? "bg-green-50/50 hover:bg-green-100/50" : "hover:bg-muted/30"}`}>
                             <td className="px-2 py-2">
-                              <p className="font-medium text-foreground max-w-[200px] truncate" title={c.key}>{c.key}</p>
+                              <button 
+                                className="font-medium text-blue-600 hover:underline max-w-[200px] truncate text-left" 
+                                title={c.key}
+                                onClick={() => setSelectedRecordForModal(c)}
+                              >
+                                {c.key}
+                              </button>
                               <div className="flex items-center justify-center gap-3 mt-2">
                                 {hasDetail && (
                                   <button onClick={() => setExpandedKey(isExpanded ? null : (c.key || String(i) + "svc"))} className="text-blue-600 hover:text-blue-800" title="Ver resumen y notas">
@@ -1799,7 +1807,7 @@ export default function AIRPDashboard({
                                 const isUnset = !isSi && !isNo;
 
                                 return (
-                                  <div className="flex w-[70px] h-[24px] rounded border border-border shadow-sm overflow-hidden">
+                                  <div className="flex flex-col w-[35px] h-[48px] rounded border border-border shadow-sm overflow-hidden">
                                     <button
                                       title="Sí"
                                       onClick={(e) => {
@@ -1865,10 +1873,19 @@ export default function AIRPDashboard({
                             <td className="px-2 py-3 text-xs text-foreground text-center">
                               {c.contact_center || "—"}
                             </td>
+                            <td className="px-2 py-3 text-xs text-foreground text-center">
+                              {c.solved || "—"}
+                            </td>
+                          </tr>
+                          <tr className={`border-t border-border/50 ${isExpanded ? "bg-blue-500/5" : isIA ? "bg-green-50/50 hover:bg-green-100/50" : "bg-muted/10 hover:bg-muted/30"}`}>
+                            <td colSpan={15} className="px-4 py-2 text-xs text-foreground">
+                              <span className="font-semibold text-blue-600 mr-2 uppercase">Request:</span>
+                              <span className="whitespace-pre-wrap">{c.request || "—"}</span>
+                            </td>
                           </tr>
                           {isExpanded && hasDetail && (
                             <tr className="border-t border-blue-500/20 bg-blue-500/5">
-                              <td colSpan={14} className="px-6 py-4">
+                              <td colSpan={15} className="px-6 py-4">
                                 <div className="grid gap-3 sm:grid-cols-3">
                                   {c.call_summary && (
                                     <div>
@@ -2233,6 +2250,182 @@ export default function AIRPDashboard({
           <audio controls autoPlay src={playingRecordingUrl} className="w-full">
             Tu navegador no soporta el elemento de audio.
           </audio>
+        </div>
+      )}
+      {selectedRecordForModal && (
+        <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 p-4 overflow-y-auto">
+          <div className="w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-xl bg-background p-6 shadow-lg relative">
+            <div className="flex justify-between items-center mb-4 border-b border-border pb-3 sticky top-0 bg-background z-10 pt-2">
+              <h3 className="text-lg font-bold text-foreground truncate" title={selectedRecordForModal.key}>
+                Registro: {selectedRecordForModal.key}
+              </h3>
+              <button onClick={() => setSelectedRecordForModal(null)} className="text-muted-foreground hover:text-foreground text-2xl leading-none">
+                &times;
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+              <div className="flex flex-col">
+                <span className="text-xs font-semibold text-muted-foreground uppercase">Status</span>
+                <span className="text-sm font-medium">{selectedRecordForModal.status || "—"}</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs font-semibold text-muted-foreground uppercase">Inicio</span>
+                <span className="text-sm">{selectedRecordForModal.start_timestamp || "—"}</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs font-semibold text-muted-foreground uppercase">Canal</span>
+                <span className="text-sm">{selectedRecordForModal.channel || "—"}</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs font-semibold text-muted-foreground uppercase">Agente / Especialista</span>
+                <span className="text-sm">{selectedRecordForModal.agent || "—"} {selectedRecordForModal.specialist ? ` / ${selectedRecordForModal.specialist}` : ""}</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs font-semibold text-muted-foreground uppercase">Teléfono</span>
+                <span className="text-sm">{selectedRecordForModal.phone || "—"}</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs font-semibold text-muted-foreground uppercase">ID Externo</span>
+                <span className="text-sm font-mono">{selectedRecordForModal.external_id || "—"}</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs font-semibold text-muted-foreground uppercase">PBX (Transferencia)</span>
+                <span className="text-sm">{selectedRecordForModal.call_transfer === "Si" ? `Sí (${selectedRecordForModal.pbx || ""})` : selectedRecordForModal.call_transfer || "—"}</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs font-semibold text-muted-foreground uppercase">Desconexión</span>
+                <span className="text-sm">{selectedRecordForModal.disconnection_reason || "—"}</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs font-semibold text-muted-foreground uppercase">Ticket</span>
+                <span className="text-sm">{selectedRecordForModal.ticket || "—"}</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs font-semibold text-muted-foreground uppercase">Transferido A</span>
+                <span className="text-sm">{selectedRecordForModal.transferredTo || "—"}</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs font-semibold text-muted-foreground uppercase">Duración (ms)</span>
+                <span className="text-sm">{selectedRecordForModal.duration_ms || "—"}</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs font-semibold text-muted-foreground uppercase">Contact Center</span>
+                <span className="text-sm">{selectedRecordForModal.contact_center || "—"}</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs font-semibold text-muted-foreground uppercase">Solved</span>
+                <span className="text-sm">{selectedRecordForModal.solved || "—"}</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs font-semibold text-muted-foreground uppercase">Grabación</span>
+                {selectedRecordForModal.recording_url || selectedRecordForModal.url ? (
+                  <button onClick={(e) => { e.preventDefault(); setPlayingRecordingUrl(selectedRecordForModal.recording_url || selectedRecordForModal.url || null); }} className="text-blue-600 hover:text-blue-800 flex items-center gap-1 text-sm mt-1">
+                    <Play className="h-4 w-4" /> Reproducir
+                  </button>
+                ) : (
+                  <span className="text-sm text-muted-foreground mt-1">Sin grabación</span>
+                )}
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs font-semibold text-muted-foreground uppercase">AIRP</span>
+                {(() => {
+                  const rowKey = String(selectedRecordForModal.key ?? "");
+                  const currentValue = airpValues[rowKey] !== undefined ? airpValues[rowKey] : selectedRecordForModal.AIRP;
+                  const isSi = currentValue === "Si" || currentValue === "Sí";
+                  const isNo = currentValue === "No";
+                  const isUnset = !isSi && !isNo;
+
+                  return (
+                    <div className="flex w-[100px] h-[32px] rounded border border-border shadow-sm overflow-hidden mt-1">
+                      <button
+                        title="Sí"
+                        onClick={() => setAirpValues(prev => ({ ...prev, [rowKey]: "Si" }))}
+                        className={`flex-1 flex items-center justify-center text-xs font-bold transition-all ${
+                          isSi ? "bg-green-500 text-white" : isUnset ? "bg-green-50 text-green-400 hover:bg-green-100" : "bg-muted/50 text-muted-foreground/50 hover:bg-green-100"
+                        }`}
+                      >
+                        SÍ
+                      </button>
+                      <button
+                        title="No"
+                        onClick={() => setAirpValues(prev => ({ ...prev, [rowKey]: "No" }))}
+                        className={`flex-1 flex items-center justify-center text-xs font-bold transition-all ${
+                          isNo ? "bg-red-500 text-white" : isUnset ? "bg-red-50 text-red-400 hover:bg-red-100" : "bg-muted/50 text-muted-foreground/50 hover:bg-red-100"
+                        }`}
+                      >
+                        NO
+                      </button>
+                      <input type="hidden" id={`modal-airp-select-${selectedRecordForModal.key}`} value={currentValue || ""} />
+                    </div>
+                  );
+                })()}
+              </div>
+            </div>
+            
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col">
+                <span className="text-xs font-semibold text-muted-foreground uppercase mb-1">Request</span>
+                <div className="text-sm p-3 bg-muted/20 rounded border border-border whitespace-pre-wrap">
+                  {selectedRecordForModal.request || "—"}
+                </div>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs font-semibold text-muted-foreground uppercase mb-1">Resumen de Llamada</span>
+                <div className="text-sm p-3 bg-muted/20 rounded border border-border whitespace-pre-wrap">
+                  {selectedRecordForModal.call_summary ? decodeURIComponent(selectedRecordForModal.call_summary) : "—"}
+                </div>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs font-semibold text-muted-foreground uppercase mb-1">Notas</span>
+                <textarea 
+                  className="w-full text-sm text-foreground bg-background border border-border p-3 rounded resize-y min-h-[80px]" 
+                  defaultValue={selectedRecordForModal.notes ? decodeURIComponent(selectedRecordForModal.notes) : ""}
+                  readOnly
+                ></textarea>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs font-semibold text-muted-foreground uppercase mb-1">Notas AIRP</span>
+                <textarea 
+                  id={`modal-notes-airp-${selectedRecordForModal.key}`}
+                  className="w-full text-sm text-foreground bg-background border border-border p-3 rounded resize-y min-h-[80px]" 
+                  defaultValue={selectedRecordForModal.notes_AIRP ? decodeURIComponent(selectedRecordForModal.notes_AIRP) : ""}
+                ></textarea>
+              </div>
+            </div>
+
+            <div className="mt-6 flex justify-end gap-3 border-t border-border pt-4">
+              <button onClick={() => setSelectedRecordForModal(null)} className="rounded bg-muted px-4 py-2 text-sm font-medium text-foreground hover:bg-muted-foreground/20">
+                Cerrar
+              </button>
+              <button 
+                className="bg-blue-600 text-white text-sm px-4 py-2 rounded hover:bg-blue-700 font-medium"
+                onClick={() => {
+                  const newNotesAirp = (document.getElementById(`modal-notes-airp-${selectedRecordForModal.key}`) as HTMLTextAreaElement).value;
+                  const airpSelect = (document.getElementById(`modal-airp-select-${selectedRecordForModal.key}`) as HTMLInputElement).value;
+                  if(confirm("¿Deseas guardar las notas AIRP?")) {
+                    fetch(`https://vmi3533489.contaboserver.net/webhook/call-set-AIRP`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ "KEY": selectedRecordForModal.key, "AIRP": airpSelect, "Notas_AIRP": newNotesAirp })
+                    }).then(async r => {
+                        if(r.ok) {
+                            alert("Notas AIRP guardadas correctamente");
+                            setSelectedRecordForModal(null);
+                            window.location.reload();
+                        }
+                        else {
+                            const errorText = await r.text();
+                            alert(`Error al guardar notas AIRP: ${errorText}`);
+                        }
+                    }).catch((err) => alert(`Error al guardar notas AIRP: ${err.message}`));
+                  }
+                }}
+              >
+                Guardar Notas AIRP
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </main>
