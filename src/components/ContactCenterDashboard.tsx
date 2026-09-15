@@ -118,6 +118,15 @@ type HumanAgent = {
   roles: string[];
 };
 
+type HumanAgentData = {
+  key: string;
+  name: string;
+  initials: string;
+  phone: string;
+  status: "active" | "inactive";
+};
+
+
 export default function ContactCenterDashboard({
 
   onLogout,
@@ -143,6 +152,40 @@ export default function ContactCenterDashboard({
   const [newTicketNotes, setNewTicketNotes] = useState("");
   const [newTicketId, setNewTicketId] = useState<string>("");
   const [newTicketPriority, setNewTicketPriority] = useState<string>("Baja");
+
+  // ── Human Agent Modal State ──────────────────────────────────────────────────
+  const [isAgentModalOpen, setIsAgentModalOpen] = useState(false);
+  const [agentList, setAgentList] = useState<HumanAgentData[]>([]);
+  const [agentListLoading, setAgentListLoading] = useState(false);
+  
+  const [newAgentKey, setNewAgentKey] = useState("");
+  const [newAgentName, setNewAgentName] = useState("");
+  const [newAgentInitials, setNewAgentInitials] = useState("");
+  const [newAgentPhone, setNewAgentPhone] = useState("");
+  const [editingAgents, setEditingAgents] = useState<Record<string, HumanAgentData>>({});
+
+  const loadAgents = () => {
+    setAgentListLoading(true);
+    fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL || 'https://vmi3533489.contaboserver.net/webhook'}/get-human-agent-header`, { method: "POST" })
+      .then(res => res.json())
+      .then((data: HumanAgentData[]) => {
+        setAgentList(data);
+        const edits: Record<string, HumanAgentData> = {};
+        data.forEach(ag => {
+          let val = (ag.phone || "").replace(/\D/g, "");
+          if (val.length > 10) val = val.slice(0, 10);
+          let formatted = val;
+          if (val.length > 6) formatted = `${val.slice(0, 3)}-${val.slice(3, 6)}-${val.slice(6, 10)}`;
+          else if (val.length > 3) formatted = `${val.slice(0, 3)}-${val.slice(3, 6)}`;
+          
+          edits[ag.key] = { ...ag, phone: formatted };
+        });
+        setEditingAgents(edits);
+      })
+      .catch(err => console.error("Error fetching agents:", err))
+      .finally(() => setAgentListLoading(false));
+  };
+
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let val = e.target.value.replace(/\D/g, "");
@@ -1265,6 +1308,19 @@ export default function ContactCenterDashboard({
                   >
                     Crear Ticket
                   </button>
+                  <button 
+                    onClick={() => {
+                      loadAgents();
+                      setNewAgentKey("");
+                      setNewAgentName("");
+                      setNewAgentInitials("");
+                      setNewAgentPhone("");
+                      setIsAgentModalOpen(true);
+                    }}
+                    className="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 transition-colors"
+                  >
+                    Crear Agente
+                  </button>
                 </div>
               )}
               </div>
@@ -1281,6 +1337,7 @@ export default function ContactCenterDashboard({
                       { label: "Agente", field: "agent" },
                       { label: "Teléfono", field: "phone" },
                       { label: "ID Externo", field: "external_id" },
+                      { label: "Dirección", field: "direccion" },
                       { label: "PBX", field: "call_transfer" },
                       { label: "Desconexión", field: "disconnection_reason" }
                     ].map((col) => {
@@ -1315,7 +1372,7 @@ export default function ContactCenterDashboard({
                 <tbody>
                   {enProgresoLoading ? (
                     <tr>
-                      <td colSpan={9} className="px-6 py-8 text-center text-muted-foreground">
+                      <td colSpan={10} className="px-6 py-8 text-center text-muted-foreground">
                         <div className="flex items-center justify-center gap-2">
                           <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" />
                           Consultando llamadas de servicio...
@@ -1324,7 +1381,7 @@ export default function ContactCenterDashboard({
                     </tr>
                   ) : enProgresoCalls.length === 0 ? (
                     <tr>
-                      <td colSpan={9} className="px-6 py-8 text-center text-muted-foreground">
+                      <td colSpan={10} className="px-6 py-8 text-center text-muted-foreground">
                         {enProgresoError ? `Error al cargar: ${enProgresoError}` : "Sin registros encontrados."}
                       </td>
                     </tr>
@@ -1482,7 +1539,13 @@ export default function ContactCenterDashboard({
                                <p className="font-medium">{c.phone || "—"}</p>
                                {c.caller_name && <p className="text-muted-foreground">{c.caller_name}</p>}
                             </td>
-                            <td className="px-4 py-3 font-mono text-xs text-foreground">{c.external_id || "—"}</td>
+                            <td className="px-4 py-3 text-xs text-foreground">
+                              <p className="font-mono">{c.external_id || "—"}</p>
+                              {c.client_name && <p className="text-muted-foreground">{c.client_name}</p>}
+                            </td>
+                            <td className="px-4 py-3 text-xs text-foreground max-w-[150px] truncate" title={c.direccion}>
+                              {c.direccion || "—"}
+                            </td>
                             <td className="px-4 py-3 text-xs text-foreground">
                               {c.pbx === "Fallo" ? (
                                 <span className="inline-flex items-center rounded-full bg-red-500/10 px-2 py-0.5 text-xs font-medium text-red-700">
@@ -1500,7 +1563,7 @@ export default function ContactCenterDashboard({
                           </tr>
                           {isExpanded && hasDetail && (
                             <tr className="border-t border-blue-500/20 bg-blue-500/5">
-                              <td colSpan={9} className="px-6 py-4">
+                              <td colSpan={10} className="px-6 py-4">
                                 <div className="grid gap-3 sm:grid-cols-2">
                                   {c.call_summary && (
                                     <div>
@@ -1689,8 +1752,8 @@ export default function ContactCenterDashboard({
                       const currentAgent = assignedAgents[c.key!] || (c.assignedTo && allAgents[c.assignedTo] ? {
                         initials: allAgents[c.assignedTo].initials,
                         name: allAgents[c.assignedTo].name
-                      } : (c.assignedTo === "IA" ? { initials: "IA", name: "Inteligencia Artificial" } : null));
-                      const isIA = currentAgent?.initials === "IA";
+                      } : (c.assignedTo === "human-agent:services.airoutinepartner.com" ? { initials: "IA", name: "Inteligencia Artificial" } : null));
+                      const isIA = c.assignedTo === "human-agent:services.airoutinepartner.com";
 
                       return (
                         <React.Fragment key={c.key || i}>
@@ -2206,6 +2269,217 @@ export default function ContactCenterDashboard({
           <audio controls autoPlay src={playingRecordingUrl} className="w-full">
             Tu navegador no soporta el elemento de audio.
           </audio>
+        </div>
+      )}
+
+      {/* ── Human Agent Modal ── */}
+      {isAgentModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-4xl max-h-[90vh] flex flex-col rounded-2xl bg-background p-6 shadow-2xl overflow-hidden">
+            <div className="mb-4 flex items-center justify-between">
+              <div>
+                <h3 className="text-xl font-bold text-foreground">Gestión de Agentes</h3>
+                <p className="text-sm text-muted-foreground">Crea y modifica agentes humanos</p>
+              </div>
+              <button onClick={() => setIsAgentModalOpen(false)} className="rounded-full p-2 hover:bg-muted text-muted-foreground transition-colors">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            
+            <div className="flex-1 overflow-auto rounded-lg border border-border">
+              <table className="w-full text-sm text-left">
+                <thead className="bg-muted/50 text-xs uppercase text-muted-foreground sticky top-0 z-10">
+                  <tr>
+                    <th className="px-4 py-3 font-medium">Key (Email)</th>
+                    <th className="px-4 py-3 font-medium">Nombre</th>
+                    <th className="px-4 py-3 font-medium">Iniciales</th>
+                    <th className="px-4 py-3 font-medium">Teléfono</th>
+                    <th className="px-4 py-3 font-medium text-center">Estado</th>
+                    <th className="px-4 py-3 font-medium text-right">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {/* Fila de Creación */}
+                  <tr className="bg-blue-50/50 hover:bg-blue-50/80 transition-colors">
+                    <td className="px-4 py-3">
+                      <input 
+                        type="email"
+                        placeholder="ejemplo@correo.com"
+                        className="w-full rounded border border-input px-2 py-1 text-xs"
+                        value={newAgentKey}
+                        onChange={e => setNewAgentKey(e.target.value)}
+                      />
+                    </td>
+                    <td className="px-4 py-3">
+                      <input 
+                        type="text"
+                        placeholder="Nombre completo"
+                        className="w-full rounded border border-input px-2 py-1 text-xs"
+                        value={newAgentName}
+                        onChange={e => setNewAgentName(e.target.value)}
+                      />
+                    </td>
+                    <td className="px-4 py-3">
+                      <input 
+                        type="text"
+                        placeholder="Ej. AR"
+                        className="w-20 rounded border border-input px-2 py-1 text-xs"
+                        value={newAgentInitials}
+                        onChange={e => setNewAgentInitials(e.target.value)}
+                      />
+                    </td>
+                    <td className="px-4 py-3">
+                      <input 
+                        type="text"
+                        placeholder="###-###-####"
+                        className="w-28 rounded border border-input px-2 py-1 text-xs"
+                        value={newAgentPhone}
+                        onChange={e => {
+                          let val = e.target.value.replace(/\D/g, "");
+                          if (val.length > 10) val = val.slice(0, 10);
+                          let formatted = val;
+                          if (val.length > 6) formatted = `${val.slice(0, 3)}-${val.slice(3, 6)}-${val.slice(6, 10)}`;
+                          else if (val.length > 3) formatted = `${val.slice(0, 3)}-${val.slice(3, 6)}`;
+                          setNewAgentPhone(formatted);
+                        }}
+                      />
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                        Active
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <button 
+                        disabled={!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newAgentKey) || !newAgentName || !newAgentInitials || newAgentPhone.length < 12}
+                        onClick={() => {
+                          const payload = {
+                            key: `human-agent:${newAgentKey}`,
+                            name: newAgentName,
+                            initials: newAgentInitials,
+                            phone: newAgentPhone,
+                            status: "active"
+                          };
+                          
+                          fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL || 'https://vmi3533489.contaboserver.net/webhook'}/set-human-agent`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(payload)
+                          })
+                          .then(async (res) => {
+                            if (!res.ok) throw new Error(await res.text());
+                            setNewAgentKey("");
+                            setNewAgentName("");
+                            setNewAgentInitials("");
+                            setNewAgentPhone("");
+                            loadAgents();
+                          })
+                          .catch(err => alert("Error al crear agente: " + err.message));
+                        }}
+                        className="rounded bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
+                      >
+                        Crear
+                      </button>
+                    </td>
+                  </tr>
+                  
+                  {/* Filas Existentes */}
+                  {agentListLoading ? (
+                    <tr>
+                      <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">
+                        Cargando agentes...
+                      </td>
+                    </tr>
+                  ) : agentList.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">
+                        No se encontraron agentes.
+                      </td>
+                    </tr>
+                  ) : (
+                    agentList.map(agent => {
+                      const editData = editingAgents[agent.key] || { ...agent };
+                      const updateField = (field: keyof HumanAgentData, value: string) => {
+                        setEditingAgents(prev => ({
+                          ...prev,
+                          [agent.key]: { ...prev[agent.key], [field]: value }
+                        }));
+                      };
+                      
+                      const displayKey = agent.key.startsWith("human-agent:") ? agent.key.replace("human-agent:", "") : agent.key;
+                      
+                      return (
+                        <tr key={agent.key} className="hover:bg-muted/30 transition-colors">
+                          <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
+                            {displayKey}
+                          </td>
+                          <td className="px-4 py-3">
+                            <input 
+                              type="text"
+                              className="w-full rounded border border-transparent hover:border-input focus:border-input bg-transparent px-2 py-1 text-xs transition-colors"
+                              value={editData.name}
+                              onChange={e => updateField("name", e.target.value)}
+                            />
+                          </td>
+                          <td className="px-4 py-3">
+                            <input 
+                              type="text"
+                              className="w-20 rounded border border-transparent hover:border-input focus:border-input bg-transparent px-2 py-1 text-xs transition-colors"
+                              value={editData.initials}
+                              onChange={e => updateField("initials", e.target.value)}
+                            />
+                          </td>
+                          <td className="px-4 py-3">
+                            <input 
+                              type="text"
+                              className="w-28 rounded border border-transparent hover:border-input focus:border-input bg-transparent px-2 py-1 text-xs transition-colors"
+                              value={editData.phone}
+                              onChange={e => {
+                                let val = e.target.value.replace(/\D/g, "");
+                                if (val.length > 10) val = val.slice(0, 10);
+                                let formatted = val;
+                                if (val.length > 6) formatted = `${val.slice(0, 3)}-${val.slice(3, 6)}-${val.slice(6, 10)}`;
+                                else if (val.length > 3) formatted = `${val.slice(0, 3)}-${val.slice(3, 6)}`;
+                                updateField("phone", formatted);
+                              }}
+                            />
+                          </td>
+                          <td className="px-4 py-3 text-center">
+                            <button
+                              onClick={() => updateField("status", editData.status === "active" ? "inactive" : "active")}
+                              className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${editData.status === 'active' ? 'bg-green-500' : 'bg-gray-300'}`}
+                            >
+                              <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${editData.status === 'active' ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                            </button>
+                          </td>
+                          <td className="px-4 py-3 text-right">
+                            <button 
+                              disabled={!editData.name || !editData.initials || !editData.phone || editData.phone.length < 12}
+                              onClick={() => {
+                                fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL || 'https://vmi3533489.contaboserver.net/webhook'}/set-human-agent`, {
+                                  method: "POST",
+                                  headers: { "Content-Type": "application/json" },
+                                  body: JSON.stringify(editData)
+                                })
+                                .then(async (res) => {
+                                  if (!res.ok) throw new Error(await res.text());
+                                  loadAgents();
+                                })
+                                .catch(err => alert("Error al modificar agente: " + err.message));
+                              }}
+                              className="rounded border border-border bg-background px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              Modificar
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       )}
     </main>

@@ -1664,8 +1664,8 @@ export default function AIRPDashboard({
                       const currentAgent = assignedAgents[c.key!] || (c.assignedTo && allAgents[c.assignedTo] ? {
                         initials: allAgents[c.assignedTo].initials,
                         name: allAgents[c.assignedTo].name
-                      } : (c.assignedTo === "IA" ? { initials: "IA", name: "Inteligencia Artificial" } : null));
-                      const isIA = currentAgent?.initials === "IA";
+                      } : (c.assignedTo === "human-agent:services.airoutinepartner.com" ? { initials: "IA", name: "Inteligencia Artificial" } : null));
+                      const isIA = c.assignedTo === "human-agent:services.airoutinepartner.com";
 
                       return (
                         <React.Fragment key={c.key || i}>

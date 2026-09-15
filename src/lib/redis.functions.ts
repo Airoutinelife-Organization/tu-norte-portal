@@ -140,6 +140,8 @@ export type ServiceCall = {
   phone?: string;
   external_id?: string;
   caller_name?: string;
+  client_name?: string;
+  direccion?: string;
   call_summary?: string;
   notes?: string;
   url?: string;
