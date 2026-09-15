@@ -377,7 +377,9 @@ export default function VentasDashboard({
         return 0;
       });
     }
-    const startIdx = (historicoPage - 1) * historicoPageSize;
+    const totalPages = Math.ceil(calls.length / historicoPageSize);
+    const validPage = Math.max(1, Math.min(historicoPage, totalPages || 1));
+    const startIdx = (validPage - 1) * historicoPageSize;
     return calls.slice(startIdx, startIdx + historicoPageSize);
   }, [historicoCalls, historicoPage, historicoPageSize, historicoSortField, historicoSortDirection]);
   
@@ -406,6 +408,7 @@ export default function VentasDashboard({
           .then((res) => {
             if (!cancelled) {
               setHistoricoCalls(res.calls || []);
+              setHistoricoPage(1);
               setHistoricoError(res.error ?? null);
             }
           })
@@ -1624,6 +1627,7 @@ export default function VentasDashboard({
                       { label: "Agente", field: "agent" },
                       { label: "Teléfono", field: "phone" },
                       { label: "ID Externo", field: "external_id" },
+                      { label: "Dirección", field: "direccion" },
                       { label: "PBX", field: "call_transfer" },
                       { label: "Desconexión", field: "disconnection_reason" }
                     ].map((col) => {
@@ -1658,7 +1662,7 @@ export default function VentasDashboard({
                 <tbody>
                   {historicoLoading ? (
                     <tr>
-                      <td colSpan={9} className="px-6 py-8 text-center text-muted-foreground">
+                      <td colSpan={10} className="px-6 py-8 text-center text-muted-foreground">
                         <div className="flex items-center justify-center gap-2">
                           <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" />
                           Consultando llamadas de servicio...
@@ -1667,7 +1671,7 @@ export default function VentasDashboard({
                     </tr>
                   ) : historicoCalls.length === 0 ? (
                     <tr>
-                      <td colSpan={9} className="px-6 py-8 text-center text-muted-foreground">
+                      <td colSpan={10} className="px-6 py-8 text-center text-muted-foreground">
                         {historicoError ? `Error al cargar: ${historicoError}` : "Sin registros encontrados."}
                       </td>
                     </tr>
@@ -1801,7 +1805,11 @@ export default function VentasDashboard({
                                <p className="font-medium">{c.phone || "—"}</p>
                                {c.caller_name && <p className="text-muted-foreground">{c.caller_name}</p>}
                             </td>
-                            <td className="px-4 py-3 font-mono text-xs text-foreground">{c.external_id || "—"}</td>
+                            <td className="px-4 py-3 text-xs text-foreground">
+                              <p className="font-mono">{c.external_id || "—"}</p>
+                              {c.client_name && <p className="text-muted-foreground mt-0.5">{c.client_name}</p>}
+                            </td>
+                            <td className="px-4 py-3 text-xs text-foreground">{c.direccion || "—"}</td>
                             <td className="px-4 py-3 text-xs text-foreground">
                               {c.pbx === "Fallo" ? (
                                 <span className="inline-flex items-center rounded-full bg-red-500/10 px-2 py-0.5 text-xs font-medium text-red-700">
@@ -1819,7 +1827,7 @@ export default function VentasDashboard({
                           </tr>
                           {isExpanded && hasDetail && (
                             <tr className="border-t border-blue-500/20 bg-blue-500/5">
-                              <td colSpan={9} className="px-6 py-4">
+                              <td colSpan={10} className="px-6 py-4">
                                 <div className="grid gap-3 sm:grid-cols-2">
                                   {c.call_summary && (
                                     <div>
@@ -1876,7 +1884,7 @@ export default function VentasDashboard({
             {!historicoLoading && historicoCalls.length > 0 && (
               <div className="flex items-center justify-between border-t border-border px-6 py-3">
                 <div className="text-xs text-muted-foreground">
-                  Mostrando {((historicoPage - 1) * historicoPageSize) + 1} a {Math.min(historicoPage * historicoPageSize, historicoCalls.length)} de {historicoCalls.length}
+                  Mostrando {((Math.min(historicoPage, Math.max(1, Math.ceil(historicoCalls.length / historicoPageSize))) - 1) * historicoPageSize) + 1} a {Math.min(Math.min(historicoPage, Math.max(1, Math.ceil(historicoCalls.length / historicoPageSize))) * historicoPageSize, historicoCalls.length)} de {historicoCalls.length}
                 </div>
                 <div className="flex items-center gap-2">
                   <button
