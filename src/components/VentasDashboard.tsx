@@ -1267,6 +1267,7 @@ export default function VentasDashboard({
                       { label: "Agente", field: "agent" },
                       { label: "Teléfono", field: "phone" },
                       { label: "ID Externo", field: "external_id" },
+                      { label: "Dirección", field: "direccion" },
                       { label: "PBX", field: "call_transfer" },
                       { label: "Desconexión", field: "disconnection_reason" }
                     ].map((col) => {
@@ -1301,7 +1302,7 @@ export default function VentasDashboard({
                 <tbody>
                   {enProgresoLoading ? (
                     <tr>
-                      <td colSpan={9} className="px-6 py-8 text-center text-muted-foreground">
+                      <td colSpan={10} className="px-6 py-8 text-center text-muted-foreground">
                         <div className="flex items-center justify-center gap-2">
                           <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" />
                           Consultando llamadas de servicio...
@@ -1310,7 +1311,7 @@ export default function VentasDashboard({
                     </tr>
                   ) : enProgresoCalls.length === 0 ? (
                     <tr>
-                      <td colSpan={9} className="px-6 py-8 text-center text-muted-foreground">
+                      <td colSpan={10} className="px-6 py-8 text-center text-muted-foreground">
                         {enProgresoError ? `Error al cargar: ${enProgresoError}` : "Sin registros encontrados."}
                       </td>
                     </tr>
@@ -1468,7 +1469,11 @@ export default function VentasDashboard({
                                <p className="font-medium">{c.phone || "—"}</p>
                                {c.caller_name && <p className="text-muted-foreground">{c.caller_name}</p>}
                             </td>
-                            <td className="px-4 py-3 font-mono text-xs text-foreground">{c.external_id || "—"}</td>
+                            <td className="px-4 py-3 text-xs text-foreground">
+                              <p className="font-mono">{c.external_id || "—"}</p>
+                              {c.client_name && <p className="text-muted-foreground mt-0.5">{c.client_name}</p>}
+                            </td>
+                            <td className="px-4 py-3 text-xs text-foreground">{c.direccion || "—"}</td>
                             <td className="px-4 py-3 text-xs text-foreground">
                               {c.pbx === "Fallo" ? (
                                 <span className="inline-flex items-center rounded-full bg-red-500/10 px-2 py-0.5 text-xs font-medium text-red-700">
@@ -1486,7 +1491,7 @@ export default function VentasDashboard({
                           </tr>
                           {isExpanded && hasDetail && (
                             <tr className="border-t border-blue-500/20 bg-blue-500/5">
-                              <td colSpan={9} className="px-6 py-4">
+                              <td colSpan={10} className="px-6 py-4">
                                 <div className="grid gap-3 sm:grid-cols-2">
                                   {c.call_summary && (
                                     <div>
