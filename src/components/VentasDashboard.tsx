@@ -780,7 +780,7 @@ export default function VentasDashboard({
                     <th className="px-4 py-3 text-left font-medium">Inicio</th>
                     <th className="px-4 py-3 text-left font-medium">Especialista</th>
                     <th className="px-4 py-3 text-left font-medium">Teléfono</th>
-                    <th className="px-4 py-3 text-left font-medium">ID Externo</th>
+                    <th className="px-4 py-3 text-left font-medium">Documento</th>
                     <th className="px-4 py-3 text-left font-medium">Zona</th>
                     <th className="px-4 py-3 text-left font-medium">Desconexión</th>
                   </tr>
@@ -986,7 +986,7 @@ export default function VentasDashboard({
                     <th className="px-4 py-3 text-left font-medium">Canal</th>
                     <th className="px-4 py-3 text-left font-medium">Agente</th>
                     <th className="px-4 py-3 text-left font-medium">Teléfono</th>
-                    <th className="px-4 py-3 text-left font-medium">ID Externo</th>
+                    <th className="px-4 py-3 text-left font-medium">Documento</th>
                     <th className="px-4 py-3 text-left font-medium">PBX</th>
                     
                     <th className="px-4 py-3 text-left font-medium">Desconexión</th>
@@ -1269,7 +1269,7 @@ export default function VentasDashboard({
                       { label: "Canal", field: "channel" },
                       { label: "Agente", field: "agent" },
                       { label: "Teléfono", field: "phone" },
-                      { label: "ID Externo", field: "external_id" },
+                      { label: "Documento", field: "external_id" },
                       { label: "Dirección", field: "direccion" },
                       { label: "PBX", field: "call_transfer" },
                       { label: "Desconexión", field: "disconnection_reason" }
@@ -1626,7 +1626,7 @@ export default function VentasDashboard({
                       { label: "Canal", field: "channel" },
                       { label: "Agente", field: "agent" },
                       { label: "Teléfono", field: "phone" },
-                      { label: "ID Externo", field: "external_id" },
+                      { label: "Documento", field: "external_id" },
                       { label: "Dirección", field: "direccion" },
                       { label: "PBX", field: "call_transfer" },
                       { label: "Desconexión", field: "disconnection_reason" }
