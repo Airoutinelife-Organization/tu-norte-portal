@@ -834,7 +834,7 @@ export default function ContactCenterDashboard({
                     <th className="px-4 py-3 text-left font-medium">Inicio</th>
                     <th className="px-4 py-3 text-left font-medium">Especialista</th>
                     <th className="px-4 py-3 text-left font-medium">Teléfono</th>
-                    <th className="px-4 py-3 text-left font-medium">ID Externo</th>
+                    <th className="px-4 py-3 text-left font-medium">Documento</th>
                     <th className="px-4 py-3 text-left font-medium">Zona</th>
                     <th className="px-4 py-3 text-left font-medium">Desconexión</th>
                   </tr>
@@ -1040,7 +1040,7 @@ export default function ContactCenterDashboard({
                     <th className="px-4 py-3 text-left font-medium">Canal</th>
                     <th className="px-4 py-3 text-left font-medium">Agente</th>
                     <th className="px-4 py-3 text-left font-medium">Teléfono</th>
-                    <th className="px-4 py-3 text-left font-medium">ID Externo</th>
+                    <th className="px-4 py-3 text-left font-medium">Documento</th>
                     <th className="px-4 py-3 text-left font-medium">PBX</th>
                     
                     <th className="px-4 py-3 text-left font-medium">Desconexión</th>
@@ -1336,7 +1336,7 @@ export default function ContactCenterDashboard({
                       { label: "Canal", field: "channel" },
                       { label: "Agente", field: "agent" },
                       { label: "Teléfono", field: "phone" },
-                      { label: "ID Externo", field: "external_id" },
+                      { label: "Documento", field: "external_id" },
                       { label: "Dirección", field: "direccion" },
                       { label: "PBX", field: "call_transfer" },
                       { label: "Desconexión", field: "disconnection_reason" }
@@ -1558,7 +1558,11 @@ export default function ContactCenterDashboard({
                               ) : c.call_transfer === "No" ? (
                                 <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">No</span>
                               ) : "—"}
-                              {c.contact && <p className="text-muted-foreground mt-1">{c.contact}</p>}
+                              {c.contact && (
+                                <p className={`mt-1 font-medium ${c.contact.trim().toLowerCase() === "cerrado" ? "text-red-400" : "text-muted-foreground"}`}>
+                                  {c.contact}
+                                </p>
+                              )}
                             </td>
                             <td className="px-2 py-2 text-xs text-muted-foreground">{c.disconnection_reason || "—"}</td>
                           </tr>
@@ -1696,7 +1700,8 @@ export default function ContactCenterDashboard({
                       { label: "Canal", field: "channel" },
                       { label: "Agente", field: "agent" },
                       { label: "Teléfono", field: "phone" },
-                      { label: "ID Externo", field: "external_id" },
+                      { label: "Documento", field: "external_id" },
+                      { label: "Dirección", field: "direccion" },
                       { label: "PBX", field: "call_transfer" },
                       { label: "Desconexión", field: "disconnection_reason" },
                       { label: "Ticket", field: "ticket" }
@@ -1880,7 +1885,13 @@ export default function ContactCenterDashboard({
                                <p className="font-medium">{c.phone || "—"}</p>
                                {c.caller_name && <p className="text-muted-foreground">{c.caller_name}</p>}
                             </td>
-                            <td className="px-2 py-2 font-mono text-xs text-foreground">{c.external_id || "—"}</td>
+                            <td className="px-2 py-2 text-xs text-foreground">
+                              <p className="font-mono">{c.external_id || "—"}</p>
+                              {c.client_name && <p className="text-muted-foreground">{c.client_name}</p>}
+                            </td>
+                            <td className="px-2 py-2 text-xs text-foreground max-w-[150px] whitespace-normal break-words" title={c.direccion}>
+                              {c.direccion || "—"}
+                            </td>
                             <td className="px-2 py-2 text-xs text-foreground">
                               {c.pbx === "Fallo" ? (
                                 <span className="inline-flex items-center rounded-full bg-red-500/10 px-2 py-0.5 text-xs font-medium text-red-700">
@@ -1893,6 +1904,11 @@ export default function ContactCenterDashboard({
                               ) : c.call_transfer === "No" ? (
                                 <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">No</span>
                               ) : "—"}
+                              {c.contact && (
+                                <p className={`mt-1 font-medium ${c.contact.trim().toLowerCase() === "cerrado" ? "text-red-400" : "text-muted-foreground"}`}>
+                                  {c.contact}
+                                </p>
+                              )}
                             </td>
                             <td className="px-2 py-2 text-xs text-muted-foreground">{c.disconnection_reason || "—"}</td>
                             <td className="px-2 py-2 text-center text-xs">
@@ -1911,7 +1927,7 @@ export default function ContactCenterDashboard({
                           </tr>
                           {isExpanded && hasDetail && (
                             <tr className="border-t border-blue-500/20 bg-blue-500/5">
-                              <td colSpan={10} className="px-6 py-4">
+                              <td colSpan={11} className="px-6 py-4">
                                 <div className="grid gap-3 sm:grid-cols-2">
                                   {c.call_summary && (
                                     <div>
