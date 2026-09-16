@@ -158,6 +158,7 @@ export type ServiceCall = {
   transferredTo?: string;
   contact_center?: string;
   priority?: string;
+  contact?: string;
 };
 
 export const getServiceCalls = createServerFn().handler(

@@ -1345,7 +1345,7 @@ export default function ContactCenterDashboard({
                       return (
                         <th
                           key={col.field}
-                          className={`px-4 py-3 text-left font-medium ${isSortable ? "cursor-pointer hover:bg-muted/80 select-none" : ""}`}
+                          className={`px-2 py-2 text-left font-medium ${isSortable ? "cursor-pointer hover:bg-muted/80 select-none" : ""}`}
                           onClick={() => {
                             if (!isSortable) return;
                             if (enProgresoSortField === col.field) {
@@ -1392,8 +1392,8 @@ export default function ContactCenterDashboard({
                       return (
                         <React.Fragment key={c.key || i}>
                           <tr className={`border-t border-border transition-colors ${isExpanded ? "bg-blue-500/5" : "hover:bg-muted/30"}`}>
-                            <td className="px-4 py-3">
-                              <p className="font-medium text-foreground max-w-[200px] truncate" title={c.key}>{c.key}</p>
+                            <td className="px-2 py-2">
+                              <p className="font-medium text-foreground max-w-[100px] xl:max-w-[150px] truncate" title={c.key}>{c.key}</p>
                               <div className="flex items-center justify-center gap-3 mt-2">
                                 {hasDetail && (
                                   <button onClick={() => setExpandedKey(isExpanded ? null : (c.key || String(i) + "svc"))} className="text-blue-600 hover:text-blue-800" title="Ver resumen y notas">
@@ -1454,7 +1454,7 @@ export default function ContactCenterDashboard({
                                   </div>
                                 </div>
                             </td>
-                            <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">
+                            <td className="whitespace-nowrap px-2 py-2 text-xs text-foreground">
                               <div className="flex flex-col items-center gap-2">
                                 <div className="flex gap-2">
                                   <button
@@ -1529,24 +1529,24 @@ export default function ContactCenterDashboard({
                                 })()}
                               </div>
                             </td>
-                            <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">{c.start_timestamp || "—"}</td>
-                            <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">{c.channel || "—"}</td>
-                            <td className="whitespace-nowrap px-4 py-3 text-xs text-foreground">
+                            <td className="whitespace-nowrap px-2 py-2 text-xs text-foreground">{c.start_timestamp || "—"}</td>
+                            <td className="whitespace-nowrap px-2 py-2 text-xs text-foreground">{c.channel || "—"}</td>
+                            <td className="whitespace-nowrap px-2 py-2 text-xs text-foreground">
                               <p className="font-medium">{c.agent || "—"}</p>
                               {c.specialist && <p className="text-muted-foreground">{c.specialist}</p>}
                             </td>
-                            <td className="px-4 py-3 text-xs text-foreground">
+                            <td className="px-2 py-2 text-xs text-foreground">
                                <p className="font-medium">{c.phone || "—"}</p>
                                {c.caller_name && <p className="text-muted-foreground">{c.caller_name}</p>}
                             </td>
-                            <td className="px-4 py-3 text-xs text-foreground">
+                            <td className="px-2 py-2 text-xs text-foreground">
                               <p className="font-mono">{c.external_id || "—"}</p>
                               {c.client_name && <p className="text-muted-foreground">{c.client_name}</p>}
                             </td>
-                            <td className="px-4 py-3 text-xs text-foreground max-w-[150px] truncate" title={c.direccion}>
+                            <td className="px-2 py-2 text-xs text-foreground max-w-[150px] whitespace-normal break-words" title={c.direccion}>
                               {c.direccion || "—"}
                             </td>
-                            <td className="px-4 py-3 text-xs text-foreground">
+                            <td className="px-2 py-2 text-xs text-foreground">
                               {c.pbx === "Fallo" ? (
                                 <span className="inline-flex items-center rounded-full bg-red-500/10 px-2 py-0.5 text-xs font-medium text-red-700">
                                   {c.call_transfer === "Si" ? "Sí (Fallo PBX)" : "Fallo PBX"}
@@ -1558,8 +1558,9 @@ export default function ContactCenterDashboard({
                               ) : c.call_transfer === "No" ? (
                                 <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">No</span>
                               ) : "—"}
+                              {c.contact && <p className="text-muted-foreground mt-1">{c.contact}</p>}
                             </td>
-                            <td className="px-4 py-3 text-xs text-muted-foreground">{c.disconnection_reason || "—"}</td>
+                            <td className="px-2 py-2 text-xs text-muted-foreground">{c.disconnection_reason || "—"}</td>
                           </tr>
                           {isExpanded && hasDetail && (
                             <tr className="border-t border-blue-500/20 bg-blue-500/5">
