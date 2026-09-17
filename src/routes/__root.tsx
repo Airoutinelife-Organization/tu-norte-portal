@@ -65,7 +65,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
   );
 }
 
-const ADMIN_PATHS = ["/admin", "/airp", "/contact-center", "/ventas"];
+const ADMIN_PATHS = ["/admin", "/airp", "/contact-center", "/ventas", "/contact-agent"];
 const ADMIN_SESSION_KEY = "tunorte_admin_session";
 
 function RootComponent() {

@@ -14,6 +14,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AgendarRouteImport } from './routes/agendar'
 import { Route as AirpRouteImport } from './routes/airp'
 import { Route as CoberturaRouteImport } from './routes/cobertura'
+import { Route as ContactAgentRouteImport } from './routes/contact-agent'
 import { Route as ContactCenterRouteImport } from './routes/contact-center'
 import { Route as DiagnosticoRouteImport } from './routes/diagnostico'
 import { Route as EmpresaRouteImport } from './routes/empresa'
@@ -54,6 +55,11 @@ const AirpRoute = AirpRouteImport.update({
 const CoberturaRoute = CoberturaRouteImport.update({
   id: '/cobertura',
   path: '/cobertura',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactAgentRoute = ContactAgentRouteImport.update({
+  id: '/contact-agent',
+  path: '/contact-agent',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactCenterRoute = ContactCenterRouteImport.update({
@@ -144,6 +150,7 @@ export interface FileRoutesByFullPath {
   '/agendar': typeof AgendarRoute
   '/airp': typeof AirpRoute
   '/cobertura': typeof CoberturaRoute
+  '/contact-agent': typeof ContactAgentRoute
   '/contact-center': typeof ContactCenterRoute
   '/diagnostico': typeof DiagnosticoRoute
   '/empresa': typeof EmpresaRoute
@@ -167,6 +174,7 @@ export interface FileRoutesByTo {
   '/agendar': typeof AgendarRoute
   '/airp': typeof AirpRoute
   '/cobertura': typeof CoberturaRoute
+  '/contact-agent': typeof ContactAgentRoute
   '/contact-center': typeof ContactCenterRoute
   '/diagnostico': typeof DiagnosticoRoute
   '/empresa': typeof EmpresaRoute
@@ -191,6 +199,7 @@ export interface FileRoutesById {
   '/agendar': typeof AgendarRoute
   '/airp': typeof AirpRoute
   '/cobertura': typeof CoberturaRoute
+  '/contact-agent': typeof ContactAgentRoute
   '/contact-center': typeof ContactCenterRoute
   '/diagnostico': typeof DiagnosticoRoute
   '/empresa': typeof EmpresaRoute
@@ -216,6 +225,7 @@ export interface FileRouteTypes {
     | '/agendar'
     | '/airp'
     | '/cobertura'
+    | '/contact-agent'
     | '/contact-center'
     | '/diagnostico'
     | '/empresa'
@@ -239,6 +249,7 @@ export interface FileRouteTypes {
     | '/agendar'
     | '/airp'
     | '/cobertura'
+    | '/contact-agent'
     | '/contact-center'
     | '/diagnostico'
     | '/empresa'
@@ -262,6 +273,7 @@ export interface FileRouteTypes {
     | '/agendar'
     | '/airp'
     | '/cobertura'
+    | '/contact-agent'
     | '/contact-center'
     | '/diagnostico'
     | '/empresa'
@@ -286,6 +298,7 @@ export interface RootRouteChildren {
   AgendarRoute: typeof AgendarRoute
   AirpRoute: typeof AirpRoute
   CoberturaRoute: typeof CoberturaRoute
+  ContactAgentRoute: typeof ContactAgentRoute
   ContactCenterRoute: typeof ContactCenterRoute
   DiagnosticoRoute: typeof DiagnosticoRoute
   EmpresaRoute: typeof EmpresaRoute
@@ -339,6 +352,13 @@ declare module '@tanstack/react-router' {
       path: '/cobertura'
       fullPath: '/cobertura'
       preLoaderRoute: typeof CoberturaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact-agent': {
+      id: '/contact-agent'
+      path: '/contact-agent'
+      fullPath: '/contact-agent'
+      preLoaderRoute: typeof ContactAgentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact-center': {
@@ -462,6 +482,7 @@ const rootRouteChildren: RootRouteChildren = {
   AgendarRoute: AgendarRoute,
   AirpRoute: AirpRoute,
   CoberturaRoute: CoberturaRoute,
+  ContactAgentRoute: ContactAgentRoute,
   ContactCenterRoute: ContactCenterRoute,
   DiagnosticoRoute: DiagnosticoRoute,
   EmpresaRoute: EmpresaRoute,
