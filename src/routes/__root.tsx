@@ -69,7 +69,7 @@ const ADMIN_SESSION_KEY = "tunorte_admin_session";
 
 function RootComponent() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const isAdminArea = ADMIN_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+  const isAdminArea = ADMIN_PATHS.some((p) => pathname.toLowerCase() === p || pathname.toLowerCase().startsWith(`${p}/`));
   const [hasAdminSession, setHasAdminSession] = useState(false);
 
   useEffect(() => {
