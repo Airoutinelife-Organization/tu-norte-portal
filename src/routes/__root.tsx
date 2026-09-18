@@ -1,6 +1,5 @@
 import { Outlet, createRootRoute, HeadContent, Scripts, useRouterState } from "@tanstack/react-router";
 import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { Chatbot } from "@/components/Chatbot";
 import { Link } from "@tanstack/react-router";
 import { Toaster } from "@/components/ui/sonner";
@@ -101,7 +100,6 @@ function RootComponent() {
       <main className="flex-1">
         <Outlet />
       </main>
-      <Footer />
       {!hasAdminSession && <Chatbot />}
       <Toaster />
     </div>

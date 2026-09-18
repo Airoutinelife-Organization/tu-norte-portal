@@ -157,6 +157,7 @@ export default function AIRPDashboard({
   
   const isTicketFormValid = newTicketAgent && newTicketSpecialist && newTicketRequest.trim();
 
+
   useEffect(() => {
     if (isCreatingTicket && voiceAgents.length === 0) {
       fetch(`${import.meta.env.VITE_WEBHOOK_BASE_URL || 'https://vmi3533489.contaboserver.net/webhook'}/voice-agent`, { method: "POST" })
@@ -203,6 +204,193 @@ export default function AIRPDashboard({
   const [filterMode, setFilterMode] = useState<FilterMode>("preset");
   const [rangeStart, setRangeStart] = useState(""); // "YYYY-MM-DD"
   const [rangeEnd, setRangeEnd] = useState("");   // "YYYY-MM-DD"
+
+  // ── KPI State ─────────────────────────────────────────────────────────────────
+  const [kpiAtendidas, setKpiAtendidas] = useState(0);
+  const [kpiResueltas, setKpiResueltas] = useState(0);
+  
+  const [kpiDailyData, setKpiDailyData] = useState<{ labels: string[]; atendidas: number[]; resueltasIA: number[] }>({ labels: [], atendidas: [], resueltasIA: [] });
+  const [kpiHourlyData, setKpiHourlyData] = useState<{ labels: string[]; atendidas: number[] }>({ labels: [], atendidas: [] });
+  const [sentimentData, setSentimentData] = useState<{ positive: number; negative: number; neutral: number }>({ positive: 0, negative: 0, neutral: 0 });
+  const [outcomeData, setOutcomeData] = useState<{ exitosa: number; fallida: number }>({ exitosa: 0, fallida: 0 });
+
+  useEffect(() => {
+    let begin = "";
+    let end = "";
+    if (filterMode === "range" && rangeStart && rangeEnd) {
+      begin = rangeStart;
+      end = rangeEnd;
+    } else {
+      const today = new Date();
+      const past = new Date();
+      past.setDate(today.getDate() - (days - 1));
+      begin = formatDateLocal(past);
+      end = formatDateLocal(today);
+    }
+
+    const payload = { begin, end };
+    const baseUrl = import.meta.env.VITE_WEBHOOK_BASE_URL || 'https://vmi3533489.contaboserver.net/webhook';
+
+    const sumarValoresNumericos = (valores: any[]) => {
+      return valores.reduce((acc, val) => {
+        const n = Number(val);
+        return acc + (isNaN(n) ? 0 : n);
+      }, 0);
+    };
+
+    const parseCalls = (data: any) => {
+      if (typeof data === 'number') return data;
+      if (typeof data === 'object' && !Array.isArray(data) && data !== null) {
+        const claveExplicita = data['Llamadas Atendidas'] ?? data['llamadas_atendidas'] ?? data['llamadasAtendidas'] ?? data['atendidas'] ?? data['total'] ?? data['count'];
+        if (claveExplicita !== undefined) return Number(claveExplicita) || 0;
+        return sumarValoresNumericos(Object.values(data));
+      }
+      if (Array.isArray(data)) {
+        if (data.length === 0) return 0;
+        const primerItem = data[0];
+        if (Array.isArray(primerItem)) {
+          return data.reduce((acc: any, par: any) => {
+            const val = Number(par[1]);
+            return acc + (isNaN(val) ? 0 : val);
+          }, 0);
+        }
+        if (typeof primerItem === 'object' && primerItem !== null) {
+          const claveExplicita = primerItem['Llamadas Atendidas'] ?? primerItem['llamadas_atendidas'] ?? primerItem['llamadasAtendidas'] ?? primerItem['atendidas'];
+          if (claveExplicita !== undefined) {
+            return data.reduce((acc: number, obj: any) => {
+              const val = Number(obj['Llamadas Atendidas'] ?? obj['llamadas_atendidas'] ?? obj['llamadasAtendidas'] ?? obj['atendidas'] ?? 0);
+              return acc + (isNaN(val) ? 0 : val);
+            }, 0);
+          }
+          return data.reduce((acc: number, obj: any) => acc + sumarValoresNumericos(Object.values(obj)), 0);
+        }
+        return sumarValoresNumericos(data);
+      }
+      return 0;
+    };
+
+    const agruparPorDia = (dataLlamadas: any, dataResueltas: any) => {
+      const porDiaAtendidas = new Map<string, number>();
+      const porDiaResueltas = new Map<string, number>();
+
+      const procesarObjeto = (obj: any, map: Map<string, number>) => {
+        for (const [key, value] of Object.entries(obj)) {
+          const matchDate = key.match(/(\d{4}-\d{2}-\d{2})/);
+          const dia = matchDate ? matchDate[1] : null;
+          if (!dia) continue;
+          const num = Number(value);
+          if (isNaN(num)) continue;
+          map.set(dia, (map.get(dia) ?? 0) + num);
+        }
+      };
+
+      if (Array.isArray(dataLlamadas)) {
+        dataLlamadas.forEach((item) => {
+          if (typeof item === 'object' && item !== null && !Array.isArray(item)) procesarObjeto(item, porDiaAtendidas);
+        });
+      } else if (typeof dataLlamadas === 'object' && dataLlamadas !== null) {
+        procesarObjeto(dataLlamadas, porDiaAtendidas);
+      }
+
+      if (dataResueltas) {
+        if (Array.isArray(dataResueltas)) {
+          dataResueltas.forEach((item) => {
+            if (typeof item === 'object' && item !== null && !Array.isArray(item)) procesarObjeto(item, porDiaResueltas);
+          });
+        } else if (typeof dataResueltas === 'object' && dataResueltas !== null) {
+          procesarObjeto(dataResueltas, porDiaResueltas);
+        }
+      }
+
+      const todasLasFechas = new Set([...porDiaAtendidas.keys(), ...porDiaResueltas.keys()]);
+      const labelsOrdenados = [...todasLasFechas].sort();
+
+      return {
+        labels: labelsOrdenados,
+        atendidas: labelsOrdenados.map((d) => porDiaAtendidas.get(d) ?? 0),
+        resueltasIA: labelsOrdenados.map((d) => porDiaResueltas.get(d) ?? 0),
+      };
+    };
+
+    const agruparPorHora = (data: any) => {
+      const porHora = new Map<string, number>();
+      const procesarObjeto = (obj: any) => {
+        for (const [key, value] of Object.entries(obj)) {
+          const match = key.match(/(\d{4}-\d{2}-\d{2})\s+(\d{1,2})/);
+          if (!match) continue;
+          const hora = parseInt(match[2], 10);
+          const num = Number(value);
+          if (isNaN(num)) continue;
+          const etiqueta = hora.toString();
+          porHora.set(etiqueta, (porHora.get(etiqueta) ?? 0) + num);
+        }
+      };
+      if (Array.isArray(data)) {
+        data.forEach((item) => {
+          if (typeof item === 'object' && item !== null && !Array.isArray(item)) procesarObjeto(item);
+        });
+      } else if (typeof data === 'object' && data !== null) {
+        procesarObjeto(data);
+      }
+      const labels = [];
+      const atendidas = [];
+      for (let i = 0; i < 24; i++) {
+        const h = i.toString();
+        labels.push(h);
+        atendidas.push(porHora.get(h) ?? 0);
+      }
+      return { labels, atendidas };
+    };
+
+    Promise.all([
+      fetch(`${baseUrl}/stats-hour`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }).then(r => r.json()).catch(() => ({})),
+      fetch(`${baseUrl}/stats-solved`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }).then(r => r.json()).catch(() => ({})),
+      fetch(`${baseUrl}/stats-sentiment`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }).then(r => r.json()).catch(() => ({})),
+      fetch(`${baseUrl}/stats-call_successful`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }).then(r => r.json()).catch(() => ({}))
+    ]).then(([dataLlamadas, dataResueltas, dataSentiment, dataOutcome]) => {
+      setKpiAtendidas(parseCalls(dataLlamadas));
+      setKpiResueltas(parseCalls(dataResueltas));
+      setKpiDailyData(agruparPorDia(dataLlamadas, dataResueltas));
+      setKpiHourlyData(agruparPorHora(dataLlamadas));
+
+      let positive = 0, negative = 0, neutral = 0;
+      const procSent = (obj: any) => {
+        for (const [k, v] of Object.entries(obj)) {
+          const l = k.toLowerCase();
+          const n = Number(v) || 0;
+          if (n === 0) continue;
+          if (l.includes('positive') || l.includes('positivo')) positive += n;
+          else if (l.includes('negative') || l.includes('negativo')) negative += n;
+          else if (l.includes('neutral')) neutral += n;
+        }
+      };
+      if (Array.isArray(dataSentiment)) dataSentiment.forEach(i => typeof i === 'object' && i !== null && procSent(i));
+      else if (typeof dataSentiment === 'object' && dataSentiment !== null) procSent(dataSentiment);
+      setSentimentData({ positive, negative, neutral });
+
+      let exitosa = 0, fallida = 0;
+      const procOut = (obj: any) => {
+        for (const [k, v] of Object.entries(obj)) {
+          const l = k.toLowerCase();
+          const n = Number(v) || 0;
+          if (n === 0) continue;
+          if (l.includes('true')) exitosa += n;
+          else if (l.includes('false')) fallida += n;
+          else {
+            const parts = k.split(':');
+            const lp = parts[parts.length - 1];
+            if (lp.toLowerCase() === 'exitosa') exitosa += n;
+            else if (lp.toLowerCase() === 'fallida') fallida += n;
+          }
+        }
+      };
+      if (Array.isArray(dataOutcome)) dataOutcome.forEach(i => typeof i === 'object' && i !== null && procOut(i));
+      else if (typeof dataOutcome === 'object' && dataOutcome !== null) procOut(dataOutcome);
+      setOutcomeData({ exitosa, fallida });
+    });
+
+  }, [filterMode, rangeStart, rangeEnd, days]);
+
   const [live, setLive] = useState<RetellMetrics | null>(null);
   const [loading, setLoading] = useState(true);
   const fetchMetrics = useServerFn(getRetellMetrics);
@@ -744,12 +932,148 @@ export default function AIRPDashboard({
 
         {/* ═══════════════ PANEL GENERAL ═══════════════ */}
         {activeTab === "general" && (
-          <div className="h-[calc(100vh-180px)] w-full overflow-hidden rounded-2xl border border-border shadow-sm">
-            <iframe 
-              src="/calls-dashboard/index.html" 
-              className="h-full w-full border-0" 
-              title="Dashboard IA"
-            />
+          <div className="flex w-full flex-col gap-6 rounded-2xl">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* KPI 1: Llamadas Atendidas */}
+              <div className="flex flex-col justify-center rounded-2xl border border-border bg-card p-6 shadow-sm">
+                <div className="flex items-center gap-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-500/10">
+                    <PhoneCall className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-4xl font-bold text-foreground">{kpiAtendidas}</span>
+                  </div>
+                </div>
+                <div className="mt-4 text-sm font-semibold text-muted-foreground">
+                  Llamadas Atendidas
+                </div>
+              </div>
+
+              {/* KPI 2: Resueltas por IA */}
+              <div className="flex flex-col justify-center rounded-2xl border border-border bg-card p-6 shadow-sm">
+                <div className="flex items-center gap-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-500/10">
+                    <CheckCircle2 className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-4xl font-bold text-foreground">{kpiResueltas}</span>
+                    <span className="text-sm font-medium text-muted-foreground">
+                      ({kpiAtendidas > 0 ? ((kpiResueltas / kpiAtendidas) * 100).toFixed(1) : "0"}%)
+                    </span>
+                  </div>
+                </div>
+                <div className="mt-4 text-sm font-semibold text-muted-foreground">
+                  Resueltas por IA
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Tendencia diaria */}
+              <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+                <h3 className="text-lg font-semibold mb-4">Tendencia diaria de llamadas</h3>
+                <div className="h-[300px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={kpiDailyData.labels.map((l, i) => ({ label: l, atendidas: kpiDailyData.atendidas[i], resueltasIA: kpiDailyData.resueltasIA[i] }))}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                      <XAxis dataKey="label" tickLine={false} axisLine={false} tickMargin={10} fontSize={12} />
+                      <YAxis tickLine={false} axisLine={false} tickMargin={10} fontSize={12} />
+                      <Tooltip />
+                      <Legend />
+                      <Area type="monotone" dataKey="atendidas" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.1} name="Atendidas" />
+                      <Area type="monotone" dataKey="resueltasIA" stroke="#22c55e" fill="#22c55e" fillOpacity={0.1} name="Resueltas por IA" />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              {/* Tendencia horaria */}
+              <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+                <h3 className="text-lg font-semibold mb-4">Tendencia horaria de llamadas atendidas</h3>
+                <div className="h-[300px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={kpiHourlyData.labels.map((l, i) => ({ label: l, atendidas: kpiHourlyData.atendidas[i] }))}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                      <XAxis dataKey="label" tickLine={false} axisLine={false} tickMargin={10} fontSize={12} />
+                      <YAxis tickLine={false} axisLine={false} tickMargin={10} fontSize={12} />
+                      <Tooltip />
+                      <Legend />
+                      <Area type="monotone" dataKey="atendidas" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.1} name="Atendidas" />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              {/* Sentimiento */}
+              <div className="rounded-2xl border border-border bg-card p-6 shadow-sm flex flex-col items-center">
+                <h3 className="text-lg font-semibold mb-4 w-full text-left">Sentimiento de llamadas segun AI</h3>
+                <div className="h-[300px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={[
+                          { name: 'Positivo', value: sentimentData.positive, color: '#22c55e' },
+                          { name: 'Negativo', value: sentimentData.negative, color: '#ef4444' },
+                          { name: 'Neutral', value: sentimentData.neutral, color: '#94a3b8' }
+                        ]}
+                        dataKey="value"
+                        nameKey="name"
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={100}
+                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(2)}%`}
+                      >
+                        {
+                          [
+                            { name: 'Positivo', value: sentimentData.positive, color: '#22c55e' },
+                            { name: 'Negativo', value: sentimentData.negative, color: '#ef4444' },
+                            { name: 'Neutral', value: sentimentData.neutral, color: '#94a3b8' }
+                          ].map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))
+                        }
+                      </Pie>
+                      <Tooltip />
+                      <Legend />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              {/* Resultado */}
+              <div className="rounded-2xl border border-border bg-card p-6 shadow-sm flex flex-col items-center">
+                <h3 className="text-lg font-semibold mb-4 w-full text-left">Resultado Llamada segun AI</h3>
+                <div className="h-[300px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={[
+                          { name: 'Exitosa', value: outcomeData.exitosa, color: '#f59e0b' },
+                          { name: 'Fallida', value: outcomeData.fallida, color: '#0ea5e9' }
+                        ]}
+                        dataKey="value"
+                        nameKey="name"
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={100}
+                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(2)}%`}
+                      >
+                        {
+                          [
+                            { name: 'Exitosa', value: outcomeData.exitosa, color: '#f59e0b' },
+                            { name: 'Fallida', value: outcomeData.fallida, color: '#0ea5e9' }
+                          ].map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))
+                        }
+                      </Pie>
+                      <Tooltip />
+                      <Legend />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 

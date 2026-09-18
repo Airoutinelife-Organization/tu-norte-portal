@@ -59,23 +59,13 @@ function AdminPage() {
             window.location.href = "/ventas";
           }}
         />
-        <LoginForm
-          title="AIRP"
-          description="AI Routine Partner"
-          icon={Brain}
-          expectedUser="admin"
-          expectedPass="AIRP2026"
-          onSuccess={() => {
-            localStorage.setItem(STORAGE_KEY, "ok");
-            window.location.href = "/airp";
-          }}
-        />
+
       </div>
     </main>
   );
 }
 
-function LoginForm({
+export function LoginForm({
   title,
   description,
   icon: Icon,
