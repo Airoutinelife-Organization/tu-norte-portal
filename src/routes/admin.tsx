@@ -28,8 +28,22 @@ function AdminPage() {
   if (!ready) return <div className="min-h-screen bg-background" />;
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-gradient-to-b from-background to-muted px-4 py-12">
-      <div className="flex w-full max-w-6xl flex-col gap-8 md:flex-row md:justify-center md:items-start">
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#0B1121] px-4 py-12">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+        <video 
+          className="h-full w-full object-cover motion-reduce:hidden opacity-40" 
+          src="https://tu-norte-command-center.contact-4b1.workers.dev/tu-norte-tech-loop.webm" 
+          autoPlay 
+          loop 
+          muted 
+          playsInline 
+          preload="auto"
+        />
+        <div className="absolute inset-0 bg-black/20" />
+        <div className="absolute inset-0 shadow-[inset_0_0_150px_rgba(0,0,0,0.9)]" />
+      </div>
+
+      <div className="relative z-10 flex w-full max-w-6xl flex-col gap-8 md:flex-row md:justify-center md:items-start">
         <LoginForm
           title="Dashboard Ejecutivo"
           description="Monitoreo del asistente de IA"

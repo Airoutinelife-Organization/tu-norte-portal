@@ -1,362 +1,135 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState, useEffect, useRef } from "react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import {
-  MapPin, CreditCard, AlertCircle, CalendarPlus, Wifi, Tv, Headphones, FileText,
-  ArrowRight, Search, Zap, MessageSquare, Sparkles, Activity, ShieldCheck, Check,
-  Clock, TrendingUp,
-} from "lucide-react";
-const portalHero = "/images/portal-hero.jpg";
-const coverageCity = "/images/coverage-city.jpg";
-const heroLoop = "/videos/hero-loop.mp4";
-const girlLaptop = "/images/girl-laptop.png";
-const girlLaptopVideo = "/videos/girl-laptop.webm";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Eye, Lock } from "lucide-react";
+import { useState } from "react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Tu Norte Portal — Autogestión, soporte e instalación" },
-      { name: "description", content: "Verifica cobertura, paga tu factura, reporta fallas y agenda instalación. El portal interactivo de Tu Norte TV en Norte de Santander." },
-      { property: "og:title", content: "Tu Norte Portal — Portal interactivo" },
-      { property: "og:description", content: "Autogestión, soporte e instalación en un solo lugar." },
+      { title: "Tu Norte | Centro de Operaciones" },
+      { name: "description", content: "Portal interno seguro de Tu Norte. Acceso autorizado únicamente." },
     ],
   }),
   component: HomePage,
 });
 
-const helpOptions = [
-  { icon: MapPin, label: "Verificar cobertura", to: "/cobertura", color: "from-cyan-400 to-blue-500" },
-  { icon: CreditCard, label: "Pagar factura", to: "/medios-de-pago", color: "from-emerald-400 to-cyan-500" },
-  { icon: AlertCircle, label: "Reportar problema", to: "/mi-cuenta", color: "from-orange-400 to-red-500" },
-  { icon: CalendarPlus, label: "Agendar instalación", to: "/agendar", color: "from-violet-400 to-blue-500" },
-  { icon: Wifi, label: "Ver planes", to: "/planes", color: "from-blue-400 to-indigo-500" },
-] as const;
-
 function HomePage() {
   const navigate = useNavigate();
-  const [address, setAddress] = useState("");
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  useEffect(() => {
-    const v = videoRef.current;
-    if (!v) return;
-    v.muted = true;
-    const tryPlay = () => v.play().catch(() => {});
-    tryPlay();
-    v.addEventListener("canplay", tryPlay);
-    return () => v.removeEventListener("canplay", tryPlay);
-  }, []);
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (username === "admin" && password === "TuNorte2026*") {
+      localStorage.setItem("tunorte_admin_session", "ok");
+      navigate({ to: "/admin" });
+    } else {
+      setError(true);
+    }
+  };
 
   return (
-    <>
-      {/* HERO — How can we help you today? */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 -z-10">
-          <video
-            ref={videoRef}
-            src={heroLoop}
-            poster={portalHero}
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="auto"
-            aria-hidden="true"
-            className="h-full w-full object-cover"
+    <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-5 py-4 bg-[#0B1121]">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+        <video 
+          className="h-full w-full object-cover motion-reduce:hidden opacity-40" 
+          src="https://tu-norte-command-center.contact-4b1.workers.dev/tu-norte-tech-loop.webm" 
+          autoPlay 
+          loop 
+          muted 
+          playsInline 
+          preload="auto"
+        />
+        <div className="absolute inset-0 bg-black/20" />
+        <div className="absolute inset-0 shadow-[inset_0_0_150px_rgba(0,0,0,0.9)]" />
+      </div>
+      <section className="relative z-10 w-full max-w-md">
+        <header className="animate-in fade-in slide-in-from-bottom-4 duration-700 text-center">
+          <img 
+            src="https://tu-norte-command-center.contact-4b1.workers.dev/tu-norte-logo-white-3d.png" 
+            alt="Tu Norte TV" 
+            className="mx-auto h-auto w-32 drop-shadow-[0_16px_30px_var(--shadow-glow)] sm:w-36"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/80 to-primary/30" />
-          <div className="absolute inset-0 bg-gradient-to-t from-background/70 via-transparent to-transparent" />
-
-        </div>
-
-        <div className="relative mx-auto max-w-7xl px-4 pt-16 pb-32 md:px-6 md:pt-24 md:pb-40">
-          <div className="max-w-3xl">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-semibold text-white backdrop-blur">
-              <Sparkles className="h-3.5 w-3.5 text-brand" />
-              Portal de autogestión 24/7
-            </span>
-            <h1 className="mt-5 font-display text-4xl font-bold leading-[1.05] tracking-tight text-white md:text-6xl">
-              Accede al mundo usando la <span className="text-brand">mejor TV</span> y el <span className="text-brand">internet más rápido</span>
-            </h1>
-            <p className="mt-4 max-w-xl text-base text-white/80 md:text-lg">
-              Cientos de canales en HD, fibra óptica de alta velocidad y un portal donde tú mandas. Sin llamadas, sin esperas.
-            </p>
-
-            {/* Help options pills */}
-            <div className="mt-8 flex flex-wrap gap-3">
-              {helpOptions.map((o) => (
-                <Link
-                  key={o.label}
-                  to={o.to}
-                  className="group flex items-center gap-2 rounded-full bg-white/95 px-4 py-3 text-sm font-semibold text-primary shadow-card backdrop-blur transition hover:scale-105 hover:bg-white"
-                >
-                  <span className={`grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br ${o.color} text-white`}>
-                    <o.icon className="h-4 w-4" />
-                  </span>
-                  {o.label}
-                  <ArrowRight className="h-4 w-4 opacity-0 transition group-hover:translate-x-1 group-hover:opacity-100" />
-                </Link>
-              ))}
-            </div>
-          </div>
-        </div>
-
-      </section>
-
-      {/* QUICK ACTIONS PANEL */}
-      <section className="mx-auto max-w-7xl px-4 py-20 md:px-6">
-        <div className="mb-10 text-center">
-          <span className="text-xs font-semibold uppercase tracking-[0.2em] text-brand">Accesos rápidos</span>
-          <h2 className="mt-2 font-display text-3xl font-bold md:text-4xl">Lo que más necesitas, a un clic</h2>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {[
-            { icon: AlertCircle, title: "Internet no funciona", desc: "Diagnóstico guiado desde Mi cuenta", to: "/mi-cuenta", accent: "bg-red-500/10 text-red-600", cta: "Solucionar ahora" },
-            { icon: FileText, title: "Ver factura", desc: "Consulta y paga tu mes en línea", to: "/pagar", accent: "bg-emerald-500/10 text-emerald-600", cta: "Ir a facturas" },
-            { icon: Headphones, title: "Hablar con soporte", desc: "Crea un ticket o chatea", to: "/soporte", accent: "bg-violet-500/10 text-violet-600", cta: "Contactar" },
-            { icon: Wifi, title: "Contratar servicio", desc: "Encuentra tu plan ideal", to: "/recomendador", accent: "bg-brand/15 text-primary", cta: "Empezar" },
-          ].map((a) => (
-            <Link key={a.title} to={a.to} className="group">
-              <Card className="h-full border-border/60 bg-white p-6 shadow-soft transition hover:-translate-y-1 hover:shadow-glow">
-                <div className={`mb-4 inline-grid h-14 w-14 place-items-center rounded-2xl ${a.accent}`}>
-                  <a.icon className="h-7 w-7" />
-                </div>
-                <h3 className="font-display text-lg font-bold">{a.title}</h3>
-                <p className="mt-1 text-sm text-muted-foreground">{a.desc}</p>
-                <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary group-hover:gap-2 transition-all">
-                  {a.cta} <ArrowRight className="h-4 w-4" />
-                </span>
-              </Card>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* COVERAGE SEARCH */}
-      <section className="mx-auto max-w-5xl px-4 pb-20 md:px-6">
-        <Card className="overflow-hidden border-0 bg-white p-6 shadow-glow md:p-8">
-          <div className="flex items-center gap-3">
-            <span className="grid h-10 w-10 place-items-center rounded-xl bg-brand/15 text-primary">
-              <MapPin className="h-5 w-5" />
-            </span>
-            <div>
-              <h2 className="font-display text-lg font-bold md:text-xl">Verifica cobertura al instante</h2>
-              <p className="text-xs text-muted-foreground md:text-sm">Escribe tu dirección o barrio y ve los planes disponibles.</p>
-            </div>
-          </div>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              navigate({ to: "/cobertura" });
-            }}
-            className="mt-5 flex flex-col gap-3 sm:flex-row"
-          >
-            <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <input
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                placeholder="Ej: Av. 5 # 12-34, Barrio La Libertad, Cúcuta"
-                className="h-12 w-full rounded-xl border border-input bg-muted/40 pl-11 pr-4 text-sm outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
-                maxLength={120}
+          <p className="mt-1.5 font-display text-[0.72rem] font-bold uppercase tracking-[0.32em] text-brand">Centro de Operaciones</p>
+          <p className="mt-1 text-xs text-muted-foreground">Acceso interno autorizado</p>
+        </header>
+        <form onSubmit={handleLogin} style={{animationDelay: '120ms'}} className="animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-backwards mt-4 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 p-5 sm:p-6 shadow-2xl">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground" htmlFor="identifier">
+                Usuario o correo electrónico
+              </label>
+              <input 
+                type="text" 
+                value={username}
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                  setError(false);
+                }}
+                className="flex w-full px-3 py-2 text-base shadow-sm h-11 rounded-xl border border-white/10 bg-black/20 text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand/60 md:text-sm" 
+                id="identifier" 
+                required 
+                autoComplete="username" 
+                placeholder="nombre@tunorte.com" 
+                name="identifier" 
               />
             </div>
-            <Button type="submit" size="lg" className="h-12 bg-gradient-brand text-primary-foreground shadow-soft hover:opacity-90">
-              Verificar
-              <ArrowRight className="ml-1 h-4 w-4" />
-            </Button>
-          </form>
-        </Card>
-      </section>
-
-      {/* SMART PLAN SELECTOR teaser */}
-      <section className="bg-gradient-hero py-20">
-        <div className="mx-auto max-w-7xl px-4 md:px-6">
-          <div className="grid items-center gap-12 lg:grid-cols-2">
-            <div>
-              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-brand">Recomendador inteligente</span>
-              <h2 className="mt-2 font-display text-3xl font-bold md:text-4xl">
-                Encuentra tu plan ideal en <span className="text-gradient-brand">3 preguntas</span>
-              </h2>
-              <p className="mt-4 max-w-lg text-muted-foreground">
-                Cuéntanos cómo usas internet en casa y te recomendamos el plan que mejor se ajusta a tu familia, sin pagar de más.
-              </p>
-              <ul className="mt-6 space-y-3">
-                {[
-                  "Cuántas personas conectadas",
-                  "Para qué lo usan (streaming, gaming, trabajo)",
-                  "Si necesitas TV con canales premium",
-                ].map((b) => (
-                  <li key={b} className="flex items-center gap-3 text-sm">
-                    <span className="grid h-6 w-6 place-items-center rounded-full bg-success/15 text-success"><Check className="h-3.5 w-3.5" /></span>
-                    {b}
-                  </li>
-                ))}
-              </ul>
-              <Button asChild size="lg" className="mt-8 bg-gradient-brand text-primary-foreground shadow-glow">
-                <Link to="/recomendador">
-                  Empezar recomendador <ArrowRight className="ml-1 h-4 w-4" />
-                </Link>
-              </Button>
+            <div className="space-y-2">
+              <label className="text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground" htmlFor="password">
+                Contraseña
+              </label>
+              <div className="relative">
+                <input 
+                  type={showPassword ? "text" : "password"} 
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    setError(false);
+                  }}
+                  className="flex w-full px-3 py-2 text-base shadow-sm h-11 rounded-xl border border-white/10 bg-black/20 pr-12 text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand/60 md:text-sm" 
+                  id="password" 
+                  required 
+                  autoComplete="current-password" 
+                  placeholder="••••••••" 
+                  name="password" 
+                />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} aria-label="Mostrar contraseña" className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1.5 text-muted-foreground transition-colors hover:text-white">
+                  <Eye className="h-4.5 w-4.5" />
+                </button>
+              </div>
             </div>
-
-            <div className="relative">
-              <div className="absolute inset-0 rounded-[2.5rem] bg-gradient-brand opacity-15 blur-3xl" />
-              <Card className="relative border-0 bg-white p-6 shadow-glow md:p-8">
-                <div className="flex items-center justify-between">
-                  <span className="rounded-full bg-brand/15 px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary">Pregunta 1 / 3</span>
-                  <Sparkles className="h-5 w-5 text-brand" />
-                </div>
-                <p className="mt-4 font-display text-xl font-bold">¿Cuántas personas usarán internet en casa?</p>
-                <div className="mt-5 grid grid-cols-2 gap-3">
-                  {["1–2 personas", "3–4 personas", "5–6 personas", "Más de 6"].map((o) => (
-                    <Link key={o} to="/recomendador" className="rounded-xl border-2 border-border bg-muted/40 px-4 py-3 text-sm font-medium transition hover:border-brand hover:bg-brand/10 hover:text-primary">
-                      {o}
-                    </Link>
-                  ))}
-                </div>
-                <div className="mt-5 h-1.5 w-full overflow-hidden rounded-full bg-muted">
-                  <div className="h-full w-1/3 rounded-full bg-gradient-brand" />
-                </div>
-              </Card>
+            {error && (
+              <p className="text-sm text-red-500 font-medium">Credenciales incorrectas.</p>
+            )}
+            <div className="flex items-center justify-between gap-3 pt-1">
+              <div className="flex items-center gap-2.5">
+                <input type="checkbox" id="remember" name="remember" className="h-4 w-4 rounded-sm border-white/20 bg-black/20 text-brand focus:ring-brand" />
+                <label className="text-sm font-normal text-muted-foreground" htmlFor="remember">Recordarme</label>
+              </div>
+              <a href="#" className="text-sm font-medium text-brand underline-offset-4 transition-colors hover:text-white hover:underline">
+                ¿Olvidaste tu contraseña?
+              </a>
             </div>
+            <button className="inline-flex items-center justify-center gap-2 bg-gradient-brand shadow-glow hover:opacity-90 px-4 py-2 h-11 w-full rounded-xl font-display text-sm font-bold uppercase tracking-[0.2em] text-primary-foreground transition-transform duration-300 hover:-translate-y-0.5" type="submit">
+              Ingresar
+            </button>
           </div>
-        </div>
-      </section>
-
-      {/* SELF-SERVICE DASHBOARD CARDS */}
-      <section className="mx-auto max-w-7xl px-4 py-20 md:px-6">
-        <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-brand">Tu panel</span>
-            <h2 className="mt-2 font-display text-3xl font-bold md:text-4xl">Todo lo que necesitas, en tu mano</h2>
+          <div className="mt-5 flex items-center justify-center gap-2 border-t border-white/10 pt-4 text-[0.7rem] uppercase tracking-[0.18em] text-muted-foreground">
+            <Lock className="h-3.5 w-3.5" /> Entorno interno seguro
           </div>
-        </div>
-
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {/* Status card */}
-          <Card className="overflow-hidden border-0 bg-gradient-dark p-6 text-primary-foreground shadow-card">
-            <div className="flex items-center justify-between">
-              <span className="rounded-full bg-success/20 px-3 py-1 text-xs font-bold uppercase text-success">Operativo</span>
-              <Activity className="h-5 w-5 text-brand" />
-            </div>
-            <h3 className="mt-4 font-display text-xl font-bold">Estado de la red</h3>
-            <p className="mt-1 text-sm text-white/70">Sin incidencias reportadas en tu zona.</p>
-            <div className="mt-5 grid grid-cols-3 gap-3">
-              <div>
-                <p className="font-display text-2xl font-bold">99.9%</p>
-                <p className="text-[11px] text-white/60">Uptime</p>
-              </div>
-              <div>
-                <p className="font-display text-2xl font-bold">12ms</p>
-                <p className="text-[11px] text-white/60">Latencia</p>
-              </div>
-              <div>
-                <p className="font-display text-2xl font-bold">600</p>
-                <p className="text-[11px] text-white/60">Mbps máx</p>
-              </div>
-            </div>
-            <Link to="/test-velocidad" className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-brand hover:gap-2 transition-all">
-              Probar mi velocidad <ArrowRight className="h-4 w-4" />
-            </Link>
-          </Card>
-
-          {/* Tickets card */}
-          <Card className="border-border/60 bg-white p-6 shadow-soft transition hover:shadow-card">
-            <div className="flex items-center justify-between">
-              <span className="grid h-10 w-10 place-items-center rounded-xl bg-violet-500/10 text-violet-600">
-                <FileText className="h-5 w-5" />
-              </span>
-              <Clock className="h-5 w-5 text-muted-foreground" />
-            </div>
-            <h3 className="mt-4 font-display text-xl font-bold">My PQR</h3>
-            <p className="mt-1 text-sm text-muted-foreground">Sigue el estado de tus solicitudes en tiempo real.</p>
-            <div className="mt-5 rounded-xl border border-border bg-muted/30 p-3">
-              <div className="flex items-center justify-between text-xs">
-                <span className="font-mono font-semibold">TN-849201</span>
-                <span className="rounded-full bg-amber-500/15 px-2 py-0.5 font-semibold text-amber-700">En proceso</span>
-              </div>
-              <p className="mt-1 text-sm font-medium">Falla intermitente de señal</p>
-            </div>
-            <Link to="/my-pqr" className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:gap-2 transition-all">
-              Ver todos <ArrowRight className="h-4 w-4" />
-            </Link>
-          </Card>
-
-          {/* Billing card */}
-          <Card className="border-border/60 bg-white p-6 shadow-soft transition hover:shadow-card">
-            <div className="flex items-center justify-between">
-              <span className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-500/10 text-emerald-600">
-                <CreditCard className="h-5 w-5" />
-              </span>
-              <TrendingUp className="h-5 w-5 text-muted-foreground" />
-            </div>
-            <h3 className="mt-4 font-display text-xl font-bold">Mi factura</h3>
-            <p className="mt-1 text-sm text-muted-foreground">Próximo vencimiento: 15 de mayo</p>
-            <div className="mt-5 flex items-baseline gap-1">
-              <span className="font-display text-3xl font-bold text-primary">$89.900</span>
-              <span className="text-sm text-muted-foreground">/ mes</span>
-            </div>
-            <Link to="/pagar" className="mt-5 inline-flex w-full items-center justify-center gap-1 rounded-xl bg-gradient-brand px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-soft hover:opacity-90 transition">
-              Pagar ahora <ArrowRight className="h-4 w-4" />
-            </Link>
-          </Card>
-        </div>
+        </form>
+        <footer style={{animationDelay: '260ms'}} className="animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-backwards mt-4 flex items-center justify-center gap-2 text-center">
+          <p className="text-[0.68rem] tracking-[0.12em] text-muted-foreground/80">AI Technology powered by AI Routine Partner</p>
+          <a href="https://airoutinepartner.com/" target="_blank" rel="noopener noreferrer" className="group inline-flex shrink-0">
+            <img 
+              src="https://tu-norte-command-center.contact-4b1.workers.dev/ai-routine-partner-footer.png" 
+              alt="AI Routine Partner" 
+              className="h-auto w-12 opacity-90 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:scale-[1.06] group-hover:opacity-100" 
+            />
+          </a>
+        </footer>
       </section>
-
-      {/* COVERAGE BANNER */}
-      <section className="px-4 pb-20 md:px-6">
-        <div className="mx-auto max-w-7xl overflow-hidden rounded-[2.5rem] shadow-glow">
-          <div className="relative grid items-center gap-8 p-8 md:grid-cols-2 md:p-14">
-            <div className="absolute inset-0 -z-10">
-              <img src={coverageCity} alt="" loading="lazy" className="h-full w-full object-cover" width={1536} height={1024} />
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/95 to-primary/60" />
-            </div>
-            <div className="text-primary-foreground">
-              <h2 className="font-display text-3xl font-bold md:text-4xl">¿Listo para conectarte?</h2>
-              <p className="mt-3 max-w-xl text-white/80">
-                Verifica cobertura, elige tu plan y agenda la instalación en menos de 5 minutos.
-              </p>
-            </div>
-            <div className="flex flex-col gap-3 md:items-end">
-              <Button asChild size="lg" className="bg-brand text-primary hover:bg-brand/90 shadow-card">
-                <Link to="/cobertura">
-                  <MapPin className="mr-1 h-4 w-4" /> Ver cobertura
-                </Link>
-              </Button>
-              <Button asChild size="lg" variant="outline" className="border-white/40 bg-transparent text-white hover:bg-white/10 hover:text-white">
-                <Link to="/agendar">
-                  <CalendarPlus className="mr-1 h-4 w-4" /> Agendar instalación
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FEATURES STRIP */}
-      <section className="border-t border-border/60 bg-muted/30 py-14">
-        <div className="mx-auto grid max-w-7xl gap-6 px-4 md:grid-cols-4 md:px-6">
-          {[
-            { icon: Tv, title: "+120 canales HD", desc: "Entretenimiento para toda la familia" },
-            { icon: Zap, title: "Fibra óptica", desc: "Velocidad simétrica garantizada" },
-            { icon: ShieldCheck, title: "Operador autorizado", desc: "Vigilados por CRC y MinTIC" },
-            { icon: MessageSquare, title: "Soporte 24/7", desc: "Chat, WhatsApp y oficina física" },
-          ].map((f) => (
-            <div key={f.title} className="flex items-start gap-4">
-              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-brand/15 text-primary">
-                <f.icon className="h-6 w-6" />
-              </span>
-              <div>
-                <p className="font-display font-bold">{f.title}</p>
-                <p className="text-sm text-muted-foreground">{f.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-    </>
+    </main>
   );
 }
