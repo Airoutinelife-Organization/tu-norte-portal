@@ -14,8 +14,8 @@ export const Route = createFileRoute("/")({
 
 function HomePage() {
   const navigate = useNavigate();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("admin");
+  const [password, setPassword] = useState("TuNorte2026*");
   const [error, setError] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
