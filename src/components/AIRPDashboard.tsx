@@ -275,6 +275,11 @@ export default function AIRPDashboard({
 
       const procesarObjeto = (obj: any, map: Map<string, number>) => {
         for (const [key, value] of Object.entries(obj)) {
+          if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+            procesarObjeto(value, map);
+            continue;
+          }
+
           const matchDate = key.match(/(\d{4}-\d{2}-\d{2})/);
           const dia = matchDate ? matchDate[1] : null;
           if (!dia) continue;

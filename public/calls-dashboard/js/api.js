@@ -153,6 +153,11 @@ function agruparPorDia(dataLlamadas, dataResueltas = null) {
 
   const procesarObjeto = (obj, map) => {
     for (const [key, value] of Object.entries(obj)) {
+      if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+        procesarObjeto(value, map);
+        continue;
+      }
+
       // Buscar una fecha YYYY-MM-DD en la clave (ej: "stats:hour:2026-08-18 09", "stats:solved:2026-08-18", "2026-08-18")
       const matchDate = key.match(/(\d{4}-\d{2}-\d{2})/);
 
