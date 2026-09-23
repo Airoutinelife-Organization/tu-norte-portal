@@ -18,6 +18,7 @@ import { Route as ContactAgentRouteImport } from './routes/contact-agent'
 import { Route as ContactCenterRouteImport } from './routes/contact-center'
 import { Route as DiagnosticoRouteImport } from './routes/diagnostico'
 import { Route as EmpresaRouteImport } from './routes/empresa'
+import { Route as IncidenciasRouteImport } from './routes/incidencias'
 import { Route as MediosDePagoRouteImport } from './routes/medios-de-pago'
 import { Route as MiCuentaRouteImport } from './routes/mi-cuenta'
 import { Route as MyPqrRouteImport } from './routes/my-pqr'
@@ -75,6 +76,11 @@ const DiagnosticoRoute = DiagnosticoRouteImport.update({
 const EmpresaRoute = EmpresaRouteImport.update({
   id: '/empresa',
   path: '/empresa',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IncidenciasRoute = IncidenciasRouteImport.update({
+  id: '/incidencias',
+  path: '/incidencias',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MediosDePagoRoute = MediosDePagoRouteImport.update({
@@ -154,6 +160,7 @@ export interface FileRoutesByFullPath {
   '/contact-center': typeof ContactCenterRoute
   '/diagnostico': typeof DiagnosticoRoute
   '/empresa': typeof EmpresaRoute
+  '/incidencias': typeof IncidenciasRoute
   '/medios-de-pago': typeof MediosDePagoRoute
   '/mi-cuenta': typeof MiCuentaRoute
   '/my-pqr': typeof MyPqrRoute
@@ -178,6 +185,7 @@ export interface FileRoutesByTo {
   '/contact-center': typeof ContactCenterRoute
   '/diagnostico': typeof DiagnosticoRoute
   '/empresa': typeof EmpresaRoute
+  '/incidencias': typeof IncidenciasRoute
   '/medios-de-pago': typeof MediosDePagoRoute
   '/mi-cuenta': typeof MiCuentaRoute
   '/my-pqr': typeof MyPqrRoute
@@ -203,6 +211,7 @@ export interface FileRoutesById {
   '/contact-center': typeof ContactCenterRoute
   '/diagnostico': typeof DiagnosticoRoute
   '/empresa': typeof EmpresaRoute
+  '/incidencias': typeof IncidenciasRoute
   '/medios-de-pago': typeof MediosDePagoRoute
   '/mi-cuenta': typeof MiCuentaRoute
   '/my-pqr': typeof MyPqrRoute
@@ -229,6 +238,7 @@ export interface FileRouteTypes {
     | '/contact-center'
     | '/diagnostico'
     | '/empresa'
+    | '/incidencias'
     | '/medios-de-pago'
     | '/mi-cuenta'
     | '/my-pqr'
@@ -253,6 +263,7 @@ export interface FileRouteTypes {
     | '/contact-center'
     | '/diagnostico'
     | '/empresa'
+    | '/incidencias'
     | '/medios-de-pago'
     | '/mi-cuenta'
     | '/my-pqr'
@@ -277,6 +288,7 @@ export interface FileRouteTypes {
     | '/contact-center'
     | '/diagnostico'
     | '/empresa'
+    | '/incidencias'
     | '/medios-de-pago'
     | '/mi-cuenta'
     | '/my-pqr'
@@ -302,6 +314,7 @@ export interface RootRouteChildren {
   ContactCenterRoute: typeof ContactCenterRoute
   DiagnosticoRoute: typeof DiagnosticoRoute
   EmpresaRoute: typeof EmpresaRoute
+  IncidenciasRoute: typeof IncidenciasRoute
   MediosDePagoRoute: typeof MediosDePagoRoute
   MiCuentaRoute: typeof MiCuentaRoute
   MyPqrRoute: typeof MyPqrRoute
@@ -380,6 +393,13 @@ declare module '@tanstack/react-router' {
       path: '/empresa'
       fullPath: '/empresa'
       preLoaderRoute: typeof EmpresaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/incidencias': {
+      id: '/incidencias'
+      path: '/incidencias'
+      fullPath: '/incidencias'
+      preLoaderRoute: typeof IncidenciasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/medios-de-pago': {
@@ -486,6 +506,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactCenterRoute: ContactCenterRoute,
   DiagnosticoRoute: DiagnosticoRoute,
   EmpresaRoute: EmpresaRoute,
+  IncidenciasRoute: IncidenciasRoute,
   MediosDePagoRoute: MediosDePagoRoute,
   MiCuentaRoute: MiCuentaRoute,
   MyPqrRoute: MyPqrRoute,

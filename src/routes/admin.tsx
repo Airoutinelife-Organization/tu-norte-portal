@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import React, { useEffect, useState } from "react";
-import { ShieldCheck, HeadphonesIcon, ShoppingBag, Brain } from "lucide-react";
+import { ShieldCheck, HeadphonesIcon, ShoppingBag, Brain, Activity } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
   component: AdminPage,
@@ -43,7 +43,7 @@ function AdminPage() {
         <div className="absolute inset-0 shadow-[inset_0_0_150px_rgba(0,0,0,0.9)]" />
       </div>
 
-      <div className="relative z-10 flex w-full max-w-6xl flex-col gap-8 md:flex-row md:justify-center md:items-start">
+      <div className="relative z-10 flex w-full max-w-6xl flex-col gap-8 md:flex-row md:justify-center md:items-stretch">
         <LoginForm
           title="Dashboard Ejecutivo"
           description="Monitoreo del asistente de IA"
@@ -71,6 +71,17 @@ function AdminPage() {
           onSuccess={() => {
             localStorage.setItem(STORAGE_KEY, "ok");
             window.location.href = "/ventas";
+          }}
+        />
+        <LoginForm
+          title="Centro de Incidencias"
+          description="Estado Operacional en tiempo real"
+          icon={Activity}
+          expectedUser="admin"
+          expectedPass="TuNorte2026*"
+          onSuccess={() => {
+            localStorage.setItem(STORAGE_KEY, "ok");
+            window.location.href = "/incidencias";
           }}
         />
 
@@ -105,7 +116,7 @@ export function LoginForm({
         if (user.trim() === expectedUser && pass === expectedPass) onSuccess();
         else setError(true);
       }}
-      className="w-full max-w-sm rounded-2xl border border-border bg-card p-8 shadow-xl"
+      className="flex w-full max-w-sm flex-col rounded-2xl border border-border bg-card p-8 shadow-xl"
     >
       <div className="mb-6 flex flex-col items-center text-center">
         <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
@@ -115,7 +126,7 @@ export function LoginForm({
         <p className="mt-1 text-sm text-muted-foreground">{description}</p>
       </div>
 
-      <label className="mb-1 block text-xs font-medium text-muted-foreground">
+      <label className="mt-auto mb-1 block text-xs font-medium text-muted-foreground">
         Usuario
       </label>
       <input
