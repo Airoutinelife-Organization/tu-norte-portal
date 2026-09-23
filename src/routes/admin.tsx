@@ -81,7 +81,7 @@ function AdminPage() {
           expectedPass="TuNorte2026*"
           onSuccess={() => {
             localStorage.setItem(STORAGE_KEY, "ok");
-            window.location.href = "/incidencias";
+            window.location.href = "https://centro-de-incidencias-tu-norte.contact-4b1.workers.dev/";
           }}
         />
 
