@@ -159,6 +159,9 @@ export type ServiceCall = {
   contact_center?: string;
   priority?: string;
   contact?: string;
+  "QA-choice"?: string;
+  "QA-confidence"?: string;
+  "QA-probability"?: string;
 };
 
 export const getServiceCalls = createServerFn().handler(

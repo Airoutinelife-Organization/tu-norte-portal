@@ -2282,6 +2282,13 @@ export default function AIRPDashboard({
                               <span className="whitespace-pre-wrap">{c.request || "—"}</span>
                             </td>
                           </tr>
+                          <tr className={`border-t border-border/50 ${isExpanded ? "bg-blue-500/5" : isIA ? "bg-green-50/50 hover:bg-green-100/50" : "bg-muted/10 hover:bg-muted/30"}`}>
+                            <td colSpan={14} className="px-4 py-2 text-xs text-foreground">
+                              <span className={`whitespace-pre-wrap ${Number(c["QA-confidence"]) < 0.75 || Number(c["QA-probability"]) < 0.75 ? "text-red-500 font-semibold" : "text-muted-foreground"}`}>
+                                QA-choice={c["QA-choice"] || "—"}, QA-confidence={c["QA-confidence"] || "—"} y QA-probability={c["QA-probability"] || "—"}
+                              </span>
+                            </td>
+                          </tr>
                           {isExpanded && hasDetail && (
                             <tr className="border-t border-blue-500/20 bg-blue-500/5">
                               <td colSpan={14} className="px-6 py-4">
@@ -2767,6 +2774,9 @@ export default function AIRPDashboard({
                 <span className="text-xs font-semibold text-muted-foreground uppercase mb-1">Request</span>
                 <div className="text-sm p-3 bg-muted/20 rounded border border-border whitespace-pre-wrap">
                   {selectedRecordForModal.request || "—"}
+                </div>
+                <div className={`text-xs mt-2 ${Number(selectedRecordForModal["QA-confidence"]) < 0.75 || Number(selectedRecordForModal["QA-probability"]) < 0.75 ? "text-red-500 font-semibold" : "text-muted-foreground"}`}>
+                  QA-choice={selectedRecordForModal["QA-choice"] || "—"}, QA-confidence={selectedRecordForModal["QA-confidence"] || "—"} y QA-probability={selectedRecordForModal["QA-probability"] || "—"}
                 </div>
               </div>
               <div className="flex flex-col">
