@@ -200,10 +200,23 @@ export default function AIRPDashboard({
     return TABS.filter((t) => t.id !== "ventas" && t.id !== "servicio" && t.id !== "en_progreso");
   }, []);
 
-  const [days, setDays] = useState(1);
-  const [filterMode, setFilterMode] = useState<FilterMode>("preset");
-  const [rangeStart, setRangeStart] = useState(""); // "YYYY-MM-DD"
-  const [rangeEnd, setRangeEnd] = useState("");   // "YYYY-MM-DD"
+  const [days, setDays] = useState(() => {
+    const saved = localStorage.getItem("airp_days");
+    return saved ? parseInt(saved, 10) : 1;
+  });
+  const [filterMode, setFilterMode] = useState<FilterMode>(() => {
+    const saved = localStorage.getItem("airp_filterMode");
+    return (saved as FilterMode) || "preset";
+  });
+  const [rangeStart, setRangeStart] = useState(() => localStorage.getItem("airp_rangeStart") || ""); // "YYYY-MM-DD"
+  const [rangeEnd, setRangeEnd] = useState(() => localStorage.getItem("airp_rangeEnd") || "");   // "YYYY-MM-DD"
+
+  useEffect(() => {
+    localStorage.setItem("airp_days", days.toString());
+    localStorage.setItem("airp_filterMode", filterMode);
+    localStorage.setItem("airp_rangeStart", rangeStart);
+    localStorage.setItem("airp_rangeEnd", rangeEnd);
+  }, [days, filterMode, rangeStart, rangeEnd]);
 
   // ── KPI State ─────────────────────────────────────────────────────────────────
   const [kpiAtendidas, setKpiAtendidas] = useState(0);
@@ -1965,9 +1978,9 @@ export default function AIRPDashboard({
               )}
               </div>
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="bg-muted/50 text-xs uppercase text-muted-foreground">
+            <div className="overflow-auto max-h-[65vh]">
+              <table className="w-full text-sm relative">
+                <thead className="bg-muted/95 backdrop-blur sticky top-0 z-10 text-xs uppercase text-muted-foreground shadow-sm">
                   <tr>
                     {[
                       { label: "Key", field: "key" },
@@ -2284,8 +2297,15 @@ export default function AIRPDashboard({
                           </tr>
                           <tr className={`border-t border-border/50 ${isExpanded ? "bg-blue-500/5" : isIA ? "bg-green-50/50 hover:bg-green-100/50" : "bg-muted/10 hover:bg-muted/30"}`}>
                             <td colSpan={14} className="px-4 py-2 text-xs text-foreground">
-                              <span className={`whitespace-pre-wrap ${Number(c["QA-confidence"]) < 0.75 || Number(c["QA-probability"]) < 0.75 ? "text-red-500 font-semibold" : "text-muted-foreground"}`}>
-                                QA-choice={c["QA-choice"] || "—"}, QA-confidence={c["QA-confidence"] || "—"} y QA-probability={c["QA-probability"] || "—"}
+                              <span className="whitespace-pre-wrap text-muted-foreground">
+                                QA-choice={c["QA-choice"] || "—"},{" "}
+                                <span className={Number(c["QA-confidence"]) > 0.75 ? "text-green-500 font-semibold" : "text-red-500 font-semibold"}>
+                                  QA-confidence={c["QA-confidence"] || "—"}
+                                </span>{" "}
+                                y QA-probability={c["QA-probability"] || "—"} | QA_priority={c["QA_priority"] || "—"},{" "}
+                                <span className={Number(c["QA_priority_confidence"]) > 0.75 ? "text-green-500 font-semibold" : "text-red-500 font-semibold"}>
+                                  QA_priority_confidence={c["QA_priority_confidence"] || "—"}
+                                </span>
                               </span>
                             </td>
                           </tr>
@@ -2775,8 +2795,15 @@ export default function AIRPDashboard({
                 <div className="text-sm p-3 bg-muted/20 rounded border border-border whitespace-pre-wrap">
                   {selectedRecordForModal.request || "—"}
                 </div>
-                <div className={`text-xs mt-2 ${Number(selectedRecordForModal["QA-confidence"]) < 0.75 || Number(selectedRecordForModal["QA-probability"]) < 0.75 ? "text-red-500 font-semibold" : "text-muted-foreground"}`}>
-                  QA-choice={selectedRecordForModal["QA-choice"] || "—"}, QA-confidence={selectedRecordForModal["QA-confidence"] || "—"} y QA-probability={selectedRecordForModal["QA-probability"] || "—"}
+                <div className="text-xs mt-2 text-muted-foreground">
+                  QA-choice={selectedRecordForModal["QA-choice"] || "—"},{" "}
+                  <span className={Number(selectedRecordForModal["QA-confidence"]) > 0.75 ? "text-green-500 font-semibold" : "text-red-500 font-semibold"}>
+                    QA-confidence={selectedRecordForModal["QA-confidence"] || "—"}
+                  </span>{" "}
+                  y QA-probability={selectedRecordForModal["QA-probability"] || "—"} | QA_priority={selectedRecordForModal["QA_priority"] || "—"},{" "}
+                  <span className={Number(selectedRecordForModal["QA_priority_confidence"]) > 0.75 ? "text-green-500 font-semibold" : "text-red-500 font-semibold"}>
+                    QA_priority_confidence={selectedRecordForModal["QA_priority_confidence"] || "—"}
+                  </span>
                 </div>
               </div>
               <div className="flex flex-col">

@@ -162,6 +162,8 @@ export type ServiceCall = {
   "QA-choice"?: string;
   "QA-confidence"?: string;
   "QA-probability"?: string;
+  QA_priority?: string;
+  QA_priority_confidence?: string;
 };
 
 export const getServiceCalls = createServerFn().handler(
