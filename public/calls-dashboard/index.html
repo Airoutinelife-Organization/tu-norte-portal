@@ -102,7 +102,54 @@
           <small style="color: var(--text-secondary);">Métricas sincronizadas</small>
         </div>
       </div>
-      <div class="kpi-grid">
+      <section class="ck-module" id="callKpiModule" aria-label="Resultado de llamadas IA">
+        <div class="ck-card ck-main">
+          <div class="ck-head">
+            <div>
+              <div class="ck-eyebrow">Llamadas atendidas</div>
+              <div class="ck-total"><span id="ckTotal">0</span> <small>llamadas atendidas</small></div>
+            </div>
+            <span class="ck-status" id="ckStatus" hidden>Datos en validación</span>
+          </div>
+          <div class="ck-bar" role="img" aria-label="Distribución de resultados">
+            <span class="ck-seg ck-c-res" id="ckSegResolved"></span>
+            <span class="ck-seg ck-c-tra" id="ckSegTransferred"></span>
+            <span class="ck-seg ck-c-aba" id="ckSegAbandoned"></span>
+          </div>
+          <div class="ck-cats">
+            <button type="button" class="ck-cat" data-ck-filter="AI_RESOLVED">
+              <span class="ck-label"><i class="ck-dot ck-c-res"></i>Resueltas por IA <span class="ck-info" tabindex="0" data-tip="Llamadas donde la IA completó la solicitud del cliente sin requerir transferencia a un agente humano.">i</span></span>
+              <span class="ck-num"><b id="ckResolved">0</b> · <em id="ckResolvedPct">0%</em></span>
+            </button>
+            <div class="ck-cat-group">
+              <button type="button" class="ck-cat" data-ck-filter="TRANSFERRED">
+                <span class="ck-label"><i class="ck-dot ck-c-tra"></i>Transferidas <span class="ck-info" tabindex="0" data-tip="Llamadas donde la atención requirió continuar con un agente humano.">i</span></span>
+                <span class="ck-num"><b id="ckTransferred">0</b> · <em id="ckTransferredPct">0%</em></span>
+              </button>
+              <div class="ck-children">
+                <button type="button" class="ck-child ck-ok" data-ck-filter="TRANSFER_OK"><span>Exitosas</span><span><b id="ckOk">0</b> · <em id="ckOkPct">0%</em></span></button>
+                <button type="button" class="ck-child ck-fail" data-ck-filter="TRANSFER_FAIL"><span>Fallidas</span><span><b id="ckFail">0</b> · <em id="ckFailPct">0%</em></span></button>
+              </div>
+              <div class="ck-child-note">% sobre total transferidas</div>
+            </div>
+            <button type="button" class="ck-cat" data-ck-filter="ABANDONED">
+              <span class="ck-label"><i class="ck-dot ck-c-aba"></i>Abandonadas <span class="ck-info" tabindex="0" data-tip="Llamadas clasificadas como finalizadas prematuramente por el usuario antes de completar la atención.">i</span></span>
+              <span class="ck-num"><b id="ckAbandoned">0</b> · <em id="ckAbandonedPct">0%</em></span>
+            </button>
+          </div>
+          <p class="ck-filter-note" id="ckFilterNote" hidden></p>
+        </div>
+        <div class="ck-card ck-goal">
+          <div class="ck-eyebrow">Cumplimiento del objetivo de IA <span class="ck-info" tabindex="0" data-tip="Llamadas donde el agente IA ejecutó correctamente el objetivo definido para su flujo, incluyendo resoluciones directas o transferencias correctamente ejecutadas cuando correspondía.">i</span></div>
+          <div class="ck-goal-row"><span class="ck-goal-pct" id="ckGoalPct">0%</span><span class="ck-goal-ratio" id="ckGoalRatio">0 / 0</span></div>
+          <div class="ck-progress"><span id="ckGoalBar"></span></div>
+          <div class="ck-goal-legend">
+            <span><b class="ck-okc">✓</b> Objetivo cumplido: <b id="ckGoalDone">0</b></span>
+            <span><b class="ck-mutedc">○</b> Objetivo no completado: <b id="ckGoalNot">0</b></span>
+          </div>
+        </div>
+      </section>
+      <div class="kpi-grid" style="display:none" aria-hidden="true">
 
         <!-- KPI 1: Llamadas Atendidas (ACTIVO / CONECTADO A WEBHOOK) -->
         <article class="kpi-card" id="cardLlamadasAtendidas">

@@ -535,3 +535,48 @@
   justify-content: center;
   min-height: 200px;
 }
+
+/* ===== Módulo jerárquico de KPIs de llamadas IA ===== */
+.ck-module { display: grid; grid-template-columns: minmax(0, 2.2fr) minmax(260px, 1fr); gap: 20px; }
+.ck-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: 20px 24px; }
+.ck-module.is-loading .ck-card { opacity: .6; transition: opacity var(--transition-fast); }
+.ck-module.is-invalid .ck-bar, .ck-module.is-invalid .ck-cats, .ck-module.is-invalid .ck-goal { filter: grayscale(1); opacity: .45; }
+.ck-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.ck-eyebrow { font-size: .75rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+.ck-total { margin-top: 4px; font-size: 2.6rem; font-weight: 700; color: var(--text-primary); letter-spacing: -.02em; line-height: 1.1; }
+.ck-total small { font-size: .9rem; font-weight: 500; color: var(--text-secondary); letter-spacing: 0; }
+.ck-status { font-size: .75rem; font-weight: 600; color: #b54708; background: #fffaeb; border: 1px solid #fedf89; padding: 4px 10px; border-radius: var(--radius-full); }
+.ck-bar { display: flex; height: 14px; border-radius: var(--radius-full); overflow: hidden; background: var(--border-subtle); margin: 16px 0 18px; }
+.ck-seg { height: 100%; width: 0; transition: width .5s cubic-bezier(.4,0,.2,1); }
+.ck-c-res { background: #16a34a; }
+.ck-c-tra { background: var(--primary); }
+.ck-c-aba { background: #98a2b3; }
+.ck-cats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; align-items: start; }
+.ck-cat, .ck-child { font-family: inherit; text-align: left; cursor: pointer; background: var(--primary-tint); border: 1px solid transparent; border-radius: var(--radius-md); transition: all var(--transition-fast); width: 100%; }
+.ck-cat { padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; }
+.ck-cat:hover, .ck-child:hover { border-color: var(--primary-light); background: var(--primary-light); }
+.is-selected { border-color: var(--primary) !important; box-shadow: 0 0 0 3px var(--primary-light); }
+.ck-label { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; }
+.ck-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.ck-num { font-size: .95rem; color: var(--text-secondary); }
+.ck-num b { font-size: 1.6rem; color: var(--text-primary); font-weight: 700; }
+.ck-num em, .ck-child em { font-style: normal; font-weight: 600; }
+.ck-children { position: relative; margin: 10px 0 0 14px; padding-left: 14px; border-left: 2px solid var(--primary-light); display: flex; flex-direction: column; gap: 6px; }
+.ck-child { padding: 7px 10px; display: flex; justify-content: space-between; gap: 8px; font-size: .82rem; color: var(--text-secondary); background: var(--bg-card); border-color: var(--border-color); }
+.ck-child b { color: var(--text-primary); }
+.ck-ok span:first-child { color: #15803d; font-weight: 600; }
+.ck-fail span:first-child { color: #dc2626; font-weight: 600; }
+.ck-child-note { margin: 4px 0 0 28px; font-size: .7rem; color: var(--text-muted); }
+.ck-filter-note { margin-top: 14px; font-size: .8rem; color: var(--primary-dark); background: var(--primary-tint); border: 1px dashed var(--primary-light); border-radius: var(--radius-sm); padding: 8px 12px; }
+.ck-goal { display: flex; flex-direction: column; gap: 10px; }
+.ck-goal-row { display: flex; align-items: baseline; gap: 10px; }
+.ck-goal-pct { font-size: 2.4rem; font-weight: 700; color: var(--text-primary); letter-spacing: -.02em; }
+.ck-goal-ratio { font-size: .95rem; color: var(--text-secondary); font-weight: 600; }
+.ck-progress { height: 12px; background: var(--border-subtle); border-radius: var(--radius-full); overflow: hidden; }
+.ck-progress span { display: block; height: 100%; width: 0; background: #16a34a; border-radius: inherit; transition: width .5s cubic-bezier(.4,0,.2,1); }
+.ck-goal-legend { display: flex; flex-direction: column; gap: 4px; font-size: .85rem; color: var(--text-secondary); margin-top: auto; }
+.ck-okc { color: #16a34a; } .ck-mutedc { color: #98a2b3; }
+.ck-info { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 15px; height: 15px; border-radius: 50%; border: 1px solid var(--pill-border); color: var(--text-muted); font-size: .62rem; font-style: italic; font-weight: 700; text-transform: none; cursor: help; }
+.ck-info:hover::after, .ck-info:focus::after { content: attr(data-tip); position: absolute; left: 50%; top: calc(100% + 8px); transform: translateX(-50%); width: 240px; padding: 8px 10px; background: var(--text-primary); color: #fff; font-size: .75rem; font-weight: 500; font-style: normal; letter-spacing: 0; line-height: 1.4; border-radius: var(--radius-sm); box-shadow: var(--shadow-modal); z-index: 20; }
+@media (max-width: 992px) { .ck-module { grid-template-columns: 1fr; } }
+@media (max-width: 640px) { .ck-cats { grid-template-columns: 1fr; } .ck-total { font-size: 2.1rem; } }

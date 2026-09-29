@@ -4,6 +4,7 @@
 
 import { CONFIG } from './config.js';
 import { getPresetDateRange, formatDisplayDateRange, formatDateISO } from './dateUtils.js';
+import { renderCallKpis } from './callAnalytics.js';
 import { fetchKPIStats, agruparPorHora, fetchVentasData, fetchServiceData, fetchSentimentStats, fetchOutcomeStats } from './api.js';
 import { renderLlamadasChart, renderLlamadasHoraChart, renderSentimentChart, renderOutcomeChart } from './chartRenderer.js';
 
@@ -99,6 +100,7 @@ async function loadStatistics() {
     return;
   }
 
+  renderCallKpis({ begin: state.currentRange.begin, end: state.currentRange.end });
   if (!elements.kpiLlamadasAtendidas) return;
 
   // Estado de carga
