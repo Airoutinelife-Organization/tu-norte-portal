@@ -14,11 +14,9 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AgendarRouteImport } from './routes/agendar'
 import { Route as AirpRouteImport } from './routes/airp'
 import { Route as CoberturaRouteImport } from './routes/cobertura'
-import { Route as ContactAgentRouteImport } from './routes/contact-agent'
 import { Route as ContactCenterRouteImport } from './routes/contact-center'
 import { Route as DiagnosticoRouteImport } from './routes/diagnostico'
 import { Route as EmpresaRouteImport } from './routes/empresa'
-import { Route as IncidenciasRouteImport } from './routes/incidencias'
 import { Route as MediosDePagoRouteImport } from './routes/medios-de-pago'
 import { Route as MiCuentaRouteImport } from './routes/mi-cuenta'
 import { Route as MyPqrRouteImport } from './routes/my-pqr'
@@ -58,11 +56,6 @@ const CoberturaRoute = CoberturaRouteImport.update({
   path: '/cobertura',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ContactAgentRoute = ContactAgentRouteImport.update({
-  id: '/contact-agent',
-  path: '/contact-agent',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ContactCenterRoute = ContactCenterRouteImport.update({
   id: '/contact-center',
   path: '/contact-center',
@@ -76,11 +69,6 @@ const DiagnosticoRoute = DiagnosticoRouteImport.update({
 const EmpresaRoute = EmpresaRouteImport.update({
   id: '/empresa',
   path: '/empresa',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const IncidenciasRoute = IncidenciasRouteImport.update({
-  id: '/incidencias',
-  path: '/incidencias',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MediosDePagoRoute = MediosDePagoRouteImport.update({
@@ -156,11 +144,9 @@ export interface FileRoutesByFullPath {
   '/agendar': typeof AgendarRoute
   '/airp': typeof AirpRoute
   '/cobertura': typeof CoberturaRoute
-  '/contact-agent': typeof ContactAgentRoute
   '/contact-center': typeof ContactCenterRoute
   '/diagnostico': typeof DiagnosticoRoute
   '/empresa': typeof EmpresaRoute
-  '/incidencias': typeof IncidenciasRoute
   '/medios-de-pago': typeof MediosDePagoRoute
   '/mi-cuenta': typeof MiCuentaRoute
   '/my-pqr': typeof MyPqrRoute
@@ -181,11 +167,9 @@ export interface FileRoutesByTo {
   '/agendar': typeof AgendarRoute
   '/airp': typeof AirpRoute
   '/cobertura': typeof CoberturaRoute
-  '/contact-agent': typeof ContactAgentRoute
   '/contact-center': typeof ContactCenterRoute
   '/diagnostico': typeof DiagnosticoRoute
   '/empresa': typeof EmpresaRoute
-  '/incidencias': typeof IncidenciasRoute
   '/medios-de-pago': typeof MediosDePagoRoute
   '/mi-cuenta': typeof MiCuentaRoute
   '/my-pqr': typeof MyPqrRoute
@@ -207,11 +191,9 @@ export interface FileRoutesById {
   '/agendar': typeof AgendarRoute
   '/airp': typeof AirpRoute
   '/cobertura': typeof CoberturaRoute
-  '/contact-agent': typeof ContactAgentRoute
   '/contact-center': typeof ContactCenterRoute
   '/diagnostico': typeof DiagnosticoRoute
   '/empresa': typeof EmpresaRoute
-  '/incidencias': typeof IncidenciasRoute
   '/medios-de-pago': typeof MediosDePagoRoute
   '/mi-cuenta': typeof MiCuentaRoute
   '/my-pqr': typeof MyPqrRoute
@@ -234,11 +216,9 @@ export interface FileRouteTypes {
     | '/agendar'
     | '/airp'
     | '/cobertura'
-    | '/contact-agent'
     | '/contact-center'
     | '/diagnostico'
     | '/empresa'
-    | '/incidencias'
     | '/medios-de-pago'
     | '/mi-cuenta'
     | '/my-pqr'
@@ -259,11 +239,9 @@ export interface FileRouteTypes {
     | '/agendar'
     | '/airp'
     | '/cobertura'
-    | '/contact-agent'
     | '/contact-center'
     | '/diagnostico'
     | '/empresa'
-    | '/incidencias'
     | '/medios-de-pago'
     | '/mi-cuenta'
     | '/my-pqr'
@@ -284,11 +262,9 @@ export interface FileRouteTypes {
     | '/agendar'
     | '/airp'
     | '/cobertura'
-    | '/contact-agent'
     | '/contact-center'
     | '/diagnostico'
     | '/empresa'
-    | '/incidencias'
     | '/medios-de-pago'
     | '/mi-cuenta'
     | '/my-pqr'
@@ -310,11 +286,9 @@ export interface RootRouteChildren {
   AgendarRoute: typeof AgendarRoute
   AirpRoute: typeof AirpRoute
   CoberturaRoute: typeof CoberturaRoute
-  ContactAgentRoute: typeof ContactAgentRoute
   ContactCenterRoute: typeof ContactCenterRoute
   DiagnosticoRoute: typeof DiagnosticoRoute
   EmpresaRoute: typeof EmpresaRoute
-  IncidenciasRoute: typeof IncidenciasRoute
   MediosDePagoRoute: typeof MediosDePagoRoute
   MiCuentaRoute: typeof MiCuentaRoute
   MyPqrRoute: typeof MyPqrRoute
@@ -367,13 +341,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CoberturaRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/contact-agent': {
-      id: '/contact-agent'
-      path: '/contact-agent'
-      fullPath: '/contact-agent'
-      preLoaderRoute: typeof ContactAgentRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/contact-center': {
       id: '/contact-center'
       path: '/contact-center'
@@ -393,13 +360,6 @@ declare module '@tanstack/react-router' {
       path: '/empresa'
       fullPath: '/empresa'
       preLoaderRoute: typeof EmpresaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/incidencias': {
-      id: '/incidencias'
-      path: '/incidencias'
-      fullPath: '/incidencias'
-      preLoaderRoute: typeof IncidenciasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/medios-de-pago': {
@@ -502,11 +462,9 @@ const rootRouteChildren: RootRouteChildren = {
   AgendarRoute: AgendarRoute,
   AirpRoute: AirpRoute,
   CoberturaRoute: CoberturaRoute,
-  ContactAgentRoute: ContactAgentRoute,
   ContactCenterRoute: ContactCenterRoute,
   DiagnosticoRoute: DiagnosticoRoute,
   EmpresaRoute: EmpresaRoute,
-  IncidenciasRoute: IncidenciasRoute,
   MediosDePagoRoute: MediosDePagoRoute,
   MiCuentaRoute: MiCuentaRoute,
   MyPqrRoute: MyPqrRoute,

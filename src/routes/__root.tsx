@@ -1,5 +1,6 @@
 import { Outlet, createRootRoute, HeadContent, Scripts, useRouterState } from "@tanstack/react-router";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 import { Chatbot } from "@/components/Chatbot";
 import { Link } from "@tanstack/react-router";
 import { Toaster } from "@/components/ui/sonner";
@@ -64,12 +65,12 @@ function RootShell({ children }: { children: React.ReactNode }) {
   );
 }
 
-const ADMIN_PATHS = ["/admin", "/airp", "/contact-center", "/ventas", "/contact-agent", "/incidencias"];
+const ADMIN_PATHS = ["/admin", "/airp", "/contact-center", "/ventas"];
 const ADMIN_SESSION_KEY = "tunorte_admin_session";
 
 function RootComponent() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const isAdminArea = pathname === "/" || ADMIN_PATHS.some((p) => pathname.toLowerCase() === p || pathname.toLowerCase().startsWith(`${p}/`));
+  const isAdminArea = ADMIN_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`));
   const [hasAdminSession, setHasAdminSession] = useState(false);
 
   useEffect(() => {
@@ -100,6 +101,7 @@ function RootComponent() {
       <main className="flex-1">
         <Outlet />
       </main>
+      <Footer />
       {!hasAdminSession && <Chatbot />}
       <Toaster />
     </div>

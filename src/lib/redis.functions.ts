@@ -140,8 +140,6 @@ export type ServiceCall = {
   phone?: string;
   external_id?: string;
   caller_name?: string;
-  client_name?: string;
-  direccion?: string;
   call_summary?: string;
   notes?: string;
   url?: string;
@@ -154,16 +152,6 @@ export type ServiceCall = {
   AIRP?: string;
   notes_AIRP?: string;
   ticket?: string;
-  duration_ms?: number;
-  transferredTo?: string;
-  contact_center?: string;
-  priority?: string;
-  contact?: string;
-  "QA-choice"?: string;
-  "QA-confidence"?: string;
-  "QA-probability"?: string;
-  QA_priority?: string;
-  QA_priority_confidence?: string;
 };
 
 export const getServiceCalls = createServerFn().handler(
@@ -204,25 +192,6 @@ export const getHistoricoCalls = createServerFn()
     }
   });
 
-export const getHistoricoCallsAgente = createServerFn()
-  .validator((d: { begin: string; end: string; agente?: string }) => d)
-  .handler(async ({ data }): Promise<{ calls: ServiceCall[]; error?: string }> => {
-    try {
-      const url = "https://vmi3533489.contaboserver.net/webhook/get-contact-center-historico-agente";
-      const res = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      if (!res.ok) return { calls: [], error: await res.text() };
-      const raw = await res.json();
-      const callsData = Array.isArray(raw) ? raw : (raw ? [raw] : []);
-      return { calls: callsData };
-    } catch (err) {
-      return { calls: [], error: String(err) };
-    }
-  });
-
 export const getEnProgresoCalls = createServerFn()
   .handler(async (): Promise<{ calls: ServiceCall[]; error?: string }> => {
     try {
@@ -231,25 +200,6 @@ export const getEnProgresoCalls = createServerFn()
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({}),
-      });
-      if (!res.ok) return { calls: [], error: await res.text() };
-      const raw = await res.json();
-      const callsData = Array.isArray(raw) ? raw : (raw ? [raw] : []);
-      return { calls: callsData };
-    } catch (err) {
-      return { calls: [], error: String(err) };
-    }
-  });
-
-export const getEnProgresoCallsAgente = createServerFn()
-  .validator((d: { agente?: string }) => d)
-  .handler(async ({ data }): Promise<{ calls: ServiceCall[]; error?: string }> => {
-    try {
-      const url = "https://vmi3533489.contaboserver.net/webhook/get-contact-center-en-progreso-agente";
-      const res = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ agente: data.agente }),
       });
       if (!res.ok) return { calls: [], error: await res.text() };
       const raw = await res.json();

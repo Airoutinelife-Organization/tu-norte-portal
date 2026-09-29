@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import React, { useEffect, useState } from "react";
-import { ShieldCheck, HeadphonesIcon, ShoppingBag, Brain, Activity } from "lucide-react";
+import { ShieldCheck, HeadphonesIcon, ShoppingBag, Brain } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
   component: AdminPage,
@@ -28,22 +28,8 @@ function AdminPage() {
   if (!ready) return <div className="min-h-screen bg-background" />;
 
   return (
-    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#0B1121] px-4 py-12">
-      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
-        <video 
-          className="h-full w-full object-cover motion-reduce:hidden opacity-40" 
-          src="https://tu-norte-command-center.contact-4b1.workers.dev/tu-norte-tech-loop.webm" 
-          autoPlay 
-          loop 
-          muted 
-          playsInline 
-          preload="auto"
-        />
-        <div className="absolute inset-0 bg-black/20" />
-        <div className="absolute inset-0 shadow-[inset_0_0_150px_rgba(0,0,0,0.9)]" />
-      </div>
-
-      <div className="relative z-10 flex w-full max-w-6xl flex-col gap-8 md:flex-row md:justify-center md:items-stretch">
+    <main className="flex min-h-screen items-center justify-center bg-gradient-to-b from-background to-muted px-4 py-12">
+      <div className="flex w-full max-w-6xl flex-col gap-8 md:flex-row md:justify-center md:items-start">
         <LoginForm
           title="Dashboard Ejecutivo"
           description="Monitoreo del asistente de IA"
@@ -57,7 +43,6 @@ function AdminPage() {
           title="Contact Center"
           description="Gestión y métricas de llamadas"
           icon={HeadphonesIcon}
-          expectedPass="Contact2026!"
           onSuccess={() => {
             localStorage.setItem(STORAGE_KEY, "ok");
             window.location.href = "/contact-center";
@@ -67,30 +52,28 @@ function AdminPage() {
           title="Administracion"
           description="Ventas y otros"
           icon={ShoppingBag}
-          expectedPass="Flor2026$"
           onSuccess={() => {
             localStorage.setItem(STORAGE_KEY, "ok");
             window.location.href = "/ventas";
           }}
         />
         <LoginForm
-          title="Centro de Incidencias"
-          description="Estado Operacional en tiempo real"
-          icon={Activity}
+          title="AIRP"
+          description="AI Routine Partner"
+          icon={Brain}
           expectedUser="admin"
-          expectedPass="TuNorte2026*"
+          expectedPass="AIRP2026"
           onSuccess={() => {
             localStorage.setItem(STORAGE_KEY, "ok");
-            window.location.href = "https://centro-de-incidencias-tu-norte.contact-4b1.workers.dev/";
+            window.location.href = "/airp";
           }}
         />
-
       </div>
     </main>
   );
 }
 
-export function LoginForm({
+function LoginForm({
   title,
   description,
   icon: Icon,
@@ -116,7 +99,7 @@ export function LoginForm({
         if (user.trim() === expectedUser && pass === expectedPass) onSuccess();
         else setError(true);
       }}
-      className="flex w-full max-w-sm flex-col rounded-2xl border border-border bg-card p-8 shadow-xl"
+      className="w-full max-w-sm rounded-2xl border border-border bg-card p-8 shadow-xl"
     >
       <div className="mb-6 flex flex-col items-center text-center">
         <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
@@ -126,7 +109,7 @@ export function LoginForm({
         <p className="mt-1 text-sm text-muted-foreground">{description}</p>
       </div>
 
-      <label className="mt-auto mb-1 block text-xs font-medium text-muted-foreground">
+      <label className="mb-1 block text-xs font-medium text-muted-foreground">
         Usuario
       </label>
       <input

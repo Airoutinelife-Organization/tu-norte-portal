@@ -2,11 +2,6 @@
 <html lang="es">
 
 <head>
-  <script>
-    if (localStorage.getItem("tunorte_admin_session") !== "ok") {
-      window.location.href = "/admin";
-    }
-  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard IA (v1) · Tu Norte</title>
@@ -50,7 +45,19 @@
     <!-- Navegación por Pestañas (inline en header) -->
     <nav class="header-nav" aria-label="Navegación principal">
       <ul class="nav-tabs" role="tablist">
-
+        <li role="presentation">
+          <button type="button" class="nav-tab-btn active" data-target="panel-general" role="tab" aria-selected="true">
+            <!-- Icon Grid -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" />
+            </svg>
+            <span>Panel General</span>
+          </button>
+        </li>
         
         
 
@@ -190,7 +197,25 @@
           <h2 class="kpi-title">Transferencia fallida pbx</h2>
         </article>
 
-
+        <!-- KPI 6: Pending -->
+        <article class="kpi-card">
+          <div class="kpi-header">
+            <div class="kpi-icon-wrapper" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                <circle cx="8.5" cy="7" r="4" />
+                <line x1="18" y1="8" x2="23" y2="13" />
+                <line x1="23" y1="8" x2="18" y2="13" />
+              </svg>
+            </div>
+            <div style="display: flex; align-items: baseline; gap: 8px;">
+              <div class="kpi-value">0</div>
+              <div class="kpi-percentage">(0%)</div>
+            </div>
+          </div>
+          <h2 class="kpi-title">Pending</h2>
+        </article>
 
 
       </div>

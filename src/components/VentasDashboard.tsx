@@ -57,7 +57,6 @@ import {X,
   UserPlus,
   Clock,
   Archive,
-  Star,
 } from "lucide-react";
 
 const formatDateLocal = (date: Date) => {
@@ -377,9 +376,7 @@ export default function VentasDashboard({
         return 0;
       });
     }
-    const totalPages = Math.ceil(calls.length / historicoPageSize);
-    const validPage = Math.max(1, Math.min(historicoPage, totalPages || 1));
-    const startIdx = (validPage - 1) * historicoPageSize;
+    const startIdx = (historicoPage - 1) * historicoPageSize;
     return calls.slice(startIdx, startIdx + historicoPageSize);
   }, [historicoCalls, historicoPage, historicoPageSize, historicoSortField, historicoSortDirection]);
   
@@ -408,7 +405,6 @@ export default function VentasDashboard({
           .then((res) => {
             if (!cancelled) {
               setHistoricoCalls(res.calls || []);
-              setHistoricoPage(1);
               setHistoricoError(res.error ?? null);
             }
           })
@@ -780,7 +776,7 @@ export default function VentasDashboard({
                     <th className="px-4 py-3 text-left font-medium">Inicio</th>
                     <th className="px-4 py-3 text-left font-medium">Especialista</th>
                     <th className="px-4 py-3 text-left font-medium">Teléfono</th>
-                    <th className="px-4 py-3 text-left font-medium">Documento</th>
+                    <th className="px-4 py-3 text-left font-medium">ID Externo</th>
                     <th className="px-4 py-3 text-left font-medium">Zona</th>
                     <th className="px-4 py-3 text-left font-medium">Desconexión</th>
                   </tr>
@@ -986,8 +982,8 @@ export default function VentasDashboard({
                     <th className="px-4 py-3 text-left font-medium">Canal</th>
                     <th className="px-4 py-3 text-left font-medium">Agente</th>
                     <th className="px-4 py-3 text-left font-medium">Teléfono</th>
-                    <th className="px-4 py-3 text-left font-medium">Documento</th>
-                    <th className="px-4 py-3 text-left font-medium">PBX</th>
+                    <th className="px-4 py-3 text-left font-medium">ID Externo</th>
+                    <th className="px-4 py-3 text-left font-medium">Transferencia</th>
                     
                     <th className="px-4 py-3 text-left font-medium">Desconexión</th>
                   </tr>
@@ -1269,9 +1265,8 @@ export default function VentasDashboard({
                       { label: "Canal", field: "channel" },
                       { label: "Agente", field: "agent" },
                       { label: "Teléfono", field: "phone" },
-                      { label: "Documento", field: "external_id" },
-                      { label: "Dirección", field: "direccion" },
-                      { label: "PBX", field: "call_transfer" },
+                      { label: "ID Externo", field: "external_id" },
+                      { label: "Transferencia", field: "call_transfer" },
                       { label: "Desconexión", field: "disconnection_reason" }
                     ].map((col) => {
                       const isSortable = col.field !== "key" && col.field !== "status";
@@ -1305,7 +1300,7 @@ export default function VentasDashboard({
                 <tbody>
                   {enProgresoLoading ? (
                     <tr>
-                      <td colSpan={10} className="px-6 py-8 text-center text-muted-foreground">
+                      <td colSpan={9} className="px-6 py-8 text-center text-muted-foreground">
                         <div className="flex items-center justify-center gap-2">
                           <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" />
                           Consultando llamadas de servicio...
@@ -1314,7 +1309,7 @@ export default function VentasDashboard({
                     </tr>
                   ) : enProgresoCalls.length === 0 ? (
                     <tr>
-                      <td colSpan={10} className="px-6 py-8 text-center text-muted-foreground">
+                      <td colSpan={9} className="px-6 py-8 text-center text-muted-foreground">
                         {enProgresoError ? `Error al cargar: ${enProgresoError}` : "Sin registros encontrados."}
                       </td>
                     </tr>
@@ -1360,29 +1355,11 @@ export default function VentasDashboard({
                                       initials: allAgents[c.assignedTo].initials,
                                       name: allAgents[c.assignedTo].name
                                     } : null);
-                                    return (
-                                      <div className="flex items-center gap-1">
-                                        {currentAgent ? (
-                                          <span className="ml-1 text-[10px] font-bold text-orange-700 bg-orange-100 rounded px-1.5 py-0.5" title={currentAgent.name}>
-                                            {currentAgent.initials}
-                                          </span>
-                                        ) : null}
-                                        <div className="flex ml-1" title={c.priority ? `Prioridad: ${c.priority}` : "Sin prioridad"}>
-                                          {[1, 2, 3].map((starIdx) => {
-                                            const isActive = 
-                                              (c.priority === "Alta" && starIdx <= 3) ||
-                                              (c.priority === "Media" && starIdx <= 2) ||
-                                              (c.priority === "Baja" && starIdx <= 1);
-                                            return (
-                                              <Star 
-                                                key={starIdx} 
-                                                className={`h-3 w-3 ${isActive ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`} 
-                                              />
-                                            );
-                                          })}
-                                        </div>
-                                      </div>
-                                    );
+                                    return currentAgent ? (
+                                      <span className="ml-1 text-[10px] font-bold text-orange-700 bg-orange-100 rounded px-1.5 py-0.5" title={currentAgent.name}>
+                                        {currentAgent.initials}
+                                      </span>
+                                    ) : null;
                                   })()}
                                 </div>
                                 </div>
@@ -1472,11 +1449,7 @@ export default function VentasDashboard({
                                <p className="font-medium">{c.phone || "—"}</p>
                                {c.caller_name && <p className="text-muted-foreground">{c.caller_name}</p>}
                             </td>
-                            <td className="px-4 py-3 text-xs text-foreground">
-                              <p className="font-mono">{c.external_id || "—"}</p>
-                              {c.client_name && <p className="text-muted-foreground mt-0.5">{c.client_name}</p>}
-                            </td>
-                            <td className="px-4 py-3 text-xs text-foreground">{c.direccion || "—"}</td>
+                            <td className="px-4 py-3 font-mono text-xs text-foreground">{c.external_id || "—"}</td>
                             <td className="px-4 py-3 text-xs text-foreground">
                               {c.pbx === "Fallo" ? (
                                 <span className="inline-flex items-center rounded-full bg-red-500/10 px-2 py-0.5 text-xs font-medium text-red-700">
@@ -1494,7 +1467,7 @@ export default function VentasDashboard({
                           </tr>
                           {isExpanded && hasDetail && (
                             <tr className="border-t border-blue-500/20 bg-blue-500/5">
-                              <td colSpan={10} className="px-6 py-4">
+                              <td colSpan={9} className="px-6 py-4">
                                 <div className="grid gap-3 sm:grid-cols-2">
                                   {c.call_summary && (
                                     <div>
@@ -1626,9 +1599,8 @@ export default function VentasDashboard({
                       { label: "Canal", field: "channel" },
                       { label: "Agente", field: "agent" },
                       { label: "Teléfono", field: "phone" },
-                      { label: "Documento", field: "external_id" },
-                      { label: "Dirección", field: "direccion" },
-                      { label: "PBX", field: "call_transfer" },
+                      { label: "ID Externo", field: "external_id" },
+                      { label: "Transferencia", field: "call_transfer" },
                       { label: "Desconexión", field: "disconnection_reason" }
                     ].map((col) => {
                       const isSortable = col.field !== "key";
@@ -1662,7 +1634,7 @@ export default function VentasDashboard({
                 <tbody>
                   {historicoLoading ? (
                     <tr>
-                      <td colSpan={10} className="px-6 py-8 text-center text-muted-foreground">
+                      <td colSpan={9} className="px-6 py-8 text-center text-muted-foreground">
                         <div className="flex items-center justify-center gap-2">
                           <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" />
                           Consultando llamadas de servicio...
@@ -1671,7 +1643,7 @@ export default function VentasDashboard({
                     </tr>
                   ) : historicoCalls.length === 0 ? (
                     <tr>
-                      <td colSpan={10} className="px-6 py-8 text-center text-muted-foreground">
+                      <td colSpan={9} className="px-6 py-8 text-center text-muted-foreground">
                         {historicoError ? `Error al cargar: ${historicoError}` : "Sin registros encontrados."}
                       </td>
                     </tr>
@@ -1704,29 +1676,11 @@ export default function VentasDashboard({
                                       initials: allAgents[c.assignedTo].initials,
                                       name: allAgents[c.assignedTo].name
                                     } : null);
-                                    return (
-                                      <div className="flex items-center gap-1">
-                                        {currentAgent ? (
-                                          <span className="ml-1 text-[10px] font-bold text-orange-700 bg-orange-100 rounded px-1.5 py-0.5" title={currentAgent.name}>
-                                            {currentAgent.initials}
-                                          </span>
-                                        ) : null}
-                                        <div className="flex ml-1" title={c.priority ? `Prioridad: ${c.priority}` : "Sin prioridad"}>
-                                          {[1, 2, 3].map((starIdx) => {
-                                            const isActive = 
-                                              (c.priority === "Alta" && starIdx <= 3) ||
-                                              (c.priority === "Media" && starIdx <= 2) ||
-                                              (c.priority === "Baja" && starIdx <= 1);
-                                            return (
-                                              <Star 
-                                                key={starIdx} 
-                                                className={`h-3 w-3 ${isActive ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`} 
-                                              />
-                                            );
-                                          })}
-                                        </div>
-                                      </div>
-                                    );
+                                    return currentAgent ? (
+                                      <span className="ml-1 text-[10px] font-bold text-orange-700 bg-orange-100 rounded px-1.5 py-0.5" title={currentAgent.name}>
+                                        {currentAgent.initials}
+                                      </span>
+                                    ) : null;
                                   })()}
                                 </div>
                                 </div>
@@ -1805,11 +1759,7 @@ export default function VentasDashboard({
                                <p className="font-medium">{c.phone || "—"}</p>
                                {c.caller_name && <p className="text-muted-foreground">{c.caller_name}</p>}
                             </td>
-                            <td className="px-4 py-3 text-xs text-foreground">
-                              <p className="font-mono">{c.external_id || "—"}</p>
-                              {c.client_name && <p className="text-muted-foreground mt-0.5">{c.client_name}</p>}
-                            </td>
-                            <td className="px-4 py-3 text-xs text-foreground">{c.direccion || "—"}</td>
+                            <td className="px-4 py-3 font-mono text-xs text-foreground">{c.external_id || "—"}</td>
                             <td className="px-4 py-3 text-xs text-foreground">
                               {c.pbx === "Fallo" ? (
                                 <span className="inline-flex items-center rounded-full bg-red-500/10 px-2 py-0.5 text-xs font-medium text-red-700">
@@ -1827,7 +1777,7 @@ export default function VentasDashboard({
                           </tr>
                           {isExpanded && hasDetail && (
                             <tr className="border-t border-blue-500/20 bg-blue-500/5">
-                              <td colSpan={10} className="px-6 py-4">
+                              <td colSpan={9} className="px-6 py-4">
                                 <div className="grid gap-3 sm:grid-cols-2">
                                   {c.call_summary && (
                                     <div>
@@ -1884,7 +1834,7 @@ export default function VentasDashboard({
             {!historicoLoading && historicoCalls.length > 0 && (
               <div className="flex items-center justify-between border-t border-border px-6 py-3">
                 <div className="text-xs text-muted-foreground">
-                  Mostrando {((Math.min(historicoPage, Math.max(1, Math.ceil(historicoCalls.length / historicoPageSize))) - 1) * historicoPageSize) + 1} a {Math.min(Math.min(historicoPage, Math.max(1, Math.ceil(historicoCalls.length / historicoPageSize))) * historicoPageSize, historicoCalls.length)} de {historicoCalls.length}
+                  Mostrando {((historicoPage - 1) * historicoPageSize) + 1} a {Math.min(historicoPage * historicoPageSize, historicoCalls.length)} de {historicoCalls.length}
                 </div>
                 <div className="flex items-center gap-2">
                   <button
