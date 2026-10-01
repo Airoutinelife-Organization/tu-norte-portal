@@ -60,7 +60,6 @@ export function validateSummary(s) {
   if (issues.length) return issues;
   if (s.ai_resolved + s.transferred + s.abandoned !== s.total_calls) issues.push('resueltas + transferidas + abandonadas ≠ total');
   if (s.transfer_successful + s.transfer_failed !== s.transferred) issues.push('exitosas + fallidas ≠ transferidas');
-  if (s.ai_goal_completed + s.ai_goal_not_completed !== s.total_calls) issues.push('objetivo cumplido + no cumplido ≠ total');
   return issues;
 }
 
@@ -116,7 +115,6 @@ export async function renderCallKpis(dateRange) {
     const T = s.total_calls;
     const pr = pct(s.ai_resolved, T), pt = pct(s.transferred, T), pa = pct(s.abandoned, T);
     const pOk = pct(s.transfer_successful, s.transferred), pFail = pct(s.transfer_failed, s.transferred);
-    const pg = pct(s.ai_goal_completed, T);
 
     setText('ckTotal', T.toLocaleString());
     setText('ckResolved', s.ai_resolved.toLocaleString()); setText('ckResolvedPct', fmtPct(pr));
@@ -128,12 +126,6 @@ export async function renderCallKpis(dateRange) {
     $('ckSegResolved').style.width = `${pr}%`;
     $('ckSegTransferred').style.width = `${pt}%`;
     $('ckSegAbandoned').style.width = `${pa}%`;
-
-    setText('ckGoalRatio', `${s.ai_goal_completed.toLocaleString()} / ${T.toLocaleString()}`);
-    setText('ckGoalPct', fmtPct(pg));
-    setText('ckGoalDone', s.ai_goal_completed.toLocaleString());
-    setText('ckGoalNot', s.ai_goal_not_completed.toLocaleString());
-    $('ckGoalBar').style.width = `${pg}%`;
   } catch (err) {
     console.error('[CallKPI] Error obteniendo resumen', err);
     if (status) { status.hidden = false; status.textContent = 'Datos en validación'; }
