@@ -34,7 +34,7 @@ class MockCallAnalyticsService extends CallAnalyticsService {
     return {
       total_calls, ai_resolved, transferred, abandoned,
       transfer_successful, transfer_failed,
-      tickets_created,
+
     };
   }
 }
