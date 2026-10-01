@@ -29,10 +29,13 @@ class MockCallAnalyticsService extends CallAnalyticsService {
     const transfer_successful = r(36), transfer_failed = r(2);
     const transferred = transfer_successful + transfer_failed;
     const total_calls = ai_resolved + transferred + abandoned;
+    const tickets_created = Math.round(ai_resolved * 0.6);
     await new Promise((res) => setTimeout(res, 250));
     return {
       total_calls, ai_resolved, transferred, abandoned,
       transfer_successful, transfer_failed,
+      tickets_created,
+
     };
   }
 }

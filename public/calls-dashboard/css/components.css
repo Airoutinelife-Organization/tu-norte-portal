@@ -551,7 +551,14 @@
 .ck-c-res { background: #16a34a; }
 .ck-c-tra { background: var(--primary); }
 .ck-c-aba { background: #98a2b3; }
-.ck-cats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; align-items: start; }
+.ck-cats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; align-items: stretch; }
+.ck-cat-group { display: flex; flex-direction: column; gap: 8px; padding: 10px 12px 12px; border-radius: var(--radius-md); border: 1px solid transparent; }
+.ck-cat-group.g-res { background: #f0fdf4; border-color: #bbf7d0; }
+.ck-cat-group.g-tra { background: var(--primary-light); border-color: #c7dbfc; }
+.ck-cat-group.g-aba { background: #f2f4f7; border-color: #e4e7ec; }
+.ck-cat-group .ck-cat { background: transparent; border-radius: var(--radius-sm); }
+.ck-cat-group .ck-cat:hover { background: rgba(16, 24, 40, .05); border-color: transparent; }
+.ck-cat-group .ck-cat.is-selected { box-shadow: none; background: rgba(16, 24, 40, .08); }
 .ck-cat, .ck-child { font-family: inherit; text-align: left; cursor: pointer; background: var(--primary-tint); border: 1px solid transparent; border-radius: var(--radius-md); transition: all var(--transition-fast); width: 100%; }
 .ck-cat { padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; }
 .ck-cat:hover, .ck-child:hover { border-color: var(--primary-light); background: var(--primary-light); }
@@ -561,8 +568,8 @@
 .ck-num { font-size: .95rem; color: var(--text-secondary); }
 .ck-num b { font-size: 1.6rem; color: var(--text-primary); font-weight: 700; }
 .ck-num em, .ck-child em { font-style: normal; font-weight: 600; }
-.ck-children { position: relative; margin: 10px 0 0 14px; padding-left: 14px; border-left: 2px solid var(--primary-light); display: flex; flex-direction: column; gap: 6px; }
-.ck-child { padding: 7px 10px; display: flex; justify-content: space-between; gap: 8px; font-size: .82rem; color: var(--text-secondary); background: var(--bg-card); border-color: var(--border-color); }
+.ck-children { position: relative; margin: 2px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.ck-child { padding: 8px 10px; display: flex; justify-content: space-between; gap: 8px; font-size: .82rem; color: var(--text-secondary); background: var(--bg-card); border-color: var(--border-color); }
 .ck-child b { color: var(--text-primary); }
 .ck-ticket { cursor: default; }
 .ck-ticket:hover { border-color: var(--border-color); background: var(--bg-card); }
