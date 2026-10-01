@@ -117,10 +117,15 @@
             <span class="ck-seg ck-c-aba" id="ckSegAbandoned"></span>
           </div>
           <div class="ck-cats">
-            <button type="button" class="ck-cat" data-ck-filter="AI_RESOLVED">
-              <span class="ck-label"><i class="ck-dot ck-c-res"></i>Resueltas por IA <span class="ck-info" tabindex="0" data-tip="Llamadas donde la IA completó la solicitud del cliente sin requerir transferencia a un agente humano.">i</span></span>
-              <span class="ck-num"><b id="ckResolved">0</b> · <em id="ckResolvedPct">0%</em></span>
-            </button>
+            <div class="ck-cat-group">
+              <button type="button" class="ck-cat" data-ck-filter="AI_RESOLVED">
+                <span class="ck-label"><i class="ck-dot ck-c-res"></i>Resueltas por IA <span class="ck-info" tabindex="0" data-tip="Llamadas donde la IA completó la solicitud del cliente sin requerir transferencia a un agente humano.">i</span></span>
+                <span class="ck-num"><b id="ckResolved">0</b> · <em id="ckResolvedPct">0%</em></span>
+              </button>
+              <div class="ck-children">
+                <div class="ck-child ck-ticket"><span>Tickets</span><span><b id="ckTickets">0</b></span></div>
+              </div>
+            </div>
             <div class="ck-cat-group">
               <button type="button" class="ck-cat" data-ck-filter="TRANSFERRED">
                 <span class="ck-label"><i class="ck-dot ck-c-tra"></i>Transferidas <span class="ck-info" tabindex="0" data-tip="Llamadas donde la atención requirió continuar con un agente humano.">i</span></span>
