@@ -12,6 +12,7 @@
  * @property {number} transfer_failed
  * @property {number} ai_goal_completed
  * @property {number} ai_goal_not_completed
+ * @property {number} [tickets_created] - Available when the analytics source reports created tickets.
  */
 
 class CallAnalyticsService {
@@ -123,6 +124,7 @@ export async function renderCallKpis(dateRange) {
 
     setText('ckTotal', T.toLocaleString());
     setText('ckResolved', s.ai_resolved.toLocaleString()); setText('ckResolvedPct', fmtPct(pr));
+    setText('ckTickets', typeof s.tickets_created === 'number' && Number.isFinite(s.tickets_created) && s.tickets_created >= 0 ? s.tickets_created.toLocaleString() : '—');
     setText('ckTransferred', s.transferred.toLocaleString()); setText('ckTransferredPct', fmtPct(pt));
     setText('ckAbandoned', s.abandoned.toLocaleString()); setText('ckAbandonedPct', fmtPct(pa));
     setText('ckOk', s.transfer_successful.toLocaleString()); setText('ckOkPct', fmtPct(pOk));

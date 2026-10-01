@@ -564,6 +564,8 @@
 .ck-children { position: relative; margin: 10px 0 0 14px; padding-left: 14px; border-left: 2px solid var(--primary-light); display: flex; flex-direction: column; gap: 6px; }
 .ck-child { padding: 7px 10px; display: flex; justify-content: space-between; gap: 8px; font-size: .82rem; color: var(--text-secondary); background: var(--bg-card); border-color: var(--border-color); }
 .ck-child b { color: var(--text-primary); }
+.ck-ticket { cursor: default; }
+.ck-ticket:hover { border-color: var(--border-color); background: var(--bg-card); }
 .ck-ok span:first-child { color: #15803d; font-weight: 600; }
 .ck-fail span:first-child { color: #dc2626; font-weight: 600; }
 .ck-child-note { margin: 4px 0 0 28px; font-size: .7rem; color: var(--text-muted); }
