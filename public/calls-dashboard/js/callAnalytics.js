@@ -10,8 +10,6 @@
  * @property {number} abandoned
  * @property {number} transfer_successful
  * @property {number} transfer_failed
- * @property {number} ai_goal_completed
- * @property {number} ai_goal_not_completed
  * @property {number} [tickets_created] - Available when the analytics source reports created tickets.
  */
 
@@ -31,12 +29,10 @@ class MockCallAnalyticsService extends CallAnalyticsService {
     const transfer_successful = r(36), transfer_failed = r(2);
     const transferred = transfer_successful + transfer_failed;
     const total_calls = ai_resolved + transferred + abandoned;
-    const ai_goal_completed = Math.round(total_calls * 0.683);
     await new Promise((res) => setTimeout(res, 250));
     return {
       total_calls, ai_resolved, transferred, abandoned,
       transfer_successful, transfer_failed,
-      ai_goal_completed, ai_goal_not_completed: total_calls - ai_goal_completed,
     };
   }
 }
@@ -58,7 +54,7 @@ export { CallAnalyticsService, MockCallAnalyticsService, AIRPCallAnalyticsServic
 export function validateSummary(s) {
   const issues = [];
   const n = (v) => typeof v === 'number' && Number.isFinite(v) && v >= 0;
-  for (const k of ['total_calls','ai_resolved','transferred','abandoned','transfer_successful','transfer_failed','ai_goal_completed','ai_goal_not_completed']) {
+  for (const k of ['total_calls','ai_resolved','transferred','abandoned','transfer_successful','transfer_failed']) {
     if (!n(s?.[k])) issues.push(`${k} inválido`);
   }
   if (issues.length) return issues;
