@@ -6,4 +6,6 @@
   "main": "@tanstack/react-start/server-entry",
   // Aviso de corte: config + imagen. Sin "id": wrangler (>=4.45) crea el namespace solo en el deploy
   "kv_namespaces": [{ "binding": "AVISO_KV" }],
+  // "off" = panel /admin/aviso-corte sin login y API de n8n sin token. Quitar para exigir login (requiere secrets).
+  "vars": { "AVISO_AUTH": "off" },
 }

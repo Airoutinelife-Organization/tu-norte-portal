@@ -1,5 +1,6 @@
 // Lógica del "Aviso de corte" (solo servidor). Config + imagen en Workers KV (binding AVISO_KV).
 // Secrets (wrangler secret put): AVISO_ADMIN_USER, AVISO_ADMIN_PASS, AVISO_N8N_TOKEN.
+// Var AVISO_AUTH = "off" desactiva login y token (solo para pruebas).
 import { env } from "cloudflare:workers";
 
 export type AvisoConfig = {
@@ -68,8 +69,14 @@ function safeEq(a: string, c: string) {
   return (crypto.subtle as unknown as { timingSafeEqual(a: Uint8Array, b: Uint8Array): boolean }).timingSafeEqual(x, y);
 }
 
+/** AVISO_AUTH = "off" (var en wrangler.jsonc) desactiva el login del panel y el token de n8n. */
+export function authOff(): boolean {
+  return secret("AVISO_AUTH") === "off";
+}
+
 /** Devuelve el usuario si el header Authorization: Basic es válido; si no, null. */
 export function checkAdmin(request: Request): string | null {
+  if (authOff()) return "panel (sin login)";
   const user = secret("AVISO_ADMIN_USER");
   const pass = secret("AVISO_ADMIN_PASS");
   if (!user || !pass) return null;
@@ -89,6 +96,7 @@ export function checkAdmin(request: Request): string | null {
 }
 
 export function checkN8n(request: Request): boolean {
+  if (authOff()) return true;
   const token = secret("AVISO_N8N_TOKEN");
   return !!token && safeEq(request.headers.get("x-api-key") || "", token);
 }

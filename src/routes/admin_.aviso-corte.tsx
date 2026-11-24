@@ -44,11 +44,18 @@ const b64 = (s: string) => btoa(String.fromCharCode(...new TextEncoder().encode(
 
 function AvisoCortePage() {
   const [auth, setAuth] = useState<string | null>(null);
+  const [open, setOpen] = useState(false); // true si el servidor tiene AVISO_AUTH = "off"
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    setAuth(sessionStorage.getItem(SS_KEY));
-    setReady(true);
+    const saved = sessionStorage.getItem(SS_KEY);
+    fetch(API)
+      .then((r) => setOpen(r.ok))
+      .catch(() => setOpen(false))
+      .finally(() => {
+        setAuth(saved);
+        setReady(true);
+      });
   }, []);
 
   const logout = () => {
@@ -57,6 +64,7 @@ function AvisoCortePage() {
   };
 
   if (!ready) return <div className="min-h-screen bg-background" />;
+  if (open) return <Editor auth={null} onUnauthorized={() => setOpen(false)} />;
   if (!auth)
     return (
       <Login
@@ -116,7 +124,7 @@ function Login({ onLogin }: { onLogin: (auth: string) => void }) {
   );
 }
 
-function Editor({ auth, onUnauthorized, onLogout }: { auth: string; onUnauthorized: () => void; onLogout: () => void }) {
+function Editor({ auth, onUnauthorized, onLogout }: { auth: string | null; onUnauthorized: () => void; onLogout?: () => void }) {
   const [cfg, setCfg] = useState<Cfg | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -125,10 +133,10 @@ function Editor({ auth, onUnauthorized, onLogout }: { auth: string; onUnauthoriz
   const [saving, setSaving] = useState(false);
   const [over, setOver] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
-  const headers = { Authorization: `Basic ${auth}` };
+  const headers: Record<string, string> = auth ? { Authorization: `Basic ${auth}` } : {};
 
   const load = useCallback(async () => {
-    const r = await fetch(API, { headers: { Authorization: `Basic ${auth}` } });
+    const r = await fetch(API, { headers: auth ? { Authorization: `Basic ${auth}` } : {} });
     if (r.status === 401) return onUnauthorized();
     const j = await r.json();
     if (!r.ok) return toast.error(j.error || "No se pudo cargar la configuración");
@@ -220,9 +228,11 @@ function Editor({ auth, onUnauthorized, onLogout }: { auth: string; onUnauthoriz
               Imagen que Lina envía por WhatsApp a los clientes con servicio CORTADO de las franquicias que elijas.
             </p>
           </div>
-          <Button variant="ghost" size="sm" onClick={onLogout}>
-            <LogOut className="mr-2 h-4 w-4" /> Salir
-          </Button>
+          {onLogout && (
+            <Button variant="ghost" size="sm" onClick={onLogout}>
+              <LogOut className="mr-2 h-4 w-4" /> Salir
+            </Button>
+          )}
         </header>
 
         <Card>
