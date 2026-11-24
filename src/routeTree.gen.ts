@@ -27,6 +27,11 @@ import { Route as RecomendadorRouteImport } from './routes/recomendador'
 import { Route as SoporteRouteImport } from './routes/soporte'
 import { Route as TestVelocidadRouteImport } from './routes/test-velocidad'
 import { Route as VentasRouteImport } from './routes/ventas'
+import { Route as AdminAvisoCorteRouteImport } from './routes/admin_.aviso-corte'
+import { Route as AvisosFileRouteImport } from './routes/avisos.$file'
+import { Route as ApiAdminAvisoCorteConfigRouteImport } from './routes/api/admin/aviso-corte-config'
+import { Route as ApiAdminAvisoCorteImagenRouteImport } from './routes/api/admin/aviso-corte-imagen'
+import { Route as ApiAvisoCorteConfigRouteImport } from './routes/api/aviso-corte/config'
 import { Route as ApiPublicChatbotRouteImport } from './routes/api/public/chatbot'
 import { Route as ApiPublicDashboardConfigRouteImport } from './routes/api/public/dashboard-config'
 import { Route as ApiPublicSaeRouteImport } from './routes/api/public/sae'
@@ -121,6 +126,33 @@ const VentasRoute = VentasRouteImport.update({
   path: '/ventas',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminAvisoCorteRoute = AdminAvisoCorteRouteImport.update({
+  id: '/admin_/aviso-corte',
+  path: '/admin/aviso-corte',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AvisosFileRoute = AvisosFileRouteImport.update({
+  id: '/avisos/$file',
+  path: '/avisos/$file',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminAvisoCorteConfigRoute =
+  ApiAdminAvisoCorteConfigRouteImport.update({
+    id: '/api/admin/aviso-corte-config',
+    path: '/api/admin/aviso-corte-config',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiAdminAvisoCorteImagenRoute =
+  ApiAdminAvisoCorteImagenRouteImport.update({
+    id: '/api/admin/aviso-corte-imagen',
+    path: '/api/admin/aviso-corte-imagen',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiAvisoCorteConfigRoute = ApiAvisoCorteConfigRouteImport.update({
+  id: '/api/aviso-corte/config',
+  path: '/api/aviso-corte/config',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicChatbotRoute = ApiPublicChatbotRouteImport.update({
   id: '/api/public/chatbot',
   path: '/api/public/chatbot',
@@ -157,6 +189,11 @@ export interface FileRoutesByFullPath {
   '/soporte': typeof SoporteRoute
   '/test-velocidad': typeof TestVelocidadRoute
   '/ventas': typeof VentasRoute
+  '/admin/aviso-corte': typeof AdminAvisoCorteRoute
+  '/avisos/$file': typeof AvisosFileRoute
+  '/api/admin/aviso-corte-config': typeof ApiAdminAvisoCorteConfigRoute
+  '/api/admin/aviso-corte-imagen': typeof ApiAdminAvisoCorteImagenRoute
+  '/api/aviso-corte/config': typeof ApiAvisoCorteConfigRoute
   '/api/public/chatbot': typeof ApiPublicChatbotRoute
   '/api/public/dashboard-config': typeof ApiPublicDashboardConfigRoute
   '/api/public/sae': typeof ApiPublicSaeRoute
@@ -180,6 +217,11 @@ export interface FileRoutesByTo {
   '/soporte': typeof SoporteRoute
   '/test-velocidad': typeof TestVelocidadRoute
   '/ventas': typeof VentasRoute
+  '/admin/aviso-corte': typeof AdminAvisoCorteRoute
+  '/avisos/$file': typeof AvisosFileRoute
+  '/api/admin/aviso-corte-config': typeof ApiAdminAvisoCorteConfigRoute
+  '/api/admin/aviso-corte-imagen': typeof ApiAdminAvisoCorteImagenRoute
+  '/api/aviso-corte/config': typeof ApiAvisoCorteConfigRoute
   '/api/public/chatbot': typeof ApiPublicChatbotRoute
   '/api/public/dashboard-config': typeof ApiPublicDashboardConfigRoute
   '/api/public/sae': typeof ApiPublicSaeRoute
@@ -204,6 +246,11 @@ export interface FileRoutesById {
   '/soporte': typeof SoporteRoute
   '/test-velocidad': typeof TestVelocidadRoute
   '/ventas': typeof VentasRoute
+  '/admin_/aviso-corte': typeof AdminAvisoCorteRoute
+  '/avisos/$file': typeof AvisosFileRoute
+  '/api/admin/aviso-corte-config': typeof ApiAdminAvisoCorteConfigRoute
+  '/api/admin/aviso-corte-imagen': typeof ApiAdminAvisoCorteImagenRoute
+  '/api/aviso-corte/config': typeof ApiAvisoCorteConfigRoute
   '/api/public/chatbot': typeof ApiPublicChatbotRoute
   '/api/public/dashboard-config': typeof ApiPublicDashboardConfigRoute
   '/api/public/sae': typeof ApiPublicSaeRoute
@@ -229,6 +276,11 @@ export interface FileRouteTypes {
     | '/soporte'
     | '/test-velocidad'
     | '/ventas'
+    | '/admin/aviso-corte'
+    | '/avisos/$file'
+    | '/api/admin/aviso-corte-config'
+    | '/api/admin/aviso-corte-imagen'
+    | '/api/aviso-corte/config'
     | '/api/public/chatbot'
     | '/api/public/dashboard-config'
     | '/api/public/sae'
@@ -252,6 +304,11 @@ export interface FileRouteTypes {
     | '/soporte'
     | '/test-velocidad'
     | '/ventas'
+    | '/admin/aviso-corte'
+    | '/avisos/$file'
+    | '/api/admin/aviso-corte-config'
+    | '/api/admin/aviso-corte-imagen'
+    | '/api/aviso-corte/config'
     | '/api/public/chatbot'
     | '/api/public/dashboard-config'
     | '/api/public/sae'
@@ -275,6 +332,11 @@ export interface FileRouteTypes {
     | '/soporte'
     | '/test-velocidad'
     | '/ventas'
+    | '/admin_/aviso-corte'
+    | '/avisos/$file'
+    | '/api/admin/aviso-corte-config'
+    | '/api/admin/aviso-corte-imagen'
+    | '/api/aviso-corte/config'
     | '/api/public/chatbot'
     | '/api/public/dashboard-config'
     | '/api/public/sae'
@@ -299,6 +361,11 @@ export interface RootRouteChildren {
   SoporteRoute: typeof SoporteRoute
   TestVelocidadRoute: typeof TestVelocidadRoute
   VentasRoute: typeof VentasRoute
+  AdminAvisoCorteRoute: typeof AdminAvisoCorteRoute
+  AvisosFileRoute: typeof AvisosFileRoute
+  ApiAdminAvisoCorteConfigRoute: typeof ApiAdminAvisoCorteConfigRoute
+  ApiAdminAvisoCorteImagenRoute: typeof ApiAdminAvisoCorteImagenRoute
+  ApiAvisoCorteConfigRoute: typeof ApiAvisoCorteConfigRoute
   ApiPublicChatbotRoute: typeof ApiPublicChatbotRoute
   ApiPublicDashboardConfigRoute: typeof ApiPublicDashboardConfigRoute
   ApiPublicSaeRoute: typeof ApiPublicSaeRoute
@@ -432,6 +499,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VentasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin_/aviso-corte': {
+      id: '/admin_/aviso-corte'
+      path: '/admin/aviso-corte'
+      fullPath: '/admin/aviso-corte'
+      preLoaderRoute: typeof AdminAvisoCorteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/avisos/$file': {
+      id: '/avisos/$file'
+      path: '/avisos/$file'
+      fullPath: '/avisos/$file'
+      preLoaderRoute: typeof AvisosFileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/aviso-corte-config': {
+      id: '/api/admin/aviso-corte-config'
+      path: '/api/admin/aviso-corte-config'
+      fullPath: '/api/admin/aviso-corte-config'
+      preLoaderRoute: typeof ApiAdminAvisoCorteConfigRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/aviso-corte-imagen': {
+      id: '/api/admin/aviso-corte-imagen'
+      path: '/api/admin/aviso-corte-imagen'
+      fullPath: '/api/admin/aviso-corte-imagen'
+      preLoaderRoute: typeof ApiAdminAvisoCorteImagenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/aviso-corte/config': {
+      id: '/api/aviso-corte/config'
+      path: '/api/aviso-corte/config'
+      fullPath: '/api/aviso-corte/config'
+      preLoaderRoute: typeof ApiAvisoCorteConfigRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/chatbot': {
       id: '/api/public/chatbot'
       path: '/api/public/chatbot'
@@ -475,6 +577,11 @@ const rootRouteChildren: RootRouteChildren = {
   SoporteRoute: SoporteRoute,
   TestVelocidadRoute: TestVelocidadRoute,
   VentasRoute: VentasRoute,
+  AdminAvisoCorteRoute: AdminAvisoCorteRoute,
+  AvisosFileRoute: AvisosFileRoute,
+  ApiAdminAvisoCorteConfigRoute: ApiAdminAvisoCorteConfigRoute,
+  ApiAdminAvisoCorteImagenRoute: ApiAdminAvisoCorteImagenRoute,
+  ApiAvisoCorteConfigRoute: ApiAvisoCorteConfigRoute,
   ApiPublicChatbotRoute: ApiPublicChatbotRoute,
   ApiPublicDashboardConfigRoute: ApiPublicDashboardConfigRoute,
   ApiPublicSaeRoute: ApiPublicSaeRoute,

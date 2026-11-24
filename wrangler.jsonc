@@ -4,4 +4,6 @@
   "compatibility_date": "2025-09-24",
   "compatibility_flags": ["nodejs_compat"],
   "main": "@tanstack/react-start/server-entry",
+  // Aviso de corte: config + imagen. Sin "id": wrangler (>=4.45) crea el namespace solo en el deploy
+  "kv_namespaces": [{ "binding": "AVISO_KV" }],
 }
